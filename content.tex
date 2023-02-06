@@ -23,6 +23,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
+\usepackage{todonotes}
 
 \mathtoolsset{showonlyrefs}
 
@@ -42,6 +43,12 @@
 \DeclareMathOperator{\ifop}{if}
 \DeclareMathOperator{\elseop}{otherwise}
 \DeclareMathOperator{\OPT}{OPT}
+\DeclareMathOperator{\fv}{fv}
+\DeclareMathOperator{\uv}{uv}
+\DeclareMathOperator{\pv}{pv}
+\DeclareMathOperator{\vol}{v}
+\DeclareMathOperator{\opdef}{def}
+\DeclareMathOperator{\exc}{exc}
 
 
 \newtheorem{theorem}{Theorem}
@@ -72,6 +79,10 @@
 \tableofcontents
 
 \section{Algorithm}
+\todo{Formal Problem definition, notation}
+\todo{Formulate and format keepactive, keepidle nicer.}
+\todo{Properly define scheduling problem with lower and upper bounds $l_t, m_t$.}
+\todo{Precisely relate $l_t, m_t$ returned by Algorithm to assignment of jobs to processors, time slots.}
 \begin{algorithm}[H]
 \caption{Parallel Left-to-Right}\label{alg:RECLTR}
 \begin{algorithmic}
@@ -112,6 +123,10 @@
   \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of active processors at $t$.}
 \end{figure}
 
+\todo{Ambiguity of $t$ used for time slots and sink in flow-network: Use $\alpha$-$\omega$ flow}
+\todo{Briefly define $c$ for edge capacities and cuts.}
+\todo{Introduce notation for number of jobs scheduled at $t$?}
+
 \begin{lemma}\label{lemma:flow_feasibility}
   There exists a feasible solution to a scheduling instance with lower and upper bounds $l_t, m_t$ if and only if the maximum $s$-$t$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
 \end{lemma}
@@ -151,7 +166,112 @@
 
 \end{proof}
 
+\section{Structure of the PLTR-Schedule}
+\subsection{Preliminary Definitions}
+\todo{Use $T = [0, d^*]$ here?}
+\begin{definition}
+  For schedule $S$, we define the \emph{volume} $\vol_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the number of time slots of $Q$ for which $j$ is scheduled at by $S$.
+\end{definition}
+\begin{definition}
+  We define the \emph{forced volume} $\fv(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the number of time slots of $Q$ for which $j$ has to be scheduled in every feasible schedule, i.e.
+  \begin{align}
+    \fv(j, Q) = \max\{0; p_j - |E_j \setminus Q|\}
+  \end{align}
+\end{definition}
+\begin{definition}
+  We define the \emph{unnecessary volume} $\uv_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the amount of volume which does not have to scheduled during $Q$, i.e.
+  \begin{align}
+    \uv_S(j, Q) = \vol_S(j, Q) - \fv(j,Q)\text{.}
+  \end{align}
+\end{definition}
+\begin{definition}
+  We define the \emph{possible volume} $\pv(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the maximum amount of volume which $j$ can be feasibly scheduled in $Q$, i.e.
+  \begin{align}
+    \pv(j, Q) = \min\{ p_j, |E_j \cap Q \} \text{.}
+  \end{align}
+\end{definition}
+Since the corresponding schedule $S$ will usually be clear from context, we drop the subscript for the volume and the unnecessary volume.
+We extend our volume definitions to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
+\begin{align}
+  \vol(J', Q) = \sum_{j \in J'} \vol(j, Q)\text{.}
+\end{align}
+If the first parameter is dropped, we refer to the whole set $J$, i.e.\ $\vol(Q) = \vol(J, Q)$.
+Clearly we have for every feasible schedule, every $Q, j$ that $\fv(j, Q) \leq \vol(j, Q) \leq \pv(j, Q)$.
 
+\begin{definition}
+  We define the \emph{density} $\phi(Q)$ for a set $Q \subseteq [0, d^*]$ as the average amount of processing volume which has to be completed in every slot of $Q$, i.e.
+  $\phi(Q) = \fv(J, Q) / |Q|$.
+  We also define $\widehat \phi(Q) = \max_{Q' \subseteq Q} \phi(Q')$.
+\end{definition}
+If $\widehat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in some time slot $t \in Q$ for every feasible schedule.
+\begin{definition}
+  We define the \emph{deficiency} $\opdef(Q)$ of a set $Q \subseteq [0, d^*]$ of time slots as the difference between the amount of volume which has to be completed in $Q$ and the processing capacity available in $Q$, i.e. $\opdef(Q) = \fv(Q) - \sum_{t \in Q} m_t$.
+\end{definition}
+\begin{definition}
+  We define the \emph{excess} $\exc(Q)$ of a set $Q \subseteq [0, d^*]$ of time slots as the difference between the processor utilization required in $Q$ and the amount of processing volume available in $Q$, i.e. $\exc(Q) = \sum_{t \in Q} l_t - \pv(Q)$.
+\end{definition}
+\subsection{Critical set of time slots}
+\begin{lemma}\label{lemma:cut}
+  For every $s$-$t$ cut $(S, \bar S)$ we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
+  $c(S) \geq P - \opdef(Q(S))$ or $c(S) \geq P - \exc(Q(\bar S))$, where $Q(S) \coloneqq \{ t \mid v_t \in S \}$.
+\end{lemma}
+\begin{proof}
+  Let $(S, \bar S)$ be a $s$-$t$ cut, let $J(S) \coloneqq \{j \mid u_j \in S\}$.
+  We consider 
+  If $w \notin S$, consider the contribution of every node of $S$ to the capacity of the cut.
+  \begin{itemize}
+    \item Node $s$: $\sum_{j \in J(\bar S)} p_j$.
+    \item Node $u_j$: $|\{v_t \in \bar S \mid t \in E_j\}| = | E_j \setminus Q(S) | \geq p_j - \fv(j, Q(S))$
+    \item Node $v_t$: $l_t + m_t - l_t = m_t$
+  \end{itemize}
+  The inequality for node $u_j$ follows since $\fv(j, Q(S)) = \max \{0, p_j - |E_j \setminus Q(S)| \}$.
+  In total, we can lower bound the capacity with 
+  \begin{align}
+    c(S) &\geq \sum_{j \in J(\bar S)} p_j + \sum_{j \in J(S)} p_j - \fv(j, Q(S)) + \sum_{t \in Q(S)} m_t
+    \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
+    \\ &\geq P - \opdef(Q(S))\text{.}
+  \end{align}
+  If $w \in S$, again consider the contribution of every node of $S$ to the capacity of the cut.
+  \begin{itemize}
+    \item Node $s$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$.
+    \item Node $u_j$: $| E_j \setminus Q(S) |
+      = | E_j \cap Q(\bar S)| \geq \pv(j, Q(\bar S))$
+    \item Node $v_t$: $l_t$
+    \item Node $w$: $P - \sum_t l_t$
+  \end{itemize}
+  In total, we can lower bound the capacity with 
+  \begin{align}
+    c(S) &\geq P - \sum_{t \in Q(\bar S)} l_t + \pv(Q(\bar S))
+    \\ &= P - \exc(Q(\bar S))
+  \end{align}
+
+\end{proof}
+
+\begin{lemma}\label{lemma:feasibility}
+  A scheduling instance with lower and upper bounds $l_t$ and $m_t$ is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq [0, d^*]$.
+\end{lemma}
+\begin{proof}
+  If $\opdef(Q) > 0$ for some $Q$, then some upper bounds $m_t$ cannot be met.
+  If $\exc(Q) > 0$ for some $Q$, then some lower bound $l_t$ cannot be met.
+  For the direction from right to left, consider an infeasible scheduling instance with lower and upper bounds.
+  By Lemma~\ref{lemma:flow_feasibility} we have that the maximum flow $f$ for this instance has value $|f| < P$.
+  Hence, there must be a $s$-$t$ cut $(S, \bar S)$ of capacity $c(S) < P$.
+  Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
+\end{proof}
+\begin{lemma}
+  For every time slot $t \in [0, d^*]$ for which some processor $k \in [m]$ is activated in $S_{PLTR}$, there exists a set $Q \subseteq [0, d^*]$ of time slots with $t \in Q$ and
+  \begin{align}
+    \fv(Q) = v(Q)
+  \end{align}
+  \begin{align}
+    \forall t' \in Q: \vol(t') \geq k-1
+  \end{align}
+  \begin{align}
+    \forall t' \in Q~\text{with}~t' \geq t: \vol(t') \geq k-1
+  \end{align}
+\end{lemma}
+\begin{proof}
+\end{proof}
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
 \setcitestyle{authoryear,open={(},close={)}}
