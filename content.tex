@@ -1,0 +1,81 @@
+\documentclass[a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+%\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+%\usepackage{listings} % Darstellen von Codebeispielen
+\usepackage{titlesec}
+%\usepackage{chngcntr}
+\usepackage{mathtools}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[normalem]{ulem}
+%\usepackage{float}
+%\usepackage{cite}
+\counterwithin{figure}{section}
+\newcommand{\sectionbreak}{\clearpage}
+\usepackage[round]{natbib}
+\usepackage{float}
+\usepackage{svg}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage[hidelinks]{hyperref}
+
+\mathtoolsset{showonlyrefs}
+
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\argmin}{argmin}
+%\DeclareMathOperator{\next}{next}
+\DeclareMathOperator{\prev}{prev}
+\DeclareMathOperator{\on}{on}
+\DeclareMathOperator{\off}{off}
+\DeclareMathOperator{\idle}{idle}
+\DeclareMathOperator{\act}{active}
+\DeclareMathOperator{\costs}{costs}
+\DeclareMathOperator{\adjacent}{adjacent}
+\DeclareMathOperator{\neighboring}{neighboring}
+\DeclareMathOperator{\true}{true}
+\DeclareMathOperator{\false}{false}
+\DeclareMathOperator{\ifop}{if}
+\DeclareMathOperator{\elseop}{otherwise}
+\DeclareMathOperator{\OPT}{OPT}
+
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+%\newtheorem*{remark}{Remark}
+
+
+\title{Greedy Energy-Efficient Scheduling Algorithms for Processor Systems}
+%\author{Gunther Bidlingmaier}
+%\date{15.11.2020}
+
+\begin{document}
+
+\selectlanguage{english}
+%\frontmatter{}
+%\input{pages/acknowledgements}
+
+%\maketitle
+\begin{abstract}
+  We study a particular scheduling setting in which a set of $n$ jobs with individual release times and deadlines has to be scheduled across $m$ homogeneous processors while minimizing the consumed energy.
+  Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
+  For the special case of a single processor, the greedy algorithm Left-to-Right guarantees an approximation factor of $2$.
+  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$.
+  Our algorithm has a running time of $(n + m) \log(d^*) F$ where $d^*$ is the largest deadline and $F$ the costs of a maximum flow calculation for checking feasibility of an instance.
+\end{abstract}
+
+\tableofcontents
+
+\section{Algorithm}
+foo
+
+%\bibliographystyle{plain}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,open={(},close={)}}
+\bibliography{references}
+\end{document}
