@@ -72,7 +72,30 @@
 \tableofcontents
 
 \section{Algorithm}
-foo
+\begin{algorithm}[H]
+\caption{Recursive Formulation of LTR}\label{alg:RECLTR}
+\begin{algorithmic}
+  \State{} \Return{} \Call{ltr}{$p, 0, \text{empty mapping}$}
+  \State{} where
+  \Function{ltr}{$q,t,S$}
+    \If{$q = 0$}
+      \Return$S$
+    \ElsIf{$t = D$}
+      \Return\Call{ltr}{$q-1,0,S$}
+    \Else{}
+      \State$\mathcal{T} \coloneqq\Call{keepidle}{q,t,S}$
+      \State$S(q,t') \coloneqq \idle$ for $t' \in [t, \mathcal{T})$
+      \State$\overline{\mathcal{T}} \coloneqq\Call{keepactive}{q,\mathcal{T},S}$
+      \State$S(q,t') \coloneqq \act$ for $t' \in [\mathcal{T}, \overline{\mathcal{T}})$
+      \State \Return\Call{ltr}{$q, \overline{\mathcal{T}}, S$}
+    \EndIf
+  \EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
 
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
