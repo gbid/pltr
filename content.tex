@@ -670,11 +670,37 @@ This auxiliary active slot does not count towards the volume.
   In particaular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{lemma:activations}
   The realignment of $S_{\aug}$ does not create new activation times but may only change the corresponding processor being activated, i.e.\ if $t \in T$ is an activation of some processor $k$ in $S_{real}$, then $t$ is also an activation of some processor $k'$ in $S_{\aug}$.
 \end{lemma}
 \begin{proof}
-  TODO
+  Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an activation of some processor $k'$ where $t$ was no activation of any processor before this step.
+  This step must be the closing of some valley $V$ on some processor $k > k'$:
+  \todo{Explicitly make this into a separate lemma?}
+  On processor $k$, we have seen that closing of some valley can only merge active intervals.
+  On processors above $k$, the schedule does not change.
+
+  Active slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been active on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.
+  Refer to Figure~\ref{fig:activations} for a visual sketch of the situation.
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{graphics/sketches/activations.png}\label{fig:activations}
+    \caption{The situation for case $1$ in Lemma~\ref{lemma:invariant}.}
+  \end{figure}
+
+  If $t \in V$, then processor $k' + 1$ (or $k$) must have been active before at $t$.
+  Hence $t$ was already an activation before the close, contradicting our initial choice of $t$.
+
+  If $t \nin V$, then $t \succ V$.
+  Let $W$ be the valley s.t.\ $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
+  If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
+  By Invariant 2, processors $1, \ldots, k_W = k$ are active at $t$ before the close.
+  Again, this implies that $t$ was an activation before the close already, contradicting our choice of $t$.
+  If $t \nin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
+  We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
+  Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are active at $t$ before the close.
+  Hence, $t$ was activation before the close already, again contradicting our initial choice of $t$.
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
 
