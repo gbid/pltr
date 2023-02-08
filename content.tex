@@ -692,20 +692,45 @@ This auxiliary active slot does not count towards the volume.
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been active before at $t$.
   Hence $t$ was already an activation before the close, contradicting our initial choice of $t$.
 
-  If $t \nin V$, then $t \succ V$.
+  If $t \notin V$, then $t \succ V$.
   Let $W$ be the valley s.t.\ $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
   If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
   By Invariant 2, processors $1, \ldots, k_W = k$ are active at $t$ before the close.
   Again, this implies that $t$ was an activation before the close already, contradicting our choice of $t$.
-  If $t \nin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
+  If $t \notin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
   We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
   Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are active at $t$ before the close.
   Hence, $t$ was activation before the close already, again contradicting our initial choice of $t$.
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
-
+  Let $I$ an idle interval in $S_{real}$ on some processor $k$ and $A_l, A_r$ the active intervals to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
+  Allow $A_l$ to be empty, i.e.\ we might have $\min I = 0$, but $A_r$ must be nonempty, i.e.\ $\max I < d^*$.
+  Then $k = 1$ and $\hat \phi(A_l \cup I \cup A_r) > 0$.
 \end{lemma}
 \begin{proof}
+  By Lemma~\ref{lemma:activation} and $\crit(A_r) \leq 1$, we know that $\min A_r$ is an activation of processor $1$ in $S_{\aug}$.
+  Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence on all processors (stair-property in $S_{\aug}$).
+  Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J_V = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
+  Therefore, no $V$ intersecting $[\max I, \max A_r]$ was closed during realignment on any processor, since this $V$ would contain $\max I$.
+  Since $A_r$ is an active interval with $\crit(A_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
+
+  For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
+  Therefore $\crit(I) \leq q$ and no valley $V$ with $V \cap [\min A_l - 1, \max A_r + 1] \neq \emptyset$ can have been closed.
+  \todo{Properly define what `the constellation occurs in the same way in $S_{\aug}$` means.}
+  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ on processor $1$, see Figure~\ref{fig:constellation}.
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{graphics/sketches/constellation.png}\label{fig:constellation}
+    \caption{}
+  \end{figure}
+  Let $j$ be the single job scheduled at $\min A_r$.
+  We conclude by showing that $E_j \subseteq I \cup A_r$ and therefore $\hat \phi(I \cup A_r) > 0$.
+  Otherwise, $j$ could be scheduled at $\min I$ or $\max A_r + 1$.
+  In the first case, $\PLTR$ would have extended $A_l$ by scheduling $j$ at time $\min I$ instead of at $\min A_r$.
+  In the second case, $\PLTR$ would have extended the idle interval $I$ by scheduling $j$ at $\max A_r + 1$ intead of at $\min A_r$.
+
+
 \end{proof}
 
 
