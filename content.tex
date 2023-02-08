@@ -43,7 +43,7 @@
 \DeclareMathOperator{\false}{false}
 \DeclareMathOperator{\ifop}{if}
 \DeclareMathOperator{\elseop}{otherwise}
-\DeclareMathOperator{\OPT}{OPT}
+\DeclareMathOperator{\opt}{OPT}
 \DeclareMathOperator{\PLTR}{pltr}
 \DeclareMathOperator{\LTR}{ltr}
 \DeclareMathOperator{\aug}{aug}
@@ -92,7 +92,7 @@
   We study a particular scheduling setting in which a set of $n$ jobs with individual release times and deadlines has to be scheduled across $m$ homogeneous processors while minimizing the consumed energy.
   Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy algorithm Left-to-Right guarantees an approximation factor of $2$.
-  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$.
+  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \opt + P$.
   Our algorithm has a running time of $(n + m) \log(d^*) F$ where $d^*$ is the largest deadline and $F$ the costs of a maximum flow calculation for checking feasibility of an instance.
 \end{abstract}
 
@@ -422,7 +422,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \section{Modification of our Schedule}
 We modify the schedule $S_{\PLTR}$ returned by our algorithm in two steps.
 The first step augments specific processors with auxiliary active slots, s.t.\ in every critical set $C$, there are at least the first $crit(C)$ processors active.
-Recall that for the single processor $\LTR$ algorithm, the crucial property for the approximation guarantee was that every idle interval of $S_{\OPT}$ can intersect at most $2$ distinct idle intervals of $S_{\LTR}$.
+Recall that for the single processor $\LTR$ algorithm, the crucial property for the approximation guarantee was that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of $S_{\LTR}$.
 \todo{Give some high level explanation that we realign the jobs of $J_{V_l}, J_{V_r}$ to higher processors where necessary.}
 The second modification step is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
 It is important to note that these modification steps are only done for the sake of the analysis.
@@ -708,7 +708,7 @@ This auxiliary active slot does not count towards the volume.
   Then $k = 1$ and $\hat \phi(A_l \cup I \cup A_r) > 0$.
 \end{lemma}
 \begin{proof}
-  By Lemma~\ref{lemma:activation} and $\crit(A_r) \leq 1$, we know that $\min A_r$ is an activation of processor $1$ in $S_{\aug}$.
+  By Lemma~\ref{lemma:activations} and $\crit(A_r) \leq 1$, we know that $\min A_r$ is an activation of processor $1$ in $S_{\aug}$.
   Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence on all processors (stair-property in $S_{\aug}$).
   Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J_V = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
   Therefore, no $V$ intersecting $[\max I, \max A_r]$ was closed during realignment on any processor, since this $V$ would contain $\max I$.
@@ -729,8 +729,50 @@ This auxiliary active slot does not count towards the volume.
   Otherwise, $j$ could be scheduled at $\min I$ or $\max A_r + 1$.
   In the first case, $\PLTR$ would have extended $A_l$ by scheduling $j$ at time $\min I$ instead of at $\min A_r$.
   In the second case, $\PLTR$ would have extended the idle interval $I$ by scheduling $j$ at $\max A_r + 1$ intead of at $\min A_r$.
+\end{proof}
+
+\begin{lemma}\label{lemma:intersection}
+  For every processor $k$, every idle interval on processor $k$ in $S_{\opt}$ intersects at most two distinct idle intervals of processor $k$ in $S_{\real}$.
+\end{lemma}
+\begin{proof}
+  Let $I_{\opt}$ be an idle interval in $S_{\opt}$ on processor $k$ intersecting three distinct idle intervals of processor $k$ in $S_{real}$.
+  Let $I$ be the middle of these idle intervals.
+  Lemma~\ref{lemma:constellation} and Lemma~\ref{lemma:phi_prop} imply that $k$ active processors are required during $I$ and its neighboring active intervals.
+  This makes it impossible for $S_{\opt}$ to be idle on processor $k$ during the whole interval $I_{\opt}$.
+  \todo{Sketch this}
+\end{proof}
+
+\begin{lemma}\label{lemma:costs_s_real}
+  $\costs(S_{real}) \leq 2 \opt + P$
+\end{lemma}
+\begin{proof}
+  We first show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
+  Let $mathcal{I}_1$ be the set of idle intervals on $S^k_{real}$ intersecting some $\off$-interval of $S^k_{\opt}$.
+  Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
+  Therefore, the costs of these idle intervals is bounded by $2 \off(S^k_{\opt})$.
+
+  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ not intersecting any $\off$-interval in $S^k_{\opt}$.
+  The total length of these intervals is bounded by $\on(S^k_{\opt})$.
+
+  We continue by showing that $\act(S_{real}) \leq 2 P$.
+  By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary active slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\PLTR}$:
+  For $S_{\aug}$, an auxiliary active slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
+  Furthermore, initially $\res(V) = 2 |J_V|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
+  During $\fillop(k, T)$ every $t \in T$ is at most closed once (or rather one $V'$ containing $t$ is closed).
+  Finally, auxiliary active slots introduced by $S_{\aug}$ are used in $\close$.
+  In conclusion, we have $\costs(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \opt + P$.
+\end{proof}
 
 
+\begin{theorem}
+  $\costs(S_{\PLTR}) \leq 2 \opt + P$
+\end{theorem}
+\begin{proof}
+  We argue that $\costs(S_{\PLTR}) \leq \costs(S_{\real})$.
+  The theorem then follows from Lemma~\ref{lemma:costs_s_real}.
+  We do this by transforming $S_{\real}$ back into $S_{\PLTR}$ without increasing the costs of the schedule.
+  Removing the auxiliary active slots clearly cannot increase the costs.
+  Moving the active processors, i.e.\ the scheduled jobs down to the lower numbered processors
 \end{proof}
 
 
