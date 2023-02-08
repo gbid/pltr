@@ -772,23 +772,26 @@ This auxiliary active slot does not count towards the volume.
   The theorem then follows from Lemma~\ref{lemma:costs_s_real}.
   We do this by transforming $S_{\real}$ back into $S_{\pltr}$ without increasing the costs of the schedule.
   Removing the auxiliary active slots clearly cannot increase the costs.
-  Moving the active processors, i.e.\ the scheduled jobs down to the lower numbered processors
+  Since the realignment of $S_{\aug}$ only moves active slots between processors, but not between different time slots, we can easily restore $S_{\pltr}$ (up to permutations of the jobs scheduled on the active processors at the same time slot) by moving all active slots back down to the lower numbered processors.
+  By the same argument as in Lemma~\ref{lemma:stair_property_opt}, this does not increase the total costs of the schedule.
 \end{proof}
 
 \section{Running Time}
 \begin{theorem}
-  Algorithm $\pltr$ has a running time of $O((n + m) \cdot \log(d^*) \cdot F)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
+  Algorithm $\pltr$ has a running time of $O(n \cdot \log(d^*) \cdot F)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
 \begin{proof}
   First observe that every active interval is created by a pair of calls to $\keepidle$ and $\keepactive$.
   Every call to $\keepidle$ searches for the maximal slot $t \in T$ (after the current time slot) such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
   Using binary search this can be done in $O(F \cdot \log(d^*))$ with $F$ denoting the time required for finding the maximum flow.
+
   We bound the number of active intervals across all processors in $S_{\pltr}$ by $n$.
-  This then bounds the number of calls to $\keepidle$ and $\keepactive$ by $n + m$.
   Note that if $\keepidle$ returns $d^*$, then we do not have to calculate $\keepactive$ from $d^*$ on.
-  We derive the upper bound of $n$ by constructing an injective mapping $f$ from the set of active intervals across all processors to the jobs $J$.
+  Therefore, the total number of calls to $\keepidle$ and $\keepactive$ is bounded by $n + m$.
+  If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
+  We derive the upper bound of $n$ for the number of active intervals across all processors by constructing an injective mapping $f$ from the set of active intervals to the jobs $J$.
   For this construction of $f$ we consider the active intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
-  We construct $f$ such that $f(A) = j$ forsome active interval $A$ only if $d_j \in A$.
+  We construct $f$ such that $f(A) = j$ for some active interval $A$ only if $d_j \in A$.
 
   Suppose we have constructed such a partial mapping for active intervals on processors $m, \ldots, k$ up to some active interval $A$ on $k$.
   \todo{Define plateaus: active intervals which are completely idle on higher processors}
