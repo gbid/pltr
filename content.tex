@@ -5,6 +5,7 @@
 %\usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{amsmath}
+%\usepackage[thmmarks,  thref]{ntheorem}
 \usepackage{amsthm}
 %\usepackage{listings} % Darstellen von Codebeispielen
 \usepackage{titlesec}
@@ -46,6 +47,7 @@
 \DeclareMathOperator{\PLTR}{pltr}
 \DeclareMathOperator{\LTR}{ltr}
 \DeclareMathOperator{\aug}{aug}
+\DeclareMathOperator{\real}{real}
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\uv}{uv}
 \DeclareMathOperator{\pv}{pv}
@@ -61,13 +63,17 @@
 \DeclareMathOperator{\close}{close}
 \DeclareMathOperator{\res}{Res}
 
-\newcommand{\minuseq}{\mathrel{-}=}
-
-
-
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}[theorem]{Definition}
+
+%\theoremheaderfont{\itshape}
+%\theorembodyfont{\upshape}
+% wtf is this?
+\newtheoremstyle{case}{}{}{}{}{}{:}{ }{}
+\theoremstyle{case}
+\newtheorem{case}{Case}
+
 %\newtheorem*{remark}{Remark}
 
 
@@ -439,10 +445,11 @@ This auxiliary active slot does not count towards the volume.
 \begin{algorithm}[H]
   \caption{Realignment of $S_{\aug}$}\label{alg:real}
 \begin{algorithmic}
+  \State{$\res(V) \gets 2 |J_V|$ for every valley $V$}
   \For{$k \gets m$ \textrm{to} $1$}
     \State{\Call{$\fillop$}{$[0, d^*]$}}
-    \State{$\res(V) \minuseq 1$ for every $V$
-    s.t.\ some $V' \cap V \neq \emptyset$ was closed on processor $k$}
+    \State{$\res(V) \gets \res(V) - 1$ for every $V$
+    s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on processor $k$}
   \EndFor{}
   \Function{$\fillop$}{$k, V$}
     \If{$\crit(V) \leq 1$}
@@ -475,6 +482,62 @@ This auxiliary active slot does not count towards the volume.
   \EndFunction{}
 \end{algorithmic}
 \end{algorithm}
+
+\subsection{Invariants for Realignment}
+\begin{lemma}
+  For an arbitrary step during the realignment of $S_{\aug}$ let $k_V$ be the highest processor s.t.\
+  \begin{itemize}
+    \item
+      processor $k_V$ is not fully filled yet, i.e.\ $\fillop(k_V, [0, d^*])$ has not yet returned,
+    \item
+      no $V' \supseteq V$ has been closed on $k_V$ so far and
+    \item
+      there is a (full) active interval $A \subseteq V$ on processor $k_V$.
+  \end{itemize}
+  We take $k_V \coloneqq 0$ if no such processor exists.
+  At every step in realignment of $S_{\aug}$ the following invariants hold.
+  \begin{enumerate}
+    \item
+      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D \subseteq [0, d^*]$ spanning $C$, then the left or right valley $V_l, V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
+    \item
+      For every $t \in C \cap V$, processors $1, \ldots, k_V$ are active at $t$.
+    \item
+      Every active interval $A \subseteq V$ on processor $k_V$ with $A \sim V$ spans $C$.
+  \end{enumerate}
+\end{lemma}
+\begin{proof}
+  We show properties 1 and 2 via structural induction on the realigned schedule $S_{\real}$.
+  Then we show that invariant 2 implies invariant 3.
+  For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ and $C$ the critical set with $C \sim V, \crit(V) \coloneqq c$.
+  
+  We have $k_V \leq c$, otherwise $V$ contains a full active interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$. This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
+
+  The second invariant now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are active at $t$.
+
+  For the first invariant, let $D$ be an interval spanning $C$ with $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$.
+  With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left or right valley $V_l, V_r$ of $C$ and $D$ exist and $|J_{V_l}| + |J_{V_r}| \geq \delta$.
+  With the initial definition of $\res(V)$ we get the desired lower bound of $\res(V_l) + \res(V_r) \geq 2 \delta$.
+
+  Now suppose that invariants 1 and 2 hold at all steps of the realignment up to a specific next step.
+  Let $V$ again be an arbitrary valley of $\crit(V) \geq 2$ and $k$ the processor currently being filled.
+  For the next step, we have to discern four cases.
+  \begin{enumerate}
+    \item
+      Some $V' \supseteq V$ is closed on processor $k$.
+    \item
+      Some $V' \subset V$ is closed on processor $k$.
+    \item
+      Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
+    \item 
+      The call to $\fillop(k, [0, d^*])$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, [0, d^*])$.
+  \end{enumerate}
+  \begin{case}
+    foo
+  \end{case}
+
+
+\end{proof}
+
 
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
