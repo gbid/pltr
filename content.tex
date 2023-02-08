@@ -324,6 +324,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{definition}
 \subsection{Definitions based on critical sets}
 \begin{definition}
+  \todo{Use $\succeq$ instead of $\preceq$ here}
   We define a total order $\precsim$ on the set of critical sets $C_t$ over all activations $t$.
   For activations $t, t' \in T$ of processors $k$ and $k'$ respectively, we define $C_t \precsim C_{t'}$ if and only $k < k'$ or $k = k'$ and $t \geq t'$.
   In other words, $\precsim$ is the same order in which $\PLTR$ calculates the activations: from Top-Left to Bottom-Right.
@@ -573,14 +574,58 @@ This auxiliary active slot does not count towards the volume.
       Hence there must have been an active interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the definition of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$ which allows us to prove our invariants 1 and 2.
       If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left or the right valley $V_l, V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
-
+      Our induction hypothesis also implies that for every $t \in C \cap V$ processors $1, \ldots, k_V$ are active before the close.
+      Since at most the uppermost active slot is moved by $\close$, after the close of $V'$ we still have processors $1, \ldots, k_V - 1 \geq k'_V$ active.
 
     \item[Case 2:]
       Some $V' \subset V$ is closed on processor $k$.
+      Again, no $V'' \supseteq V$ can have been close on processor $k$ so far.
+      We show that $k_V = k \geq k'_V$, i.e.\ that the critical processor of $V$ before the close of $V'$ is the processor currently being filled.
+      Let $W$ be the valley for which $V'$ is closed, i.e.\ $V'$ is closed during $\fillop(k, W)$.
+      We must have $W \supset V'$ and therefore no $W' \supseteq W$ has been closed on $k$ so far.
+      Also, for $V'$ to be closed in $\fillop(k, W)$, there must be some active interval $A \subseteq W$ on $k$ before the close, hence $k_W = k$.
+      Since $V' \subset V$ and $V' \subset W$, $V$ and $W$ intersect ($V' \neq \emptyset$ by definition of $V'$ as valley).
+      If $V \prec W$, then by choice of $V'$ as valley of $C_W$
+      \todo{introduce this notation for critical set $C_V$ of valley $V$, i.e.\ $C_V \sim V$.}
+      we must have $V \subseteq V'$, which contradicts our case assumption.
+      Therefore $V \succeq W$ and $V \supseteq W$ implying $k_V \leq k_W = k$ and since processor $k+1$ is already filled before the close we have $k_V = k \geq k'_V$.
+
+      For invariant 1, again let $\phi(C \cap D) \leq k'_V - \delta \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$.
+      Our induction hypothesis implies that the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and that both before and after the close we have $\res(V_l) + \res(V_r) \geq 2 \delta$.
+
+      For invariant 2, observe that $V' \cap C = \emptyset$ since $V' \prec C$ by our case assumption.
+      Our invariant 2 now directly follows from the induction hypothesis and $k'_V \leq k_V$.
+
     \item[Case 3:]
       Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
+      We first show that $\min V - 1 \notin V'$ and symmetrically $\max V + 1 \notin V'$.
+      Consider $t \coloneqq \min V - 1$.
+      We know $t \in T$ since $V'$ is valley of some critical set.
+      By choice of $V$ and $t$ we must have $t \succ V$.
+      If $t \in V'$, we would have $V' \succ V$ and hence $V' \supseteq V$, which contradicts our case assumption.
+      Symmetrically, we know that $\max V + 1 \notin V'$.
+      Therefore the close of $V'$ does not modify the schedule within $[\min V - 1, \max V + 1]$, implying that no partial active interval in $V$ before the close can become a full active interval.
+      In summary we have $k_V = k'_V$ and invariants 1 and 2 follow as in case 2.
+
     \item[Case 4:]
       The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
+      First observe that the schedule itself does not change by this step but processor $k$ is now fully filled, which implies $k'_V \leq k_V$.
+      Invariant 2 then follows directly from the induction hypothesis.
+      We consider two subcases.
+      If during $\fillop(k, T)$, no valley $V'$ intersecting $V$ was closed on $k$, then $\res(V)$ does not change and Invariant 1 follows from the induction hypothesis and $k'_V \leq k_V$.
+      If on the other hand some valley $V'$ intersecting $V$ was closed on $k$ during $\fillop(k, T)$, then $\res(V)$ is decresed by $1$ to $\res'(V) \coloneqq \res(V) - 1$.
+      As seen in cases 1 to 3, $k_V$ decreases monotonically during $\fillop(k, T)$.
+      Consider the schedule right before the first valley $V'$ intersecting $V$ is closed on $k$.
+      Let $k^0_V$ be the critical processor for $V$ at this point of the realignment and $k^1_V$ the critical processor right after $V'$ is closed.
+      We have $k'_V \leq k^0_V - 1$:
+      If $V' \supseteq V$, then as argued in case 1 $k^1_V \leq k^0_V - 1$ and hence $k'_V \leq k_V \leq k^1_V \leq k^0_V -1$.
+      If $V' \subset V$, then as argued in case 2 we have $k^0_V = k$.
+      Since $\fillop(k, T)$ returns in the next step of our case assumption, we have $k'_V \leq k - 1$ and hence $k'_V \leq k^0_V -1$.
+      Invariant 2 now follows by our (strong) induction hypothesis.
+      If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence the left valley $V_l$ or right valley $V_r$ of $C, D$ exists and before the close $\res(V_l) + \res(V_r) \geq 2 (\delta + 1)$.
+      Since $\res$ is decreased by at most $1$, we have after the close $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
+
+
   \end{description}
 
 \end{proof}
