@@ -70,9 +70,9 @@
 %\theoremheaderfont{\itshape}
 %\theorembodyfont{\upshape}
 % wtf is this?
-\newtheoremstyle{case}{}{}{}{}{}{:}{ }{}
-\theoremstyle{case}
-\newtheorem{case}{Case}
+%\newtheoremstyle{case}{}{}{}{}{}{:}{ }{}
+%\theoremstyle{case}
+%\newtheorem{case}{Case}
 
 %\newtheorem*{remark}{Remark}
 
@@ -138,8 +138,7 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{graphics/sketches/flow_network.png}
-  \label{fig:flow}
+  \includegraphics[width=\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
   \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of active processors at $t$.}
 \end{figure}
 
@@ -158,7 +157,7 @@
   Hence $f_{out}(u_j) = \sum_{t \in E_j} f_{in}(v_t) = p_j$.
   Hence every job $j$ is scheduled in $p_j$ distinct time slots.
 
-  The schedule respects the upper bounds $m_t$, since $c(v_t, w) + c(v_t, t) \leq m_t - l_t + l_t$ and for every $t$ at most $m_t$ jobs are scheduled at $t$. 
+  The schedule respects the upper bounds $m_t$, since $c(v_t, w) + c(v_t, t) \leq m_t - l_t + l_t$ and for every $t$ at most $m_t$ jobs are scheduled at $t$.
 
   The schedule respects the lower bounds $l_t$, since
   $c(V \setminus \{t\}, \{t\}) = P$ and hence
@@ -243,7 +242,6 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{lemma}
 \begin{proof}
   Let $(S, \bar S)$ be a $s$-$t$ cut, let $J(S) \coloneqq \{j \mid u_j \in S\}$.
-  We consider 
   If $w \notin S$, consider the contribution of every node of $S$ to the capacity of the cut.
   \begin{itemize}
     \item Node $s$: $\sum_{j \in J(\bar S)} p_j$.
@@ -251,7 +249,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
     \item Node $v_t$: $l_t + m_t - l_t = m_t$
   \end{itemize}
   The inequality for node $u_j$ follows since $\fv(j, Q(S)) = \max \{0, p_j - |E_j \setminus Q(S)| \}$.
-  In total, we can lower bound the capacity with 
+  In total, we can lower bound the capacity with
   \begin{align}
     c(S) &\geq \sum_{j \in J(\bar S)} p_j + \sum_{j \in J(S)} p_j - \fv(j, Q(S)) + \sum_{t \in Q(S)} m_t
     \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
@@ -265,7 +263,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
     \item Node $v_t$: $l_t$
     \item Node $w$: $P - \sum_t l_t$
   \end{itemize}
-  In total, we can lower bound the capacity with 
+  In total, we can lower bound the capacity with
   \begin{align}
     c(S) &\geq P - \sum_{t \in Q(\bar S)} l_t + \pv(Q(\bar S))
     \\ &= P - \exc(Q(\bar S))
@@ -298,7 +296,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   Consider the step in $\PLTR$ when $t$ was the result of $\keepidle$ on processor $k$ and the corresponding lower and upper bounds $m_{t'}, l_{t'}$ for $t' \in T$ right after the calculation of $t$ and the corresponding update of the bounds by $\keepidle$.
   We modify the bounds by decreasing $m_t$ by $1$.
   Note that at this point $m_{t'} \geq k$ for every $t' > t$ and $m_{t'} \geq k - 1$ for every $t'$.
-  
+
   Consider $Q \subseteq T$ s.t.\ $t \in Q$ and $\fv(Q) < \vol(Q)$.
   Before our modification we had $m_Q \coloneqq \sum_{t' \in Q} m_{t'} \geq \vol(Q) > \fv(Q)$.
   The inequality $m_Q \geq \vol(Q)$ here follows since the upper bounds $m_{t'}$ are monotonically decreasing during $\PLTR$.
@@ -309,7 +307,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 
   Finally, consider $Q \subseteq T$ s.t.\ $t \in Q$ and $v(t') < k$ for some $t' > t$.
   Again at the step in $\PLTR$ considered by us, we have $m_{t'} \geq k > v(t')$ which implies $m_Q \geq \fv(Q)$ after our decrement of $m_t$.
-  
+
   If for $t$ no $Q$ exists as characterized in the proposition, $t$ cannot have been the result of $\keepidle$ at this step in $\PLTR$, which is a contradiction.
 \end{proof}
 
@@ -469,7 +467,7 @@ This auxiliary active slot does not count towards the volume.
       \State{\Call{$\fillop$}{$k, V'$}}
     \EndFor{}
   \EndFunction{}
-  
+
   \Function{$\close$}{$k, V$}
     \For{every $t \in V$ which is idle on processor $k$}
       \If{processors $1, \ldots, k-1$ idle at $t$}
@@ -484,7 +482,7 @@ This auxiliary active slot does not count towards the volume.
 \end{algorithm}
 
 \subsection{Invariants for Realignment}
-\begin{lemma}
+\begin{lemma}\label{lemma:invariant}
   For an arbitrary step during the realignment of $S_{\aug}$ let $k_V$ be the highest processor s.t.\
   \begin{itemize}
     \item
@@ -509,7 +507,7 @@ This auxiliary active slot does not count towards the volume.
   We show properties 1 and 2 via structural induction on the realigned schedule $S_{\real}$.
   Then we show that invariant 2 implies invariant 3.
   For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ and $C$ the critical set with $C \sim V, \crit(V) \coloneqq c$.
-  
+
   We have $k_V \leq c$, otherwise $V$ contains a full active interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$. This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
 
   The second invariant now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are active at $t$.
@@ -520,27 +518,77 @@ This auxiliary active slot does not count towards the volume.
 
   Now suppose that invariants 1 and 2 hold at all steps of the realignment up to a specific next step.
   Let $V$ again be an arbitrary valley of $\crit(V) \geq 2$ and $k$ the processor currently being filled.
-  For the next step, we have to discern four cases.
-  \begin{enumerate}
-    \item
-      Some $V' \supseteq V$ is closed on processor $k$.
-    \item
-      Some $V' \subset V$ is closed on processor $k$.
-    \item
-      Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
-    \item 
-      The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
-  \end{enumerate}
-  \begin{case}
-    foo
-  \end{case}
+  Let furthermore $k_V, k'_V$ be the critical processor for $V$ before and after, respectively, the next step in the realignment.
+  We consider four cases for the next step in the realignment.
 
+  %\begin{enumerate}
+  %  \item
+  %    Some $V' \supseteq V$ is closed on processor $k$.
+  %  \item
+  %    Some $V' \subset V$ is closed on processor $k$.
+  %  \item
+  %    Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
+  %  \item
+  %    The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
+  %\end{enumerate}
+  \begin{description}
+    \item[Case 1:]
+      Some $V' \supseteq V$ is closed on processor $k$.
+      Then no valley $W$ intersecting $V$ has been closed so far on $k$.
+      Also, since $\close$ only moves the active slot highest active processor below $k$, we know that the stair property \todo{define stair property} holds within $V$ on processors $1, \ldots, k$.
+      We show that the closing of $V'$ on $k$ reduces the critical processor of $V$ by at least $1$, i.e. $k'_V \leq k_V - 1$.
+      If $k_V = k$, then $V' \supseteq V$ is closed on processor $k_V$ and hence by definition we have $k'_V \leq k_V - 1$.
+      If $k_V < k$, suppose for contradiction that $k_V \leq k'_V \leq k$, where $k'_V \leq k$ again by definition since $V' \subseteq V$ is closed on processor $k$.
+
+      Let $A \subseteq V$ be a full active interval on $k_V$ before the close of $V'$.
+      We show that $A \subset V$, i.e.\ that there must be some $t \in V$ idle on $k_V$ before the close and hence by the stair-property processors $k_V, \ldots, k$ idle at $t$ before the close.
+      If $V' \supseteq V$ is closed, clearly $V \subset T$ by the choice of $V_l$ and $V_r$ as valleys of some critical set in the realignment definition.
+      Hence we know that $\min V - 1 \in T$ and $\max V + 1 \in T$.
+      \todo{Double check if this is true (or if we only have one of the two guaranteed): Since $V$ must be valley \emph{of} some $C$, we should have both $0 \notin V$ and $d^* \notin V$.}
+      We show that $t \coloneqq \min V - 1$ must be active on $k_V$ before the close.
+      Let $W \supseteq V$ be the valley with $W \sim t$ and $t \in W$.
+      We know that $W \supseteq V$ since $W \sim t \succ V$ since $V$ is a valley.
+      By our case assumption, no $W' \subseteq W$ can have been closed on processor $k$ so far.
+      With $W \supseteq V$ and the definition of $k_W$ we get $k_W \geq k_V$, where $k_W$ is the critical processor of $W$ before the close.
+      Our induction hypothesis now implies that processors $1, \ldots, k_V, \ldots, k_W$ are active at $t$ before the close.
+      For $A \subseteq V$ to be a (full) active interval on $k_V$ before the close, we hence must have $\min V \notin A$.
+      We know by definition of the realignment and function $\close$, that for every $k'$ with $k_V \leq k' < k$ and every $t \in V$:
+      \begin{itemize}
+        \item
+          If $t$ was idle on $k'$ before the close, then $t$ is still idle on $k'$ after the close (definition of $\close$, $k' < k$).
+        \item
+          If $t$ was idle on $k_V$ before the close, then $t$ was idle on $k'$ before (stair-property) and hence $t$ is still idle on $k'$ after the close.
+        \item
+          If $t$ was part of full active interval $A \subset V$ on $k_V$ before the close, then $t$ was idle on $k_V + 1$ before the close (choice of $k_V$).
+          Hence $t$ was idle on $k$ before (stair-property) and hence $t$ is idle on $k_V$ after the close.
+      \end{itemize}
+      Taken together, for $t \in V$ to be active on $k'$ after the close, $t$ must have been active on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full active interval $A \subseteq V$.
+      Hence $t \in A$ for some \todo{properly define partial active intervals} \emph{partial} active interval $A \subseteq V$ on $k'$ before the close.
+      For $A' \subseteq V$ to be a full active interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$.
+      \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{graphics/sketches/invariant_case1.png}\label{fig:invariant_case1}
+        \caption{The situation for case $1$ in Lemma~\ref{lemma:invariant}.}
+      \end{figure}
+      Hence there must have been an active interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the definition of $k_V < k$.
+      In conclusion, we have $k'_V \leq k_V - 1$ which allows us to prove our invariants 1 and 2.
+      If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left or the right valley $V_l, V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
+
+
+    \item[Case 2:]
+      Some $V' \subset V$ is closed on processor $k$.
+    \item[Case 3:]
+      Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
+    \item[Case 4:]
+      The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
+  \end{description}
 
 \end{proof}
 
 
+
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
-\setcitestyle{authoryear,open={(},close={)}}
+%\setcitestyle{authoryear,open={(},close={)}}
 \bibliography{references}
 \end{document}
