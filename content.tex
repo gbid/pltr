@@ -93,7 +93,7 @@
   Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy algorithm Left-to-Right guarantees an approximation factor of $2$.
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \opt + P$.
-  Our algorithm has a running time of $(n + m) \log(d^*) F$ where $d^*$ is the largest deadline and $F$ the costs of a maximum flow calculation for checking feasibility of an instance.
+  Our algorithm has a running time of $O(n \cdot \log(d^*) \cdot F)$, where $d^*$ is the largest deadline and $F$ the time required by the maximum-flow calculation for checking the feasibility of an instance.
 \end{abstract}
 
 \tableofcontents
@@ -138,13 +138,13 @@
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
+  \includegraphics[width=0.6\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
   \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of active processors at $t$.}
 \end{figure}
 
 \todo{Ambiguity of $t$ used for time slots and sink in flow-network: Use $\alpha$-$\omega$ flow}
 \todo{Briefly define $c$ for edge capacities and cuts.}
-\todo{Introduce notation for number of jobs scheduled at $t$?}
+\todo{Introduce notation for number of jobs scheduled at $t$, e.g. $\vol(t)$?}
 
 \begin{lemma}\label{lemma:flow_feasibility}
   There exists a feasible solution to a scheduling instance with lower and upper bounds $l_t, m_t$ if and only if the maximum $s$-$t$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
@@ -216,9 +216,11 @@
   \end{align}
 \end{definition}
 Since the corresponding schedule $S$ will always be clear from context, we drop the subscript for $\vol, \uv$ and $\spac$.
-We extend our volume definitions to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
+We extend our volume definitions to single timeslots $t\in T$ and to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
 \begin{align}
-  \vol(J', Q) = \sum_{j \in J'} \vol(j, Q)\text{.}
+  \vol(J', Q) &\coloneqq \sum_{j \in J'} \vol(j, Q)\text{.}
+  \\
+  \vol(t) &\coloneqq \vol(J, \{t\})
 \end{align}
 If the first parameter is dropped, we refer to the whole set $J$, i.e.\ $\vol(Q) = \vol(J, Q)$.
 Clearly we have for every feasible schedule, every $Q, j$ that $\fv(j, Q) \leq \vol(j, Q) \leq \pv(j, Q)$.
@@ -656,7 +658,7 @@ This auxiliary active slot does not count towards the volume.
 \end{proof}
 
 \begin{lemma}\label{lemma:phi_prop}
-  For every processor $k \in [m]$, every active interval $A$ on processor $k$ in $S_{\real}$, $\hat \phi(A) > k - 1$.
+  For every processor $k \in [m]$, every active interval $A$ on processor $k$ in $S_{\real}$ with $\crit(A) \geq 2$ we have $\hat \phi(A) > k - 1$.
 \end{lemma}
 \begin{proof}
   We show that $\fillop(k, T)$ establishes the property on $k$.
@@ -742,6 +744,7 @@ This auxiliary active slot does not count towards the volume.
   \todo{Sketch this}
 \end{proof}
 
+\subsection{Approximation Guarantee}
 \begin{lemma}\label{lemma:costs_s_real}
   $\costs(S_{real}) \leq 2 \opt + P$
 \end{lemma}
