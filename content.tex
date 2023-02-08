@@ -777,9 +777,12 @@ This auxiliary active slot does not count towards the volume.
 
 \section{Running Time}
 \begin{theorem}
-  Algorithm $\pltr$ has a running time of $O(n + m) \cdot \log(d^*) \cdot F$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
+  Algorithm $\pltr$ has a running time of $O((n + m) \cdot \log(d^*) \cdot F)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
 \begin{proof}
+  First observe that every active interval is created by a pair of calls to $\keepidle$ and $\keepactive$.
+  Every call to $\keepidle$ searches for the maximal slot $t \in T$ (after the current time slot) such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
+  Using binary search this can be done in $O(F \cdot \log(d^*))$ with $F$ denoting the time required for finding the maximum flow.
   We bound the number of active intervals across all processors in $S_{\pltr}$ by $n$.
   This then bounds the number of calls to $\keepidle$ and $\keepactive$ by $n + m$.
   Note that if $\keepidle$ returns $d^*$, then we do not have to calculate $\keepactive$ from $d^*$ on.
