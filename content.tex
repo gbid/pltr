@@ -23,7 +23,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
-\usepackage{todonotes}
+\usepackage[textsize=tiny]{todonotes}
 
 \mathtoolsset{showonlyrefs}
 
@@ -43,7 +43,9 @@
 \DeclareMathOperator{\ifop}{if}
 \DeclareMathOperator{\elseop}{otherwise}
 \DeclareMathOperator{\OPT}{OPT}
-\DeclareMathOperator{\PLTR}{PLTR}
+\DeclareMathOperator{\PLTR}{pltr}
+\DeclareMathOperator{\LTR}{ltr}
+\DeclareMathOperator{\aug}{aug}
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\uv}{uv}
 \DeclareMathOperator{\pv}{pv}
@@ -54,6 +56,8 @@
 \DeclareMathOperator{\keepactive}{keepActive}
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\crit}{crit}
+\DeclareMathOperator{\spac}{space}
+
 
 
 \newtheorem{theorem}{Theorem}
@@ -180,7 +184,7 @@
 \begin{definition}
   We define the \emph{forced volume} $\fv(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the number of time slots of $Q$ for which $j$ has to be scheduled in every feasible schedule, i.e.
   \begin{align}
-    \fv(j, Q) = \max\{0; p_j - |E_j \setminus Q|\}
+    \fv(j, Q) = \max\{0; p_j - |E_j \setminus Q|\} \text{.}
   \end{align}
 \end{definition}
 \begin{definition}
@@ -192,10 +196,16 @@
 \begin{definition}
   We define the \emph{possible volume} $\pv(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the maximum amount of volume which $j$ can be feasibly scheduled in $Q$, i.e.
   \begin{align}
-    \pv(j, Q) = \min\{ p_j, |E_j \cap Q \} \text{.}
+    \pv(j, Q) = \min\{ p_j, | E_j \cap Q | \} \text{.}
   \end{align}
 \end{definition}
-Since the corresponding schedule $S$ will usually be clear from context, we drop the subscript for the volume and the unnecessary volume.
+\begin{definition}
+  We define the \emph{space $\spac_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ for schedule $S$} as the number of additional time slots, which $j$ can be scheduled in $Q$, i.e.\
+  \begin{align}
+    \spac_S(j, Q) = \pv(j, Q) - \vol_S(j, Q) \text{.}
+  \end{align}
+\end{definition}
+Since the corresponding schedule $S$ will always be clear from context, we drop the subscript for $\vol, \uv$ and $\spac$.
 We extend our volume definitions to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
 \begin{align}
   \vol(J', Q) = \sum_{j \in J'} \vol(j, Q)\text{.}
@@ -345,11 +355,81 @@ If $\widehat \phi(Q) > k - 1$, then clearly at least $k$ processors are required
       & \text{otherwise}
     \end{cases}
   \end{align}
+  We also extend the definitions to intervals $D \subseteq [0, d^*]$.
   \begin{align}
+    \rank(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
+    \\ \crit(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
   \end{align}
 \end{definition}
+\begin{definition}
+  Let $C$ be a critical set. A nonempty interval $V \subseteq [0, d^*]$ is a \emph{valley of $\rank(C)$} if $C \sim V$ and $V$ is inclusion maximal.
+  Let $C_1, \ldots, C_l$ be the (maximal) intervals of $C$.
+  A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$.
+\end{definition}
+\begin{definition}
+  For a critical set $C$, an interval $D$ \emph{spans} $C$ if $D \cap C$ contains only full subintervals of $C$ and at least one subinterval of $C$.
+  The \emph{left valley} $V_l$ of $C$ and an interval $D$ spanning $C$ is the valley of $C$ ending at $\min (C \cap D) - 1$ (if such a valley of $C$ exists).
+  The \emph{right valley} $V_r$ of $C$ and an interval $D$ spanning $C$ is the valley of $C$ starting at $\max (C \cap D) + 1$ (if such a valley of $C$ exists).
+\end{definition}
 
+\begin{definition}
+  For a valley $V$, we define the jobs $J(V) \subseteq J$ as all jobs which are scheduled by $S_{\PLTR}$ in every $t \in V$.
+\end{definition}
 
+\begin{lemma}\label{lemma:valley}
+  For every critical set $C$ with $c \coloneqq \crit(C)$, every interval $D$ spanning $C$:
+  if $\phi(C \cap D) \leq c - \delta$ for some $\delta \in \mathbb{N}$, then $V_l$ or $V_r$ is defined and $|J_{V_l}| + |J_{V_r}| \geq \delta$, where we take $|J_V| \coloneqq 0$ if $V$ does not exist.
+\end{lemma}
+\todo{Provide a rough visual sketch here}
+\begin{proof}
+  \todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math or by replacing division by multiplication}
+  By choice of $C$ as critical set with $c = \crit(C)$ we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
+  If this inequality is fulfilled strictly, i.e.\ if
+  $\vol(C \cap D) > (c-1) \cdot |C \cap D|$, then with
+  $\fv(C \cap D) / |C \cap D| \leq c - \delta$ we directly get $\uv(C \cap D) / |C \cap D| > \delta - 1$.
+  This implies that there are at least $\delta$ jobs $j$ scheduled in $C \cap D$ with $\uv(j, C \cap D) > 0$.
+  Such jobs must have $E_j \cap (C \setminus D) \neq \emptyset$ and hence at least one of $V_l$ and $V_r$ for $C$ and $D$ must exist and the jobs must be contained in $J_{V_l}$ or $J_{V_r}$.
+
+  If on the other hand we have equality, i.e.\ $\vol(C \cap D) = (c-1) \cdot |C \cap D|$, then let $t$ be the activation of processor $c$ for which $C$ is critical set for.
+  Since $\vol(t) > c-1$, we must have $t \notin C \cap D$.
+  By the same argument as before, we have that if $\fv(C \cap D) / |C \cap D| \leq c - \delta$, then $\uv(C \cap D) / |C \cap D| \geq \delta + 1$.
+  Now suppose that there is no job $j$ scheduled in $C$ s.t.\ $\spac(j, C \cap D) > 0$.
+  Then $\fv(C \setminus D) = \vol(C \setminus D) > (c-1) \cdot | C \cap D|$.
+  Hence $\fv(C \setminus D) = \vol(C \setminus D) > (c - 1) \cdot |C \cap D|$.
+  We then get $\phi(C \setminus D) = \vol(C \setminus D) > (c-1) \cdot (C \cap D)$ since by case assumption $t \in C \setminus D$.
+  In conclusion, $C \setminus D$ is still a tight set over $t$ but has higher density than $C$, contradicting the choice of $C$.
+  Therefore, there must exist a job $j$ scheduled in $C$ with $\spac(j, C \cap D) > 0$ and hence
+  \begin{align}
+    \frac
+    {\uv(C \cap D) + \spac(j, C \cap D)}
+    {|C \cap D|}
+    > \delta - 1 \text{,}
+  \end{align}
+  which again implies that there must be at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
+  This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exist and that at least $\delta$ jobs are contained in $J_{V_l}$ or $J_{V_r}$.
+\end{proof}
+
+\section{Modification of our Schedule}
+We modify the schedule $S_{\PLTR}$ returned by our algorithm in two steps.
+The first step augments specific processors with auxiliary active slots, s.t.\ in every critical set $C$, there are at least the first $crit(C)$ processors active.
+Recall that for the single processor $\LTR$ algorithm, the crucial property for the approximation guarantee was that every idle interval of $S_{\OPT}$ can intersect at most $2$ distinct idle intervals of $S_{\LTR}$.
+\todo{Give some high level explanation that we realign the jobs of $J_{V_l}, J_{V_r}$ to higher processors where necessary.}
+The second modification step is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
+It is important to note that these modification steps are only done for the sake of the analysis.
+By making sure that the costs can only be increased by this modification, we get an upper bound for the costs of $S_{\PLTR}$.
+
+\subsection{Augmentation}
+We transform $S_{\PLTR}$ into $S_{\aug}$ by adding for every $t$ with $k \coloneqq crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary active slot on processor $k$.
+This auxiliary active slot does not count towards the volume.
+
+\begin{lemma}\label{lemma:augmented}
+  In $S_{\aug}$, in every $t \in [0, d^*]$ with $crit(t) \geq 2$ processors $1, \ldots, crit(t)$ are active.
+\end{lemma}
+\begin{proof}
+  The property directly follows from our choice of the critical sets, the definition of $\crit(t)$ and the construction of $S_{\aug}$.
+\end{proof}
+
+\subsection{Realignment}
 
 
 %\bibliographystyle{plain}
