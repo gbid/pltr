@@ -153,7 +153,7 @@
 \begin{proof}
   Let $f$ be a $s$-$t$ flow of value $|f| = P$.
   We construct a feasbile schedule from $f$ respecting the lower and upper bounds given by $l_t$ and $m_t$.
-  For every $j \in J$ and  $t \in [0, d^*]$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$.
+  For every $j \in J$ and  $t \in T$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$.
   Since $|f| = P$ and the capacity $c(\{s\}, V \setminus \{s\}) = P$, we have $f_{in}(u_j) = p_j$ for every $j \in J$.
   Hence $f_{out}(u_j) = \sum_{t \in E_j} f_{in}(v_t) = p_j$.
   Hence every job $j$ is scheduled in $p_j$ distinct time slots.
@@ -188,30 +188,30 @@
 
 \section{Structure of the PLTR-Schedule}
 \subsection{Preliminary Definitions}
-\todo{Use $T = [0, d^*]$ here?}
+\todo{Use $T = T$ here?}
 \begin{definition}
-  For schedule $S$, we define the \emph{volume} $\vol_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the number of time slots of $Q$ for which $j$ is scheduled at by $S$.
+  For schedule $S$, we define the \emph{volume} $\vol_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ of time slots as the number of time slots of $Q$ for which $j$ is scheduled at by $S$.
 \end{definition}
 \begin{definition}
-  We define the \emph{forced volume} $\fv(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the number of time slots of $Q$ for which $j$ has to be scheduled in every feasible schedule, i.e.
+  We define the \emph{forced volume} $\fv(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ of time slots as the number of time slots of $Q$ for which $j$ has to be scheduled in every feasible schedule, i.e.
   \begin{align}
     \fv(j, Q) = \max\{0; p_j - |E_j \setminus Q|\} \text{.}
   \end{align}
 \end{definition}
 \begin{definition}
-  We define the \emph{unnecessary volume} $\uv_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the amount of volume which does not have to scheduled during $Q$, i.e.
+  We define the \emph{unnecessary volume} $\uv_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ of time slots as the amount of volume which does not have to scheduled during $Q$, i.e.
   \begin{align}
     \uv_S(j, Q) = \vol_S(j, Q) - \fv(j,Q)\text{.}
   \end{align}
 \end{definition}
 \begin{definition}
-  We define the \emph{possible volume} $\pv(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ of time slots as the maximum amount of volume which $j$ can be feasibly scheduled in $Q$, i.e.
+  We define the \emph{possible volume} $\pv(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ of time slots as the maximum amount of volume which $j$ can be feasibly scheduled in $Q$, i.e.
   \begin{align}
     \pv(j, Q) = \min\{ p_j, | E_j \cap Q | \} \text{.}
   \end{align}
 \end{definition}
 \begin{definition}
-  We define the \emph{space $\spac_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq [0, d^*]$ for schedule $S$} as the number of additional time slots, which $j$ can be scheduled in $Q$, i.e.\
+  We define the \emph{space $\spac_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ for schedule $S$} as the number of additional time slots, which $j$ can be scheduled in $Q$, i.e.\
   \begin{align}
     \spac_S(j, Q) = \pv(j, Q) - \vol_S(j, Q) \text{.}
   \end{align}
@@ -225,16 +225,16 @@ If the first parameter is dropped, we refer to the whole set $J$, i.e.\ $\vol(Q)
 Clearly we have for every feasible schedule, every $Q, j$ that $\fv(j, Q) \leq \vol(j, Q) \leq \pv(j, Q)$.
 
 \begin{definition}
-  We define the \emph{density} $\phi(Q)$ for a set $Q \subseteq [0, d^*]$ as the average amount of processing volume which has to be completed in every slot of $Q$, i.e.
+  We define the \emph{density} $\phi(Q)$ for a set $Q \subseteq T$ as the average amount of processing volume which has to be completed in every slot of $Q$, i.e.
   $\phi(Q) = \fv(J, Q) / |Q|$.
   We also define $\hat \phi(Q) = \max_{Q' \subseteq Q} \phi(Q')$.
 \end{definition}
 If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in some time slot $t \in Q$ for every feasible schedule.
 \begin{definition}
-  We define the \emph{deficiency} $\opdef(Q)$ of a set $Q \subseteq [0, d^*]$ of time slots as the difference between the amount of volume which has to be completed in $Q$ and the processing capacity available in $Q$, i.e. $\opdef(Q) = \fv(Q) - \sum_{t \in Q} m_t$.
+  We define the \emph{deficiency} $\opdef(Q)$ of a set $Q \subseteq T$ of time slots as the difference between the amount of volume which has to be completed in $Q$ and the processing capacity available in $Q$, i.e. $\opdef(Q) = \fv(Q) - \sum_{t \in Q} m_t$.
 \end{definition}
 \begin{definition}
-  We define the \emph{excess} $\exc(Q)$ of a set $Q \subseteq [0, d^*]$ of time slots as the difference between the processor utilization required in $Q$ and the amount of processing volume available in $Q$, i.e. $\exc(Q) = \sum_{t \in Q} l_t - \pv(Q)$.
+  We define the \emph{excess} $\exc(Q)$ of a set $Q \subseteq T$ of time slots as the difference between the processor utilization required in $Q$ and the amount of processing volume available in $Q$, i.e. $\exc(Q) = \sum_{t \in Q} l_t - \pv(Q)$.
 \end{definition}
 \subsection{Critical set of time slots}
 \begin{lemma}\label{lemma:cut}
@@ -274,7 +274,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{proof}
 
 \begin{lemma}\label{lemma:feasibility}
-  A scheduling instance with lower and upper bounds $l_t$ and $m_t$ is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq [0, d^*]$.
+  A scheduling instance with lower and upper bounds $l_t$ and $m_t$ is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq T$.
 \end{lemma}
 \begin{proof}
   If $\opdef(Q) > 0$ for some $Q$, then some upper bounds $m_t$ cannot be met.
@@ -285,7 +285,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
 \end{proof}
 \begin{lemma}\label{lemma:critical}
-  For every time slot $t \in [0, d^*]$ for which some processor $k \in [m]$ is activated in $S_{\PLTR}$, there exists a set $Q \subseteq [0, d^*]$ of time slots with $t \in Q, $
+  For every time slot $t \in T$ for which some processor $k \in [m]$ is activated in $S_{\PLTR}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
     \fv(Q) &= v(Q) \text{,}\\
     \vol(t') &\geq k-1 &~\text{for}~t' \in Q~\text{and}\\
@@ -293,21 +293,21 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   \end{align}
 \end{lemma}
 \begin{proof}
-  Suppose for contradiction there is some activation $t \in [0, d^*]$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
+  Suppose for contradiction there is some activation $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
   We show that $\PLTR$ would have extended the idle interval on processor $k$ which ends at $t$.
-  Consider the step in $\PLTR$ when $t$ was the result of $\keepidle$ on processor $k$ and the corresponding lower and upper bounds $m_{t'}, l_{t'}$ for $t' \in [0, d^*]$ right after the calculation of $t$ and the corresponding update of the bounds by $\keepidle$.
+  Consider the step in $\PLTR$ when $t$ was the result of $\keepidle$ on processor $k$ and the corresponding lower and upper bounds $m_{t'}, l_{t'}$ for $t' \in T$ right after the calculation of $t$ and the corresponding update of the bounds by $\keepidle$.
   We modify the bounds by decreasing $m_t$ by $1$.
   Note that at this point $m_{t'} \geq k$ for every $t' > t$ and $m_{t'} \geq k - 1$ for every $t'$.
   
-  Consider $Q \subseteq [0, d^*]$ s.t.\ $t \in Q$ and $\fv(Q) < \vol(Q)$.
+  Consider $Q \subseteq T$ s.t.\ $t \in Q$ and $\fv(Q) < \vol(Q)$.
   Before our modification we had $m_Q \coloneqq \sum_{t' \in Q} m_{t'} \geq \vol(Q) > \fv(Q)$.
   The inequality $m_Q \geq \vol(Q)$ here follows since the upper bounds $m_{t'}$ are monotonically decreasing during $\PLTR$.
   After our modification we still have $m_Q \geq \fv(Q)$.
 
-  Consider $Q \subseteq [0, d^*]$ s.t.\ $t \in Q$ and $v(t') < k - 1$ for some $t'$.
+  Consider $Q \subseteq T$ s.t.\ $t \in Q$ and $v(t') < k - 1$ for some $t'$.
   At the step in $\PLTR$ considered by us, we hence have $m_{t'} \geq k - 1 > v(t')$ and therefore before our decrement of $m_t$ we had $m_Q > \vol(Q) \geq \fv(Q)$ which implies $m_Q \geq \fv(Q)$ after the decrement of $m_t$.
 
-  Finally, consider $Q \subseteq [0, d^*]$ s.t.\ $t \in Q$ and $v(t') < k$ for some $t' > t$.
+  Finally, consider $Q \subseteq T$ s.t.\ $t \in Q$ and $v(t') < k$ for some $t' > t$.
   Again at the step in $\PLTR$ considered by us, we have $m_{t'} \geq k > v(t')$ which implies $m_Q \geq \fv(Q)$ after our decrement of $m_t$.
   
   If for $t$ no $Q$ exists as characterized in the proposition, $t$ cannot have been the result of $\keepidle$ at this step in $\PLTR$, which is a contradiction.
@@ -318,16 +318,16 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{definition}
 
 \begin{definition}
-  A \emph{critical set $C_t \subseteq [0, d^*]$ over an activation $t$} is the maximum of the set of tight sets $Q_t$ over activation $t$ in regard to the density $\phi$, i.e.
+  A \emph{critical set $C_t \subseteq T$ over an activation $t$} is the maximum of the set of tight sets $Q_t$ over activation $t$ in regard to the density $\phi$, i.e.
   \begin{align}
-    C_t \coloneqq \argmax \{ \phi(Q) \mid Q \subseteq [0, d^*]~\text{is tight set over}~t \} \text{.}
+    C_t \coloneqq \argmax \{ \phi(Q) \mid Q \subseteq T~\text{is tight set over}~t \} \text{.}
   \end{align}
   As the set of these critical sets $C_t$ for fixed $t$ is closed under union, for the sake of uniqueness, we take $C_t$ to be the inclusion-maximal critical set over activation $t$.
 \end{definition}
 \subsection{Definitions based on critical sets}
 \begin{definition}
   We define a total order $\precsim$ on the set of critical sets $C_t$ over all activations $t$.
-  For activations $t, t' \in [0, d^*]$ of processors $k$ and $k'$ respectively, we define $C_t \precsim C_{t'}$ if and only $k < k'$ or $k = k'$ and $t \geq t'$.
+  For activations $t, t' \in T$ of processors $k$ and $k'$ respectively, we define $C_t \precsim C_{t'}$ if and only $k < k'$ or $k = k'$ and $t \geq t'$.
   In other words, $\precsim$ is the same order in which $\PLTR$ calculates the activations: from Top-Left to Bottom-Right.
 \end{definition}
 \begin{definition}
@@ -347,7 +347,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   \end{align}
 \end{definition}
 \begin{definition}
-  We extend these definitions to general time slots $t \in [0, d^*]$.
+  We extend these definitions to general time slots $t \in T$.
   \begin{align}
     \rank(t) \coloneqq
     \begin{cases}
@@ -366,14 +366,14 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
       & \text{otherwise}
     \end{cases}
   \end{align}
-  We also extend the definitions to intervals $D \subseteq [0, d^*]$.
+  We also extend the definitions to intervals $D \subseteq T$.
   \begin{align}
     \rank(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
     \\ \crit(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
   \end{align}
 \end{definition}
 \begin{definition}
-  Let $C$ be a critical set. A nonempty interval $V \subseteq [0, d^*]$ is a \emph{valley of $\rank(C)$} if $C \sim V$ and $V$ is inclusion maximal.
+  Let $C$ be a critical set. A nonempty interval $V \subseteq T$ is a \emph{valley of $\rank(C)$} if $C \sim V$ and $V$ is inclusion maximal.
   Let $C_1, \ldots, C_l$ be the (maximal) intervals of $C$.
   A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$.
 \end{definition}
@@ -434,7 +434,7 @@ We transform $S_{\PLTR}$ into $S_{\aug}$ by adding for every $t$ with $k \colone
 This auxiliary active slot does not count towards the volume.
 
 \begin{lemma}\label{lemma:augmented}
-  In $S_{\aug}$, in every $t \in [0, d^*]$ with $crit(t) \geq 2$ processors $1, \ldots, crit(t)$ are active.
+  In $S_{\aug}$, in every $t \in T$ with $crit(t) \geq 2$ processors $1, \ldots, crit(t)$ are active.
 \end{lemma}
 \begin{proof}
   The property directly follows from our choice of the critical sets, the definition of $\crit(t)$ and the construction of $S_{\aug}$.
@@ -447,7 +447,7 @@ This auxiliary active slot does not count towards the volume.
 \begin{algorithmic}
   \State{$\res(V) \gets 2 |J_V|$ for every valley $V$}
   \For{$k \gets m$ \textrm{to} $1$}
-    \State{\Call{$\fillop$}{$[0, d^*]$}}
+    \State{\Call{$\fillop$}{$T$}}
     \State{$\res(V) \gets \res(V) - 1$ for every $V$
     s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on processor $k$}
   \EndFor{}
@@ -488,7 +488,7 @@ This auxiliary active slot does not count towards the volume.
   For an arbitrary step during the realignment of $S_{\aug}$ let $k_V$ be the highest processor s.t.\
   \begin{itemize}
     \item
-      processor $k_V$ is not fully filled yet, i.e.\ $\fillop(k_V, [0, d^*])$ has not yet returned,
+      processor $k_V$ is not fully filled yet, i.e.\ $\fillop(k_V, T)$ has not yet returned,
     \item
       no $V' \supseteq V$ has been closed on $k_V$ so far and
     \item
@@ -498,7 +498,7 @@ This auxiliary active slot does not count towards the volume.
   At every step in realignment of $S_{\aug}$ the following invariants hold.
   \begin{enumerate}
     \item
-      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D \subseteq [0, d^*]$ spanning $C$, then the left or right valley $V_l, V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
+      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D \subseteq T$ spanning $C$, then the left or right valley $V_l, V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
     \item
       For every $t \in C \cap V$, processors $1, \ldots, k_V$ are active at $t$.
     \item
@@ -529,7 +529,7 @@ This auxiliary active slot does not count towards the volume.
     \item
       Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
     \item 
-      The call to $\fillop(k, [0, d^*])$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, [0, d^*])$.
+      The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
   \end{enumerate}
   \begin{case}
     foo
