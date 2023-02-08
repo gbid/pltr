@@ -93,10 +93,12 @@
   Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy algorithm Left-to-Right guarantees an approximation factor of $2$.
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \opt + P$.
-  Our algorithm has a running time of $O(n \cdot \log(d^*) \cdot F)$, where $d^*$ is the largest deadline and $F$ the time required by the maximum-flow calculation for checking the feasibility of an instance.
+  Our algorithm has a running time of $O(F n \log d)$, where $d$ is the largest deadline and $F$ the time required by a maximum-flow calculation for checking the feasibility of an instance.
 \end{abstract}
 
 \tableofcontents
+\todo{Define problem, notation}
+\todo{Replace \emph{active, active intervals} with \emph{busy} everywere?}
 
 \section{Algorithm}
 \todo{Formal Problem definition, notation}
@@ -218,9 +220,9 @@
 Since the corresponding schedule $S$ will always be clear from context, we drop the subscript for $\vol, \uv$ and $\spac$.
 We extend our volume definitions to single timeslots $t\in T$ and to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
 \begin{align}
-  \vol(J', Q) &\coloneqq \sum_{j \in J'} \vol(j, Q)\text{.}
+  \vol(J', Q) &\coloneqq \sum_{j \in J'} \vol(j, Q)\text{,}
   \\
-  \vol(t) &\coloneqq \vol(J, \{t\})
+  \vol(t) &\coloneqq \vol(J, \{t\})\text{.}
 \end{align}
 If the first parameter is dropped, we refer to the whole set $J$, i.e.\ $\vol(Q) = \vol(J, Q)$.
 Clearly we have for every feasible schedule, every $Q, j$ that $\fv(j, Q) \leq \vol(j, Q) \leq \pv(j, Q)$.
@@ -776,12 +778,13 @@ This auxiliary active slot does not count towards the volume.
   We do this by transforming $S_{\real}$ back into $S_{\pltr}$ without increasing the costs of the schedule.
   Removing the auxiliary active slots clearly cannot increase the costs.
   Since the realignment of $S_{\aug}$ only moves active slots between processors, but not between different time slots, we can easily restore $S_{\pltr}$ (up to permutations of the jobs scheduled on the active processors at the same time slot) by moving all active slots back down to the lower numbered processors.
+  \todo{Define Lemma stair property somewhere}
   By the same argument as in Lemma~\ref{lemma:stair_property_opt}, this does not increase the total costs of the schedule.
 \end{proof}
 
 \section{Running Time}
 \begin{theorem}
-  Algorithm $\pltr$ has a running time of $O(n \cdot \log(d^*) \cdot F)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
+  Algorithm $\pltr$ has a running time of $O(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
 \begin{proof}
   First observe that every active interval is created by a pair of calls to $\keepidle$ and $\keepactive$.
