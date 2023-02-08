@@ -11,7 +11,7 @@
 %\usepackage{chngcntr}
 \usepackage{mathtools}
 \usepackage{algorithm}
-\usepackage{algpseudocode}
+\usepackage[noend]{algpseudocode}
 \usepackage[normalem]{ulem}
 %\usepackage{float}
 %\usepackage{cite}
@@ -57,6 +57,11 @@
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\crit}{crit}
 \DeclareMathOperator{\spac}{space}
+\DeclareMathOperator{\fillop}{fill}
+\DeclareMathOperator{\close}{close}
+\DeclareMathOperator{\res}{Res}
+
+\newcommand{\minuseq}{\mathrel{-}=}
 
 
 
@@ -93,7 +98,7 @@
 \todo{Properly define scheduling problem with lower and upper bounds $l_t, m_t$.}
 \todo{Precisely relate $l_t, m_t$ returned by Algorithm to assignment of jobs to processors, time slots.}
 \begin{algorithm}[H]
-\caption{Parallel Left-to-Right}\label{alg:RECLTR}
+\caption{Parallel Left-to-Right}\label{alg:pltr}
 \begin{algorithmic}
   \State{} $m_t \gets m$
   \State{} $l_t \gets 0$
@@ -216,9 +221,9 @@ Clearly we have for every feasible schedule, every $Q, j$ that $\fv(j, Q) \leq \
 \begin{definition}
   We define the \emph{density} $\phi(Q)$ for a set $Q \subseteq [0, d^*]$ as the average amount of processing volume which has to be completed in every slot of $Q$, i.e.
   $\phi(Q) = \fv(J, Q) / |Q|$.
-  We also define $\widehat \phi(Q) = \max_{Q' \subseteq Q} \phi(Q')$.
+  We also define $\hat \phi(Q) = \max_{Q' \subseteq Q} \phi(Q')$.
 \end{definition}
-If $\widehat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in some time slot $t \in Q$ for every feasible schedule.
+If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in some time slot $t \in Q$ for every feasible schedule.
 \begin{definition}
   We define the \emph{deficiency} $\opdef(Q)$ of a set $Q \subseteq [0, d^*]$ of time slots as the difference between the amount of volume which has to be completed in $Q$ and the processing capacity available in $Q$, i.e. $\opdef(Q) = \fv(Q) - \sum_{t \in Q} m_t$.
 \end{definition}
@@ -431,6 +436,45 @@ This auxiliary active slot does not count towards the volume.
 
 \subsection{Realignment}
 
+\begin{algorithm}[H]
+  \caption{Realignment of $S_{\aug}$}\label{alg:real}
+\begin{algorithmic}
+  \For{$k \gets m$ \textrm{to} $1$}
+    \State{\Call{$\fillop$}{$[0, d^*]$}}
+    \State{$\res(V) \minuseq 1$ for every $V$
+    s.t.\ some $V' \cap V \neq \emptyset$ was closed on processor $k$}
+  \EndFor{}
+  \Function{$\fillop$}{$k, V$}
+    \If{$\crit(V) \leq 1$}
+      \State{\Return{}}
+    \EndIf{}
+    \State{let $C$ be critical set s.t.\ $C \sim V$}
+    \While{exists active interval $A \subseteq V$ on processor $k$
+    with $A \sim V$ and $\hat \phi(A) \leq k - 1$}
+      \State{let $V_l, V_r$ be the left and right valley for $C$ and interval $A$ (if $A$ spans $C$)}
+      \If{$V_l$ exists and $\res(V_l) > 0$}
+        \State{\Call{$\close$}{$k, V_l$}}
+      \ElsIf{$V_r$ exists and $\res(V_r) > 0$}
+        \State{\Call{$\close$}{$k, V_r$}}
+      \EndIf{}
+    \EndWhile{}
+    \For{every valley $V' \subseteq V$ of $C$ which has not been closed on $k$}
+      \State{\Call{$\fillop$}{$k, V'$}}
+    \EndFor{}
+  \EndFunction{}
+  
+  \Function{$\close$}{$k, V$}
+    \For{every $t \in V$ which is idle on processor $k$}
+      \If{processors $1, \ldots, k-1$ idle at $t$}
+        \State{introduce new auxiliary active slot on processor $k$ at time $t$}
+      \Else{}
+        \State{move active slot at time $t$ of highest processor
+        among $1, \ldots, k-1$ to processor $k$ at $t$}
+      \EndIf{}
+    \EndFor{}
+  \EndFunction{}
+\end{algorithmic}
+\end{algorithm}
 
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
