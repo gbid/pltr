@@ -643,9 +643,44 @@ This auxiliary active slot does not count towards the volume.
   Therefore $k_W \geq k_V$ and Invariant 2 implies that $t = \min A - 1$ is active on processor $k_V$, again contradicting the choice of $A$ as full active interval on processor $k_V$.
 \end{proof}
 
-\begin{lemma}
+\begin{lemma}\label{lemma:s_real}
   The result $S_{\real}$ of the realignment of $S_{\aug}$ 
 \end{lemma}
+\begin{proof}
+  The Invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of $\fillop$, the corresponding active interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$, hence $V_r$ or $V_l$ exists and there is suffcient $\res$ to close some valley.
+
+  Since in the while-loop of $\fillop(k, V)$ the active interval $A \subseteq V$ on $k_V$ always spans $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $A$ are properly defined.
+  Also since $\phi(A) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
+  This reduces the number of idle intervals on processor $k$ by at least $1$, since Invariant 2 implies that $V_l$ or $V_r$ cannot end strictly within an idle interval on $k$.
+  Hence all terms in the realignment are well defined and the realignment terminates.
+\end{proof}
+
+\begin{lemma}\label{lemma:phi_prop}
+  For every processor $k \in [m]$, every active interval $A$ on processor $k$ in $S_{\real}$, $\hat \phi(A) > k - 1$.
+\end{lemma}
+\begin{proof}
+  We show that $\fillop(k, T)$ establishes the property on $k$.
+  The claim then follows since $\fillop(k, T)$ does not change the schedules of processors above $k$.
+  Since in $\fillop(k, T)$, we always close valleys for active intervals $A$ on $k$ spanning a corresponding critical set $C$, we know that on processor $k$, active intervals are only extended.
+  Let $A \subseteq V$ be an active interval on processor $k$ in $S_{\real}$ with $A \sim V$ and $\crit(A) \geq 2$.
+  No valley $W \supseteq V$ can have been closed on $k$ since otherwise there would be no $A \subseteq V$ in $S_{\real}$.
+  Consider then the point in $\fillop(k, V)$ when the while-loop terminates.
+  Clearly at this point all $A' \subseteq V$ with $A' \sim V$ on processor $k$ have $\hat \phi(A') > k - 1$.
+  There must also be at least one such $A'$ at this point for $A \subseteq V$ to be an active interval on $k$ in $\S_{real}$ with $A \sim V$.
+  In particaular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
+\end{proof}
+
+\begin{lemma}
+  The realignment of $S_{\aug}$ does not create new activation times but may only change the corresponding processor being activated, i.e.\ if $t \in T$ is an activation of some processor $k$ in $S_{real}$, then $t$ is also an activation of some processor $k'$ in $S_{\aug}$.
+\end{lemma}
+\begin{proof}
+  TODO
+\end{proof}
+\begin{lemma}\label{lemma:constellation}
+
+\end{lemma}
+\begin{proof}
+\end{proof}
 
 
 
