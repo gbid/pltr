@@ -497,7 +497,7 @@ This auxiliary active slot does not count towards the volume.
   At every step in realignment of $S_{\aug}$ the following invariants hold.
   \begin{enumerate}
     \item
-      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D \subseteq T$ spanning $C$, then the left or right valley $V_l, V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
+      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D \subseteq T$ spanning $C$, then the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
     \item
       For every $t \in C \cap V$, processors $1, \ldots, k_V$ are active at $t$.
     \item
@@ -507,14 +507,14 @@ This auxiliary active slot does not count towards the volume.
 \begin{proof}
   We show properties 1 and 2 via structural induction on the realigned schedule $S_{\real}$.
   Then we show that invariant 2 implies invariant 3.
-  For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ and $C$ the critical set with $C \sim V, \crit(V) \coloneqq c$.
+  For the induction base, consider $S_{\aug}$ and let $V$ be an arbitrary valley in $S_{\aug}$ and $C$ the critical set with $C \sim V, \crit(V) \coloneqq c$.
 
   We have $k_V \leq c$, otherwise $V$ contains a full active interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$. This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
 
   The second invariant now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are active at $t$.
 
   For the first invariant, let $D$ be an interval spanning $C$ with $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$.
-  With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left or right valley $V_l, V_r$ of $C$ and $D$ exist and $|J_{V_l}| + |J_{V_r}| \geq \delta$.
+  With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and $|J_{V_l}| + |J_{V_r}| \geq \delta$.
   With the initial definition of $\res(V)$ we get the desired lower bound of $\res(V_l) + \res(V_r) \geq 2 \delta$.
 
   Now suppose that invariants 1 and 2 hold at all steps of the realignment up to a specific next step.
@@ -573,7 +573,7 @@ This auxiliary active slot does not count towards the volume.
       \end{figure}
       Hence there must have been an active interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the definition of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$ which allows us to prove our invariants 1 and 2.
-      If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left or the right valley $V_l, V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
+      If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
       Our induction hypothesis also implies that for every $t \in C \cap V$ processors $1, \ldots, k_V$ are active before the close.
       Since at most the uppermost active slot is moved by $\close$, after the close of $V'$ we still have processors $1, \ldots, k_V - 1 \geq k'_V$ active.
 
@@ -611,24 +611,41 @@ This auxiliary active slot does not count towards the volume.
       The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
       First observe that the schedule itself does not change by this step but processor $k$ is now fully filled, which implies $k'_V \leq k_V$.
       Invariant 2 then follows directly from the induction hypothesis.
+
       We consider two subcases.
       If during $\fillop(k, T)$, no valley $V'$ intersecting $V$ was closed on $k$, then $\res(V)$ does not change and Invariant 1 follows from the induction hypothesis and $k'_V \leq k_V$.
       If on the other hand some valley $V'$ intersecting $V$ was closed on $k$ during $\fillop(k, T)$, then $\res(V)$ is decresed by $1$ to $\res'(V) \coloneqq \res(V) - 1$.
       As seen in cases 1 to 3, $k_V$ decreases monotonically during $\fillop(k, T)$.
       Consider the schedule right before the first valley $V'$ intersecting $V$ is closed on $k$.
       Let $k^0_V$ be the critical processor for $V$ at this point of the realignment and $k^1_V$ the critical processor right after $V'$ is closed.
+
       We have $k'_V \leq k^0_V - 1$:
       If $V' \supseteq V$, then as argued in case 1 $k^1_V \leq k^0_V - 1$ and hence $k'_V \leq k_V \leq k^1_V \leq k^0_V -1$.
       If $V' \subset V$, then as argued in case 2 we have $k^0_V = k$.
       Since $\fillop(k, T)$ returns in the next step of our case assumption, we have $k'_V \leq k - 1$ and hence $k'_V \leq k^0_V -1$.
       Invariant 2 now follows by our (strong) induction hypothesis.
-      If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence the left valley $V_l$ or right valley $V_r$ of $C, D$ exists and before the close $\res(V_l) + \res(V_r) \geq 2 (\delta + 1)$.
+      If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and before the close $\res(V_l) + \res(V_r) \geq 2 (\delta + 1)$.
       Since $\res$ is decreased by at most $1$, we have after the close $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
-
-
   \end{description}
 
+  We conclude by showing that Invariant 2 implies Invariant 3.
+  Let $V$ be an arbitrary valley during the realignemnt of $S_{aug}$ and $A \subseteq V$ an active interval on processor $k_V$ with $A \sim V$.
+  Let $C$ be the critical set with $C \sim V$.
+  Note that $A \sim V$ implies that $A$ intersects $C$.
+  Assume for contradiction that $A$ does not span $C$.
+  The $\min A$ is within subinterval of $C$ or symmetrically $\max A$ within subinterval of $C$.
+  We assume the first case, i.e.\ $t\coloneqq \min A - 1 \in C$ and $\min A \in C$.
+  The second case follows by symmetry.
+  If $t \in V$, then time slot $t$ is active on processor $k_V$ by Invariant 2.
+  Therefore, $A$ cannot be a (full) active interval on processor $k_V$, contradicting the choice of $A$.
+  If $t = \min V-1$, then consider valley $W$ with $t \in W$ and $t \sim W$.
+  We must have $W \supset V$, $W \succ V$ and $t \in C_W$.
+  Therefore $k_W \geq k_V$ and Invariant 2 implies that $t = \min A - 1$ is active on processor $k_V$, again contradicting the choice of $A$ as full active interval on processor $k_V$.
 \end{proof}
+
+\begin{lemma}
+  The result $S_{\real}$ of the realignment of $S_{\aug}$ 
+\end{lemma}
 
 
 
