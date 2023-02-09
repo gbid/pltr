@@ -97,10 +97,32 @@
 \end{abstract}
 
 \tableofcontents
-\todo{Define problem, notation}
-\todo{Replace \emph{active, active intervals} with \emph{busy} everywere?}
+
+\section{Introduction}
+
+We study a scheduling setting with a \emph{power-down mechanism} and processors working in parallel.
+In this setting a system consisting of multiple homogeneous processors has to process a set of jobs while minimizing the energy consumed.
+Each job has an individual time interval during which it has to be processed.
+Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
+Intuitively one aims for few but long idle periods during which it is worthwhile to turn a processor off.
+
+More specifically a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
+Each job $j \in J$ has to be scheduled for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline, across $m \geq 1$ processors.
+Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
+Every processor is either completely off or completely on in a discrete time slot $t$.
+A processor can only work on some job in the time slot $t$ if it is in the on-state.
+A processor can be turned on and off at discrete times without delay.
+
+The objective now is to find a feasible schedule which minimizes the expended energy $E$, which is defined as follows.
+Each processor consumes $1$ unit of energy for every unit of time it is in the on-state and $0$ units of energy if it is in the off-state.
+Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
+In Graham's notation \citep{graham}, this setting can be described with $m \mid r_j; \overline{d_j}; pmtn \mid E$.
+
+
+
 
 \section{Algorithm}
+\todo{Replace \emph{active, active intervals} with \emph{busy} everywere?}
 \todo{Formal Problem definition, notation}
 \todo{Formulate and format keepactive, keepidle nicer.}
 \todo{Properly define scheduling problem with lower and upper bounds $l_t, m_t$.}
