@@ -118,6 +118,19 @@ Each processor consumes $1$ unit of energy for every unit of time it is in the o
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
 In Graham's notation \citep{graham}, this setting can be described with $m \mid r_j; \overline{d_j}; pmtn \mid E$.
 
+\subsection{Busy and idle intervals}
+We say a processor is \emph{busy} at time $t$ if some job is scheduled on this processor at time $t$.
+Otherwise, the processor is \emph{idle}.
+Clearly, a processor cannot be busy and off at the same time.
+Also note that if a processor is idle for more than $q$ units of time, it is worth turning the processor off during this idle interval.
+Our algorithm will specify for each processor when it is busy and when it is idle.
+Each processor is then defined to be in the off-state during idle intervals of length at least $q$ and otherwise in the on-state.
+
+\subsection{Lower and upper bounds for the amount of busy processors}
+We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
+Where in the original problem, for each time slot $t$, between $0$ and $m$ processors where allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$. 
+For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number $b_t$ of busy processors, which we will denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
+Note that this is related to the problem of \emph{deadline-scheduling-on-intervals} introduced by Antoniadis (TODO: ref).
 
 
 
@@ -558,8 +571,7 @@ This auxiliary active slot does not count towards the volume.
   %  \item
   %    The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
   %\end{enumerate}
-  \begin{description}
-    \item[Case 1:]
+  \paragraph{Case 1:}
       Some $V' \supseteq V$ is closed on processor $k$.
       Then no valley $W$ intersecting $V$ has been closed so far on $k$.
       Also, since $\close$ only moves the active slot highest active processor below $k$, we know that the stair property \todo{define stair property} holds within $V$ on processors $1, \ldots, k$.
@@ -603,7 +615,7 @@ This auxiliary active slot does not count towards the volume.
       Our induction hypothesis also implies that for every $t \in C \cap V$ processors $1, \ldots, k_V$ are active before the close.
       Since at most the uppermost active slot is moved by $\close$, after the close of $V'$ we still have processors $1, \ldots, k_V - 1 \geq k'_V$ active.
 
-    \item[Case 2:]
+  \paragraph{Case 2:}
       Some $V' \subset V$ is closed on processor $k$.
       Again, no $V'' \supseteq V$ can have been close on processor $k$ so far.
       We show that $k_V = k \geq k'_V$, i.e.\ that the critical processor of $V$ before the close of $V'$ is the processor currently being filled.
@@ -622,7 +634,8 @@ This auxiliary active slot does not count towards the volume.
       For invariant 2, observe that $V' \cap C = \emptyset$ since $V' \prec C$ by our case assumption.
       Our invariant 2 now directly follows from the induction hypothesis and $k'_V \leq k_V$.
 
-    \item[Case 3:]
+
+  \paragraph{Case 3:}
       Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
       We first show that $\min V - 1 \notin V'$ and symmetrically $\max V + 1 \notin V'$.
       Consider $t \coloneqq \min V - 1$.
@@ -633,7 +646,7 @@ This auxiliary active slot does not count towards the volume.
       Therefore the close of $V'$ does not modify the schedule within $[\min V - 1, \max V + 1]$, implying that no partial active interval in $V$ before the close can become a full active interval.
       In summary we have $k_V = k'_V$ and invariants 1 and 2 follow as in case 2.
 
-    \item[Case 4:]
+  \paragraph{Case 4:}
       The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
       First observe that the schedule itself does not change by this step but processor $k$ is now fully filled, which implies $k'_V \leq k_V$.
       Invariant 2 then follows directly from the induction hypothesis.
@@ -652,7 +665,6 @@ This auxiliary active slot does not count towards the volume.
       Invariant 2 now follows by our (strong) induction hypothesis.
       If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and before the close $\res(V_l) + \res(V_r) \geq 2 (\delta + 1)$.
       Since $\res$ is decreased by at most $1$, we have after the close $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
-  \end{description}
 
   We conclude by showing that Invariant 2 implies Invariant 3.
   Let $V$ be an arbitrary valley during the realignemnt of $S_{aug}$ and $A \subseteq V$ an active interval on processor $k_V$ with $A \sim V$.
