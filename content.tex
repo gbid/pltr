@@ -44,15 +44,17 @@
 \DeclareMathOperator{\false}{false}
 \DeclareMathOperator{\ifop}{if}
 \DeclareMathOperator{\elseop}{otherwise}
-\DeclareMathOperator{\opt}{OPT}
+\DeclareMathOperator{\OPT}{OPT}
+\DeclareMathOperator{\opt}{opt}
 \DeclareMathOperator{\pltr}{pltr}
-\DeclareMathOperator{\ltr}{ltr}
+\DeclareMathOperator{\PLTR}{PLTR}
+\DeclareMathOperator{\ltr}{PLTR}
 \DeclareMathOperator{\aug}{aug}
 \DeclareMathOperator{\real}{real}
 \DeclareMathOperator{\fv}{fv}
 \DeclareMathOperator{\uv}{uv}
 \DeclareMathOperator{\pv}{pv}
-\DeclareMathOperator{\vol}{v}
+\DeclareMathOperator{\vol}{vol}
 \DeclareMathOperator{\opdef}{def}
 \DeclareMathOperator{\exc}{exc}
 \DeclareMathOperator{\keepidle}{keepIdle}
@@ -91,10 +93,10 @@
 
 %\maketitle
 \begin{abstract}
-  We study a particular scheduling setting in which a set of $n$ jobs with individual release times and deadlines has to be scheduled across $m$ homogeneous processors while minimizing the consumed energy.
+  We study a particular scheduling setting in which a set of $n$ jobs with individual release times, deadlines, and processing volumes has to be scheduled across $m$ homogeneous processors while minimizing the consumed energy.
   Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy algorithm Left-to-Right guarantees an approximation factor of $2$.
-  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \opt + P$.
+  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $P$ is the total amount processing volume.
   Our algorithm has a running time of $O(F n \log d)$, where $d$ is the largest deadline and $F$ the time required by a maximum-flow calculation for checking the feasibility of an instance.
 \end{abstract}
 
@@ -111,12 +113,16 @@ Intuitively one aims for few but long idle periods during which it is worthwhile
 More specifically a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline, across $m \geq 1$ processors.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
-Every processor is either completely off or completely on in a discrete time slot $t$.
+Without loss of generality we assume the earliest release time $r_{\min}$ to be $1$ and denote the last deadline by $d^*$.
+The set of discrete time slots is denoted by $T \coloneqq \{1, \ldots, d^*\}$.
+The total amount of processing volume is $P \coloneqq \sum_{j \in J} p_j$.
+
+Every processor is either completely off or completely on in a discrete time slot $t \in T$.
 A processor can only work on some job in the time slot $t$ if it is in the on-state.
 A processor can be turned on and off at discrete times without delay.
-
+All processors start in the off-state.
 The objective now is to find a feasible schedule which minimizes the expended energy $E$, which is defined as follows.
-Each processor consumes $1$ unit of energy for every unit of time it is in the on-state and $0$ units of energy if it is in the off-state.
+Each processor consumes $1$ unit of energy for every timeslot it is in the on-state and $0$ units of energy if it is in the off-state.
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
 In Graham's notation \citep{graham}, this setting can be described with $m \mid r_j; \overline{d_j}; pmtn \mid E$.
 
@@ -131,39 +137,56 @@ Each processor is then defined to be in the off-state during idle intervals of l
 \subsection{Lower and upper bounds for the amount of busy processors}
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors where allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$. 
-For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number $b_t$ of busy processors, which we will denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
-Note that this is related to the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis}. 
+For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we will denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
+Note that this generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by lower bounds.
 
 
+\todo{How to replace the term \emph{activation}? Candidates: \emph{start-of-work}.}
 
+\todo{Define busy, idle, off, on intervals.}
 \section{Algorithm}
-\todo{How to replace the term \emph{activation}? Candidates: start-of-work.}
-\todo{Formal Problem definition, notation}
-\todo{Formulate and format keepbusy, keepidle nicer.}
-\todo{Precisely relate $l_t, m_t$ returned by Algorithm to assignment of jobs to processors, time slots.}
+\todo{Formulate and format keepbusy, keepidle nicer?}
+
+The following algorithm \emph{Parallel Left-to-Right} ($\PLTR$) iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
+Once the current processor cannot be kept idle for any longer, it becomes busy and $\PLTR$ keeps it and all lower-numbered processors busy for as long as possible while again maintaining feasibility.
+The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ more restrictive.
+Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
+
+Once the algorithm returns, an actual schedule can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation done during the algorithm.
+The mapping from the flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}.
+
 \begin{algorithm}[H]
 \caption{Parallel Left-to-Right}\label{alg:pltr}
 \begin{algorithmic}
-  \State{} $m_t \gets m$
-  \State{} $l_t \gets 0$
+  \State{$m_t \gets m$ for all $t \in T$}
+  \State{$l_t \gets 0$ for all $t \in T$}
   \For{$k \gets m$ \textrm{to} $1$}
-    \State{$t\gets0$}
-    \While{$t < d^*$}
+    \State{$t\gets 0$}
+    \While{$t \leq d^*$}
       \State{$t \gets $\Call{$\keepidle$}{$k, t$}}
       \State{$t \gets $\Call{$\keepbusy$}{$k, t$}}
     \EndWhile{}
   \EndFor{}
+  %\Function{IsFeasible}{\null}
+  %  \State{$f^* \gets$ Max-Flow for current values of $m_t, l_t$}
+  %  \State{\Return{$f^* == P$}}
+  %\EndFunction{}
+\end{algorithmic}
+\end{algorithm}
 
-  \Function{$\keepidle$}{k, t}
-    \State{search for maximal $t' \geq t$ s.t.\
-    exists feasible schedule with $m_{t''} = k-1 \forall t'' \in [t, t')$}
-    \State{$m_{t''} \gets k - 1 \forall t'' \in [t, t')$}
+\begin{algorithm}[H]
+\caption{Auxiliary subroutines for $\PLTR$}\label{alg:keep}
+\begin{algorithmic}
+  \Function{$\keepidle$}{$k, t$}
+    \State{search for maximal $t' > t$ s.t.\
+    exists feasible schedule with $m_{t''} \gets k-1$ for all $t'' \in [t, t')$}
+    \State{$m_{t''} \gets k - 1$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
-  \Function{$\keepbusy$}{k, t}
-    \State{search for maximal $t' \geq t$ s.t.\
-    exists feasible schedule with $l'_{t''} = \max\{k, l_{t''}\}k-1 \forall t'' \in [t, t')$}
-    \State{$m_{t''} \gets k - 1 \forall t'' \in [t, t')$}
+  \Function{$\keepbusy$}{$k, t$}
+    \State{search for maximal $t' > t$ s.t.\
+    exists feasible schedule with $l_{t''} \gets \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
+    \State{$l_{t''} \gets \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
   %\Function{IsFeasible}{\null}
@@ -172,6 +195,8 @@ Note that this is related to the problem of \emph{deadline-scheduling-on-interva
   %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
+
+The feasiblity check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $s$-$t$ flow in the flow network given in Figure~\ref{fig:flow}.
 
 
 \begin{figure}[H]
@@ -190,12 +215,12 @@ Note that this is related to the problem of \emph{deadline-scheduling-on-interva
 \begin{proof}
   Let $f$ be a $s$-$t$ flow of value $|f| = P$.
   We construct a feasbile schedule from $f$ respecting the lower and upper bounds given by $l_t$ and $m_t$.
-  For every $j \in J$ and  $t \in T$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$.
+  For every $j \in J$ and  $t \in T$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$ on the lowest-numbered processor not scheduling some other job.
   Since $|f| = P$ and the capacity $c(\{s\}, V \setminus \{s\}) = P$, we have $f_{in}(u_j) = p_j$ for every $j \in J$.
   Hence $f_{out}(u_j) = \sum_{t \in E_j} f_{in}(v_t) = p_j$.
-  Hence every job $j$ is scheduled in $p_j$ distinct time slots.
+  Hence every job $j$ is scheduled in $p_j$ distinct time slots within its execution interval.
 
-  The schedule respects the upper bounds $m_t$, since $c(v_t, w) + c(v_t, t) \leq m_t - l_t + l_t$ and for every $t$ at most $m_t$ jobs are scheduled at $t$.
+  The schedule respects the upper bounds $m_t$, since $c(v_t, w) + c(v_t, t) \leq m_t - l_t + l_t$ and hence for every $t$ at most $m_t$ jobs are scheduled at $t$.
 
   The schedule respects the lower bounds $l_t$, since
   $c(V \setminus \{t\}, \{t\}) = P$ and hence
@@ -212,15 +237,22 @@ Note that this is related to the problem of \emph{deadline-scheduling-on-interva
   and $f_{out}(u_j)$ must be  $p_j$ since this corresponds to the number of distinct time slots in which $j$ is scheduled.
   Define $f(v_t, t) = l_t$ for every slot $t$.
   Define $f(v_t, w) = f_{in}(v_t) - l_t$.
-  We have $f(v_t, w) \leq m_t - l_t$ since $f_{in}(v_t)$ corresponds to the number of jobs scheduled at $t$, which is at most $m_t$.
+  We have $f(v_t, w) \leq m_t - l_t$ since $f_{in}(v_t)$ corresponds to the number $\vol(t)$ of jobs scheduled at $t$, which is at most $m_t$.
   We also have $f_{out}(v_t) = f_{in}(v_t) - l_t + l_t = f_{in}(v_t)$.
 
-  Define $f(w, t) = P - \sum_t l_t$.
-  Then $f_{in}(w) = \sum_t f_{in}(v_t) - l_t
-  = \sum_t |\{j \in J \mid j~\text{scheduled at}~t\}| - \sum_t l_t$.
-  Since the schedule is feasible, this corresponds to
-  $f_{in}(w) = P - \sum_t l_t = f_{out}(w)$.
+  Define $f(w, t) = P - \sum_{t \in T} l_t$.
+  Then $f_{in}(w) = \sum_{t \in T} f_{in}(v_t) - l_t
+  = \sum_{t \in T} \vol(t) - \sum_{t \in T} l_t$.
+  Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(w) = P - \sum_{t \in T} l_t = f_{out}(w)$.
 
+\end{proof}
+
+\begin{theorem}
+  Given a feasible problem instance, algorithm $\PLTR$ constructs a feasible schedule.
+\end{theorem}
+\begin{proof}
+  The algorithm only modifies the upper and lower bounds $m_t, l_t$ for the number of busy processors such that the resulting instance of \emph{power-down scheduling with lower and upper bounds} remains feasible.
+  The correctness of the algorithm then follows from Lemma~\ref{lemma:flow_feasibility}.
 \end{proof}
 
 \section{Structure of the PLTR-Schedule}
@@ -783,7 +815,7 @@ This auxiliary busy slot does not count towards the volume.
 
 \subsection{Approximation Guarantee}
 \begin{lemma}\label{lemma:costs_s_real}
-  $\costs(S_{real}) \leq 2 \opt + P$
+  $\costs(S_{real}) \leq 2 \OPT + P$
 \end{lemma}
 \begin{proof}
   We first show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
@@ -800,12 +832,12 @@ This auxiliary busy slot does not count towards the volume.
   Furthermore, initially $\res(V) = 2 |J_V|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
   During $\fillop(k, T)$ every $t \in T$ is at most closed once (or rather one $V'$ containing $t$ is closed).
   Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in $\close$.
-  In conclusion, we have $\costs(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \opt + P$.
+  In conclusion, we have $\costs(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$.
 \end{proof}
 
 
 \begin{theorem}
-  $\costs(S_{\pltr}) \leq 2 \opt + P$
+  $\costs(S_{\pltr}) \leq 2 \OPT + P$
 \end{theorem}
 \begin{proof}
   We argue that $\costs(S_{\pltr}) \leq \costs(S_{\real})$.
