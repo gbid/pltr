@@ -35,7 +35,8 @@
 \DeclareMathOperator{\on}{on}
 \DeclareMathOperator{\off}{off}
 \DeclareMathOperator{\idle}{idle}
-\DeclareMathOperator{\act}{active}
+%\DeclareMathOperator{\act}{active}
+\DeclareMathOperator{\busy}{busy}
 \DeclareMathOperator{\costs}{costs}
 \DeclareMathOperator{\adjacent}{adjacent}
 \DeclareMathOperator{\neighboring}{neighboring}
@@ -55,7 +56,8 @@
 \DeclareMathOperator{\opdef}{def}
 \DeclareMathOperator{\exc}{exc}
 \DeclareMathOperator{\keepidle}{keepIdle}
-\DeclareMathOperator{\keepactive}{keepActive}
+\DeclareMathOperator{\keepbusy}{keepBusy}
+%\DeclareMathOperator{\keepactive}{keepActive}
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\crit}{crit}
 \DeclareMathOperator{\spac}{space}
@@ -130,15 +132,14 @@ Each processor is then defined to be in the off-state during idle intervals of l
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors where allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$. 
 For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number $b_t$ of busy processors, which we will denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
-Note that this is related to the problem of \emph{deadline-scheduling-on-intervals} introduced by Antoniadis (TODO: ref).
+Note that this is related to the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis}. 
 
 
 
 \section{Algorithm}
-\todo{Replace \emph{active, active intervals} with \emph{busy} everywere?}
+\todo{How to replace the term \emph{activation}? Candidates: start-of-work.}
 \todo{Formal Problem definition, notation}
-\todo{Formulate and format keepactive, keepidle nicer.}
-\todo{Properly define scheduling problem with lower and upper bounds $l_t, m_t$.}
+\todo{Formulate and format keepbusy, keepidle nicer.}
 \todo{Precisely relate $l_t, m_t$ returned by Algorithm to assignment of jobs to processors, time slots.}
 \begin{algorithm}[H]
 \caption{Parallel Left-to-Right}\label{alg:pltr}
@@ -148,18 +149,18 @@ Note that this is related to the problem of \emph{deadline-scheduling-on-interva
   \For{$k \gets m$ \textrm{to} $1$}
     \State{$t\gets0$}
     \While{$t < d^*$}
-      \State{$t \gets $\Call{KeepIdle}{k, t}}
-      \State{$t \gets $\Call{KeepActive}{k, t}}
+      \State{$t \gets $\Call{$\keepidle$}{$k, t$}}
+      \State{$t \gets $\Call{$\keepbusy$}{$k, t$}}
     \EndWhile{}
   \EndFor{}
 
-  \Function{KeepIdle}{k, t}
+  \Function{$\keepidle$}{k, t}
     \State{search for maximal $t' \geq t$ s.t.\
     exists feasible schedule with $m_{t''} = k-1 \forall t'' \in [t, t')$}
     \State{$m_{t''} \gets k - 1 \forall t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
-  \Function{KeepActive}{k, t}
+  \Function{$\keepbusy$}{k, t}
     \State{search for maximal $t' \geq t$ s.t.\
     exists feasible schedule with $l'_{t''} = \max\{k, l_{t''}\}k-1 \forall t'' \in [t, t')$}
     \State{$m_{t''} \gets k - 1 \forall t'' \in [t, t')$}
@@ -176,7 +177,7 @@ Note that this is related to the problem of \emph{deadline-scheduling-on-interva
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
-  \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of active processors at $t$.}
+  \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t$.}
 \end{figure}
 
 \todo{Ambiguity of $t$ used for time slots and sink in flow-network: Use $\alpha$-$\omega$ flow}
@@ -322,7 +323,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
 \end{proof}
 \begin{lemma}\label{lemma:critical}
-  For every time slot $t \in T$ for which some processor $k \in [m]$ is activated in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
+  For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
     \fv(Q) &= v(Q) \text{,}\\
     \vol(t') &\geq k-1 &~\text{for}~t' \in Q~\text{and}\\
@@ -460,7 +461,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 
 \section{Modification of our Schedule}
 We modify the schedule $S_{\pltr}$ returned by our algorithm in two steps.
-The first step augments specific processors with auxiliary active slots, s.t.\ in every critical set $C$, there are at least the first $crit(C)$ processors active.
+The first step augments specific processors with auxiliary busy slots, s.t.\ in every critical set $C$, there are at least the first $crit(C)$ processors busy.
 Recall that for the single processor $\ltr$ algorithm, the crucial property for the approximation guarantee was that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of $S_{\ltr}$.
 \todo{Give some high level explanation that we realign the jobs of $J_{V_l}, J_{V_r}$ to higher processors where necessary.}
 The second modification step is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
@@ -468,11 +469,11 @@ It is important to note that these modification steps are only done for the sake
 By making sure that the costs can only be increased by this modification, we get an upper bound for the costs of $S_{\pltr}$.
 
 \subsection{Augmentation}
-We transform $S_{\pltr}$ into $S_{\aug}$ by adding for every $t$ with $k \coloneqq crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary active slot on processor $k$.
-This auxiliary active slot does not count towards the volume.
+We transform $S_{\pltr}$ into $S_{\aug}$ by adding for every $t$ with $k \coloneqq crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
+This auxiliary busy slot does not count towards the volume.
 
 \begin{lemma}\label{lemma:augmented}
-  In $S_{\aug}$, in every $t \in T$ with $crit(t) \geq 2$ processors $1, \ldots, crit(t)$ are active.
+  In $S_{\aug}$, in every $t \in T$ with $crit(t) \geq 2$ processors $1, \ldots, crit(t)$ are busy.
 \end{lemma}
 \begin{proof}
   The property directly follows from our choice of the critical sets, the definition of $\crit(t)$ and the construction of $S_{\aug}$.
@@ -494,7 +495,7 @@ This auxiliary active slot does not count towards the volume.
       \State{\Return{}}
     \EndIf{}
     \State{let $C$ be critical set s.t.\ $C \sim V$}
-    \While{exists active interval $A \subseteq V$ on processor $k$
+    \While{exists busy interval $A \subseteq V$ on processor $k$
     with $A \sim V$ and $\hat \phi(A) \leq k - 1$}
       \State{let $V_l, V_r$ be the left and right valley for $C$ and interval $A$ (if $A$ spans $C$)}
       \If{$V_l$ exists and $\res(V_l) > 0$}
@@ -511,9 +512,9 @@ This auxiliary active slot does not count towards the volume.
   \Function{$\close$}{$k, V$}
     \For{every $t \in V$ which is idle on processor $k$}
       \If{processors $1, \ldots, k-1$ idle at $t$}
-        \State{introduce new auxiliary active slot on processor $k$ at time $t$}
+        \State{introduce new auxiliary busy slot on processor $k$ at time $t$}
       \Else{}
-        \State{move active slot at time $t$ of highest processor
+        \State{move busy slot at time $t$ of highest processor
         among $1, \ldots, k-1$ to processor $k$ at $t$}
       \EndIf{}
     \EndFor{}
@@ -530,7 +531,7 @@ This auxiliary active slot does not count towards the volume.
     \item
       no $V' \supseteq V$ has been closed on $k_V$ so far and
     \item
-      there is a (full) active interval $A \subseteq V$ on processor $k_V$.
+      there is a (full) busy interval $A \subseteq V$ on processor $k_V$.
   \end{itemize}
   We take $k_V \coloneqq 0$ if no such processor exists.
   At every step in realignment of $S_{\aug}$ the following invariants hold.
@@ -538,9 +539,9 @@ This auxiliary active slot does not count towards the volume.
     \item
       If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D \subseteq T$ spanning $C$, then the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
     \item
-      For every $t \in C \cap V$, processors $1, \ldots, k_V$ are active at $t$.
+      For every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy at $t$.
     \item
-      Every active interval $A \subseteq V$ on processor $k_V$ with $A \sim V$ spans $C$.
+      Every busy interval $A \subseteq V$ on processor $k_V$ with $A \sim V$ spans $C$.
   \end{enumerate}
 \end{lemma}
 \begin{proof}
@@ -548,9 +549,9 @@ This auxiliary active slot does not count towards the volume.
   Then we show that invariant 2 implies invariant 3.
   For the induction base, consider $S_{\aug}$ and let $V$ be an arbitrary valley in $S_{\aug}$ and $C$ the critical set with $C \sim V, \crit(V) \coloneqq c$.
 
-  We have $k_V \leq c$, otherwise $V$ contains a full active interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$. This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
+  We have $k_V \leq c$, otherwise $V$ contains a full busy interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$. This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
 
-  The second invariant now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are active at $t$.
+  The second invariant now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are busy at $t$.
 
   For the first invariant, let $D$ be an interval spanning $C$ with $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$.
   With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and $|J_{V_l}| + |J_{V_r}| \geq \delta$.
@@ -574,23 +575,23 @@ This auxiliary active slot does not count towards the volume.
   \paragraph{Case 1:}
       Some $V' \supseteq V$ is closed on processor $k$.
       Then no valley $W$ intersecting $V$ has been closed so far on $k$.
-      Also, since $\close$ only moves the active slot highest active processor below $k$, we know that the stair property \todo{define stair property} holds within $V$ on processors $1, \ldots, k$.
+      Also, since $\close$ only moves the busy slot of the highest busy processor below $k$, we know that the stair property \todo{define stair property} holds within $V$ on processors $1, \ldots, k$.
       We show that the closing of $V'$ on $k$ reduces the critical processor of $V$ by at least $1$, i.e. $k'_V \leq k_V - 1$.
       If $k_V = k$, then $V' \supseteq V$ is closed on processor $k_V$ and hence by definition we have $k'_V \leq k_V - 1$.
       If $k_V < k$, suppose for contradiction that $k_V \leq k'_V \leq k$, where $k'_V \leq k$ again by definition since $V' \subseteq V$ is closed on processor $k$.
 
-      Let $A \subseteq V$ be a full active interval on $k_V$ before the close of $V'$.
+      Let $A \subseteq V$ be a full busy interval on $k_V$ before the close of $V'$.
       We show that $A \subset V$, i.e.\ that there must be some $t \in V$ idle on $k_V$ before the close and hence by the stair-property processors $k_V, \ldots, k$ idle at $t$ before the close.
       If $V' \supseteq V$ is closed, clearly $V \subset T$ by the choice of $V_l$ and $V_r$ as valleys of some critical set in the realignment definition.
       Hence we know that $\min V - 1 \in T$ and $\max V + 1 \in T$.
       \todo{Double check if this is true (or if we only have one of the two guaranteed): Since $V$ must be valley \emph{of} some $C$, we should have both $0 \notin V$ and $d^* \notin V$.}
-      We show that $t \coloneqq \min V - 1$ must be active on $k_V$ before the close.
+      We show that $t \coloneqq \min V - 1$ must be busy on $k_V$ before the close.
       Let $W \supseteq V$ be the valley with $W \sim t$ and $t \in W$.
       We know that $W \supseteq V$ since $W \sim t \succ V$ since $V$ is a valley.
       By our case assumption, no $W' \subseteq W$ can have been closed on processor $k$ so far.
       With $W \supseteq V$ and the definition of $k_W$ we get $k_W \geq k_V$, where $k_W$ is the critical processor of $W$ before the close.
-      Our induction hypothesis now implies that processors $1, \ldots, k_V, \ldots, k_W$ are active at $t$ before the close.
-      For $A \subseteq V$ to be a (full) active interval on $k_V$ before the close, we hence must have $\min V \notin A$.
+      Our induction hypothesis now implies that processors $1, \ldots, k_V, \ldots, k_W$ are busy at $t$ before the close.
+      For $A \subseteq V$ to be a (full) busy interval on $k_V$ before the close, we hence must have $\min V \notin A$.
       We know by definition of the realignment and function $\close$, that for every $k'$ with $k_V \leq k' < k$ and every $t \in V$:
       \begin{itemize}
         \item
@@ -598,22 +599,22 @@ This auxiliary active slot does not count towards the volume.
         \item
           If $t$ was idle on $k_V$ before the close, then $t$ was idle on $k'$ before (stair-property) and hence $t$ is still idle on $k'$ after the close.
         \item
-          If $t$ was part of full active interval $A \subset V$ on $k_V$ before the close, then $t$ was idle on $k_V + 1$ before the close (choice of $k_V$).
+          If $t$ was part of full a busy interval $A \subset V$ on $k_V$ before the close, then $t$ was idle on $k_V + 1$ before the close (choice of $k_V$).
           Hence $t$ was idle on $k$ before (stair-property) and hence $t$ is idle on $k_V$ after the close.
       \end{itemize}
-      Taken together, for $t \in V$ to be active on $k'$ after the close, $t$ must have been active on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full active interval $A \subseteq V$.
-      Hence $t \in A$ for some \todo{properly define partial active intervals} \emph{partial} active interval $A \subseteq V$ on $k'$ before the close.
-      For $A' \subseteq V$ to be a full active interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$.
+      Taken together, for $t \in V$ to be busy on $k'$ after the close, $t$ must have been busy on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full busy interval $A \subseteq V$.
+      Hence $t \in A$ for some \todo{properly define partial busy intervals} \emph{partial} busy interval $A \subseteq V$ on $k'$ before the close.
+      For $A' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$.
       \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{graphics/sketches/invariant_case1.png}\label{fig:invariant_case1}
         \caption{The situation for case $1$ in Lemma~\ref{lemma:invariant}.}
       \end{figure}
-      Hence there must have been an active interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the definition of $k_V < k$.
+      Hence there must have been a busy interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the definition of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$ which allows us to prove our invariants 1 and 2.
       If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
-      Our induction hypothesis also implies that for every $t \in C \cap V$ processors $1, \ldots, k_V$ are active before the close.
-      Since at most the uppermost active slot is moved by $\close$, after the close of $V'$ we still have processors $1, \ldots, k_V - 1 \geq k'_V$ active.
+      Our induction hypothesis also implies that for every $t \in C \cap V$ processors $1, \ldots, k_V$ are busy before the close.
+      Since at most the uppermost busy slot is moved by $\close$, after the close of $V'$ we still have processors $1, \ldots, k_V - 1 \geq k'_V$ busy.
 
   \paragraph{Case 2:}
       Some $V' \subset V$ is closed on processor $k$.
@@ -621,7 +622,7 @@ This auxiliary active slot does not count towards the volume.
       We show that $k_V = k \geq k'_V$, i.e.\ that the critical processor of $V$ before the close of $V'$ is the processor currently being filled.
       Let $W$ be the valley for which $V'$ is closed, i.e.\ $V'$ is closed during $\fillop(k, W)$.
       We must have $W \supset V'$ and therefore no $W' \supseteq W$ has been closed on $k$ so far.
-      Also, for $V'$ to be closed in $\fillop(k, W)$, there must be some active interval $A \subseteq W$ on $k$ before the close, hence $k_W = k$.
+      Also, for $V'$ to be closed in $\fillop(k, W)$, there must be some busy interval $A \subseteq W$ on $k$ before the close, hence $k_W = k$.
       Since $V' \subset V$ and $V' \subset W$, $V$ and $W$ intersect ($V' \neq \emptyset$ by definition of $V'$ as valley).
       If $V \prec W$, then by choice of $V'$ as valley of $C_W$
       \todo{introduce this notation for critical set $C_V$ of valley $V$, i.e.\ $C_V \sim V$.}
@@ -643,7 +644,7 @@ This auxiliary active slot does not count towards the volume.
       By choice of $V$ and $t$ we must have $t \succ V$.
       If $t \in V'$, we would have $V' \succ V$ and hence $V' \supseteq V$, which contradicts our case assumption.
       Symmetrically, we know that $\max V + 1 \notin V'$.
-      Therefore the close of $V'$ does not modify the schedule within $[\min V - 1, \max V + 1]$, implying that no partial active interval in $V$ before the close can become a full active interval.
+      Therefore the close of $V'$ does not modify the schedule within $[\min V - 1, \max V + 1]$, implying that no partial busy interval in $V$ before the close can become a full busy interval.
       In summary we have $k_V = k'_V$ and invariants 1 and 2 follow as in case 2.
 
   \paragraph{Case 4:}
@@ -667,44 +668,44 @@ This auxiliary active slot does not count towards the volume.
       Since $\res$ is decreased by at most $1$, we have after the close $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
 
   We conclude by showing that Invariant 2 implies Invariant 3.
-  Let $V$ be an arbitrary valley during the realignemnt of $S_{aug}$ and $A \subseteq V$ an active interval on processor $k_V$ with $A \sim V$.
+  Let $V$ be an arbitrary valley during the realignemnt of $S_{aug}$ and $A \subseteq V$ a busy interval on processor $k_V$ with $A \sim V$.
   Let $C$ be the critical set with $C \sim V$.
   Note that $A \sim V$ implies that $A$ intersects $C$.
   Assume for contradiction that $A$ does not span $C$.
   The $\min A$ is within subinterval of $C$ or symmetrically $\max A$ within subinterval of $C$.
   We assume the first case, i.e.\ $t\coloneqq \min A - 1 \in C$ and $\min A \in C$.
   The second case follows by symmetry.
-  If $t \in V$, then time slot $t$ is active on processor $k_V$ by Invariant 2.
-  Therefore, $A$ cannot be a (full) active interval on processor $k_V$, contradicting the choice of $A$.
+  If $t \in V$, then time slot $t$ is busy on processor $k_V$ by Invariant 2.
+  Therefore, $A$ cannot be a (full) busy interval on processor $k_V$, contradicting the choice of $A$.
   If $t = \min V-1$, then consider valley $W$ with $t \in W$ and $t \sim W$.
   We must have $W \supset V$, $W \succ V$ and $t \in C_W$.
-  Therefore $k_W \geq k_V$ and Invariant 2 implies that $t = \min A - 1$ is active on processor $k_V$, again contradicting the choice of $A$ as full active interval on processor $k_V$.
+  Therefore $k_W \geq k_V$ and Invariant 2 implies that $t = \min A - 1$ is busy on processor $k_V$, again contradicting the choice of $A$ as full busy interval on processor $k_V$.
 \end{proof}
 
 \begin{lemma}\label{lemma:s_real}
   The result $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
 \end{lemma}
 \begin{proof}
-  The Invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of $\fillop$, the corresponding active interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$, hence $V_r$ or $V_l$ exists and there is suffcient $\res$ to close some valley.
+  The Invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of $\fillop$, the corresponding busy interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$, hence $V_r$ or $V_l$ exists and there is suffcient $\res$ to close some valley.
 
-  Since in the while-loop of $\fillop(k, V)$ the active interval $A \subseteq V$ on $k_V$ always spans $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $A$ are properly defined.
+  Since in the while-loop of $\fillop(k, V)$ the busy interval $A \subseteq V$ on $k_V$ always spans $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $A$ are properly defined.
   Also since $\phi(A) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
   This reduces the number of idle intervals on processor $k$ by at least $1$, since Invariant 2 implies that $V_l$ or $V_r$ cannot end strictly within an idle interval on $k$.
   Hence all terms in the realignment are well defined and the realignment terminates.
 \end{proof}
 
 \begin{lemma}\label{lemma:phi_prop}
-  For every processor $k \in [m]$, every active interval $A$ on processor $k$ in $S_{\real}$ with $\crit(A) \geq 2$ we have $\hat \phi(A) > k - 1$.
+  For every processor $k \in [m]$, every busy interval $A$ on processor $k$ in $S_{\real}$ with $\crit(A) \geq 2$ we have $\hat \phi(A) > k - 1$.
 \end{lemma}
 \begin{proof}
   We show that $\fillop(k, T)$ establishes the property on $k$.
   The claim then follows since $\fillop(k, T)$ does not change the schedules of processors above $k$.
-  Since in $\fillop(k, T)$, we always close valleys for active intervals $A$ on $k$ spanning a corresponding critical set $C$, we know that on processor $k$, active intervals are only extended.
-  Let $A \subseteq V$ be an active interval on processor $k$ in $S_{\real}$ with $A \sim V$ and $\crit(A) \geq 2$.
+  Since in $\fillop(k, T)$, we always close valleys for busy intervals $A$ on $k$ spanning a corresponding critical set $C$, we know that on processor $k$, busy intervals are only extended.
+  Let $A \subseteq V$ be a busy interval on processor $k$ in $S_{\real}$ with $A \sim V$ and $\crit(A) \geq 2$.
   No valley $W \supseteq V$ can have been closed on $k$ since otherwise there would be no $A \subseteq V$ in $S_{\real}$.
   Consider then the point in $\fillop(k, V)$ when the while-loop terminates.
   Clearly at this point all $A' \subseteq V$ with $A' \sim V$ on processor $k$ have $\hat \phi(A') > k - 1$.
-  There must also be at least one such $A'$ at this point for $A \subseteq V$ to be an active interval on $k$ in $\S_{real}$ with $A \sim V$.
+  There must also be at least one such $A'$ at this point for $A \subseteq V$ to be a busy interval on $k$ in $\S_{real}$ with $A \sim V$.
   In particaular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
 \end{proof}
 
@@ -715,10 +716,10 @@ This auxiliary active slot does not count towards the volume.
   Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an activation of some processor $k'$ where $t$ was no activation of any processor before this step.
   This step must be the closing of some valley $V$ on some processor $k > k'$:
   \todo{Explicitly make this into a separate lemma?}
-  On processor $k$, we have seen that closing of some valley can only merge active intervals.
+  On processor $k$, we have seen that closing of some valley can only merge busy intervals.
   On processors above $k$, the schedule does not change.
 
-  Active slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been active on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.
+  Busy slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.
   Refer to Figure~\ref{fig:activations} for a visual sketch of the situation.
 
   \begin{figure}[H]
@@ -727,21 +728,21 @@ This auxiliary active slot does not count towards the volume.
     \caption{}
   \end{figure}
 
-  If $t \in V$, then processor $k' + 1$ (or $k$) must have been active before at $t$.
+  If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
   Hence $t$ was already an activation before the close, contradicting our initial choice of $t$.
 
   If $t \notin V$, then $t \succ V$.
   Let $W$ be the valley s.t.\ $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
   If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
-  By Invariant 2, processors $1, \ldots, k_W = k$ are active at $t$ before the close.
+  By Invariant 2, processors $1, \ldots, k_W = k$ are busy at $t$ before the close.
   Again, this implies that $t$ was an activation before the close already, contradicting our choice of $t$.
   If $t \notin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
   We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
-  Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are active at $t$ before the close.
+  Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are busy at $t$ before the close.
   Hence, $t$ was activation before the close already, again contradicting our initial choice of $t$.
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
-  Let $I$ an idle interval in $S_{real}$ on some processor $k$ and $A_l, A_r$ the active intervals to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
+  Let $I$ an idle interval in $S_{real}$ on some processor $k$ and $A_l, A_r$ the busy intervals to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
   Allow $A_l$ to be empty, i.e.\ we might have $\min I = 0$, but $A_r$ must be nonempty, i.e.\ $\max I < d^*$.
   Then $k = 1$ and $\hat \phi(A_l \cup I \cup A_r) > 0$.
 \end{lemma}
@@ -750,7 +751,7 @@ This auxiliary active slot does not count towards the volume.
   Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence on all processors (stair-property in $S_{\aug}$).
   Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J_V = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
   Therefore, no $V$ intersecting $[\max I, \max A_r]$ was closed during realignment on any processor, since this $V$ would contain $\max I$.
-  Since $A_r$ is an active interval with $\crit(A_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
+  Since $A_r$ is a busy interval with $\crit(A_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
 
   For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
   Therefore $\crit(I) \leq q$ and no valley $V$ with $V \cap [\min A_l - 1, \max A_r + 1] \neq \emptyset$ can have been closed.
@@ -775,7 +776,7 @@ This auxiliary active slot does not count towards the volume.
 \begin{proof}
   Let $I_{\opt}$ be an idle interval in $S_{\opt}$ on processor $k$ intersecting three distinct idle intervals of processor $k$ in $S_{real}$.
   Let $I$ be the middle of these idle intervals.
-  Lemma~\ref{lemma:constellation} and Lemma~\ref{lemma:phi_prop} imply that $k$ active processors are required during $I$ and its neighboring active intervals.
+  Lemma~\ref{lemma:constellation} and Lemma~\ref{lemma:phi_prop} imply that $k$ busy processors are required during $I$ and its neighboring busy intervals.
   This makes it impossible for $S_{\opt}$ to be idle on processor $k$ during the whole interval $I_{\opt}$.
   \todo{Sketch this}
 \end{proof}
@@ -793,12 +794,12 @@ This auxiliary active slot does not count towards the volume.
   Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ not intersecting any $\off$-interval in $S^k_{\opt}$.
   The total length of these intervals is bounded by $\on(S^k_{\opt})$.
 
-  We continue by showing that $\act(S_{real}) \leq 2 P$.
-  By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary active slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$:
-  For $S_{\aug}$, an auxiliary active slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
+  We continue by showing that $\busy(S_{real}) \leq 2 P$.
+  By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$:
+  For $S_{\aug}$, an auxiliary busy slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
   Furthermore, initially $\res(V) = 2 |J_V|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
   During $\fillop(k, T)$ every $t \in T$ is at most closed once (or rather one $V'$ containing $t$ is closed).
-  Finally, auxiliary active slots introduced by $S_{\aug}$ are used in $\close$.
+  Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in $\close$.
   In conclusion, we have $\costs(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \opt + P$.
 \end{proof}
 
@@ -810,8 +811,8 @@ This auxiliary active slot does not count towards the volume.
   We argue that $\costs(S_{\pltr}) \leq \costs(S_{\real})$.
   The theorem then follows from Lemma~\ref{lemma:costs_s_real}.
   We do this by transforming $S_{\real}$ back into $S_{\pltr}$ without increasing the costs of the schedule.
-  Removing the auxiliary active slots clearly cannot increase the costs.
-  Since the realignment of $S_{\aug}$ only moves active slots between processors, but not between different time slots, we can easily restore $S_{\pltr}$ (up to permutations of the jobs scheduled on the active processors at the same time slot) by moving all active slots back down to the lower numbered processors.
+  Removing the auxiliary busy slots clearly cannot increase the costs.
+  Since the realignment of $S_{\aug}$ only moves busy slots between processors, but not between different time slots, we can easily restore $S_{\pltr}$ (up to permutations of the jobs scheduled on the busy processors at the same time slot) by moving all busy slots back down to the lower numbered processors.
   \todo{Define Lemma stair property somewhere}
   By the same argument as in Lemma~\ref{lemma:stair_property_opt}, this does not increase the total costs of the schedule.
 \end{proof}
@@ -821,23 +822,23 @@ This auxiliary active slot does not count towards the volume.
   Algorithm $\pltr$ has a running time of $O(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
 \begin{proof}
-  First observe that every active interval is created by a pair of calls to $\keepidle$ and $\keepactive$.
+  First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$.
   Every call to $\keepidle$ searches for the maximal slot $t \in T$ (after the current time slot) such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
   Using binary search this can be done in $O(F \cdot \log(d^*))$ with $F$ denoting the time required for finding the maximum flow.
 
-  We bound the number of active intervals across all processors in $S_{\pltr}$ by $n$.
-  Note that if $\keepidle$ returns $d^*$, then we do not have to calculate $\keepactive$ from $d^*$ on.
-  Therefore, the total number of calls to $\keepidle$ and $\keepactive$ is bounded by $n + m$.
+  We bound the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
+  Note that if $\keepidle$ returns $d^*$, then we do not have to calculate $\keepbusy$ from $d^*$ on.
+  Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is bounded by $n + m$.
   If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
-  We derive the upper bound of $n$ for the number of active intervals across all processors by constructing an injective mapping $f$ from the set of active intervals to the jobs $J$.
-  For this construction of $f$ we consider the active intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
-  We construct $f$ such that $f(A) = j$ for some active interval $A$ only if $d_j \in A$.
+  We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $f$ from the set of busy intervals to the jobs $J$.
+  For this construction of $f$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
+  We construct $f$ such that $f(A) = j$ for some busy interval $A$ only if $d_j \in A$.
 
-  Suppose we have constructed such a partial mapping for active intervals on processors $m, \ldots, k$ up to some active interval $A$ on $k$.
-  \todo{Define plateaus: active intervals which are completely idle on higher processors}
+  Suppose we have constructed such a partial mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $A$ on $k$.
+  \todo{Define plateaus: busy intervals which are completely idle on higher processors}
   Let $A'$ be the last plateau with $A' \subseteq A$ and let $k' \geq k$ be the processor of this plateau $A'$.
   By construction of $f$ and the choice of $A'$, there are at most $k' - (k + 1)$ distinct jobs $j$ with $d_j \in [\min A', \max A]$ already mapped to by $f$.
-  This is since at most $k' - (k+1)$ active intervals on processors $k+1, \ldots, m$ intersect the interval $[\min A', \max A]$.
+  This is since at most $k' - (k+1)$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min A', \max A]$.
   Refer to Figure~\ref{fig:running_time} for a visaul sketch.
 
   \begin{figure}[H]
