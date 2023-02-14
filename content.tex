@@ -97,7 +97,7 @@
   Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy algorithm Left-to-Right guarantees an approximation factor of $2$.
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $P$ is the total amount processing volume.
-  Our algorithm has a running time of $O(F n \log d)$, where $d$ is the largest deadline and $F$ the time required by a maximum-flow calculation for checking the feasibility of an instance.
+  Our algorithm has a running time of $O(F n \log d)$, where $d$ is difference between the largest deadline and the earliest release time and $F$ the running time required by a maximum-flow calculation for checking the feasibility of an instance.
 \end{abstract}
 
 \tableofcontents
@@ -311,7 +311,8 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{lemma}
 \begin{proof}
   Let $(S, \bar S)$ be an $s$-$t$ cut, let $J(S) \coloneqq \{j \mid u_j \in S\}$.
-  If $w \notin S$, consider the contribution of every node of $S$ to the capacity of the cut, i.e.\ the capacity of its outgoing edges.
+  We consider the contribution of every node of $S$ to the capacity $c(S)$ of the cut.
+  First consider the case that $w \notin S$.
   \begin{itemize}
     \item Node $s$: $\sum_{j \in J(\bar S)} p_j$.
     \item Node $u_j$: $|\{v_t \in \bar S \mid t \in E_j\}| = | E_j \setminus Q(S) | \geq p_j - \fv(j, Q(S))$
@@ -324,7 +325,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
     \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
     \\ &\geq P - \opdef(Q(S))\text{.}
   \end{align}
-  If $w \in S$, again consider the contribution of every node of $S$ to the capacity of the cut.
+  If $w \in S$, we have the following contributions of nodes in $S$.
   \begin{itemize}
     \item Node $s$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$.
     \item Node $u_j$: $| E_j \setminus Q(S) |
@@ -332,7 +333,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
     \item Node $v_t$: $l_t$
     \item Node $w$: $P - \sum_{t \in T} l_t$
   \end{itemize}
-  In total, we can lower bound the capacity with
+  In total, we have the lower bound
   \begin{align}
     c(S) &\geq P + \pv(Q(\bar S))
     - \sum_{t \in Q(\bar S)} l_t
@@ -345,44 +346,50 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   An instance of power-down scheduling with lower and upper bounds is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq T$.
 \end{lemma}
 \begin{proof}
-  If $\opdef(Q) > 0$ for some $Q$, then some upper bounds $m_t$ cannot be met.
+  If $\opdef(Q) > 0$ for some $Q$, then some upper bound $m_t$ cannot be met.
   If $\exc(Q) > 0$ for some $Q$, then some lower bound $l_t$ cannot be met.
   For the direction from right to left, consider an infeasible scheduling instance with lower and upper bounds.
   By Lemma~\ref{lemma:flow_feasibility} we have that the maximum flow $f$ for this instance has value $|f| < P$.
   Hence, there must be a $s$-$t$ cut $(S, \bar S)$ of capacity $c(S) < P$.
   Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
 \end{proof}
+\begin{definition}
+  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if processor $k$ is idle at $t-1$ and busy at $t$.
+  A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
+\end{definition}
+The following lemma provides the crucial structure required for the proof of the approximation guarantee.
+Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which an activation of processor $k$ is necessary in every feasible schedule.
 \begin{lemma}\label{lemma:critical}
   For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
-    \fv(Q) &= v(Q) \text{,}\\
-    \vol(t') &\geq k-1 &~\text{for}~t' \in Q~\text{and}\\
-    \vol(t') &\geq k &~\text{for}~t' \in Q~\text{with}~t' \geq t \text{.}
+    \fv(Q) &= \vol(Q) \text{,}\\
+    \vol(t') &\geq k-1 &~\text{for all}~t' \in Q~\text{and}\\
+    \vol(t') &\geq k &~\text{for all}~t' \in Q~\text{with}~t' \geq t \text{.}
   \end{align}
 \end{lemma}
 \begin{proof}
   Suppose for contradiction there is some activation $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
-  We show that $\pltr$ would have extended the idle interval on processor $k$ which ends at $t$.
-  Consider the step in $\pltr$ when $t$ was the result of $\keepidle$ on processor $k$ and the corresponding lower and upper bounds $m_{t'}, l_{t'}$ for $t' \in T$ right after the calculation of $t$ and the corresponding update of the bounds by $\keepidle$.
+  We show that $\PLTR$ would have extended the idle interval on processor $k$ which ends at $t$.
+  Consider the step in $\PLTR$ when $t$ was the result of $\keepidle$ on processor $k$ and the corresponding lower and upper bounds $m_{t'}, l_{t'}$ for $t' \in T$ right after the calculation of $t$ with the corresponding update of the bounds by $\keepidle$.
   We modify the bounds by decreasing $m_t$ by $1$.
   Note that at this point $m_{t'} \geq k$ for every $t' > t$ and $m_{t'} \geq k - 1$ for every $t'$.
 
   Consider $Q \subseteq T$ s.t.\ $t \in Q$ and $\fv(Q) < \vol(Q)$.
-  Before our modification we had $m_Q \coloneqq \sum_{t' \in Q} m_{t'} \geq \vol(Q) > \fv(Q)$.
-  The inequality $m_Q \geq \vol(Q)$ here follows since the upper bounds $m_{t'}$ are monotonically decreasing during $\pltr$.
-  After our modification we still have $m_Q \geq \fv(Q)$.
+  Before our decrement of $m_t$ we had $m_Q \coloneqq \sum_{t' \in Q} m_{t'} \geq \vol(Q) > \fv(Q)$.
+  The inequality $m_Q \geq \vol(Q)$ here follows since the upper bounds $m_{t'}$ are monotonically decreasing during $\PLTR$.
+  Since our modification decreases $m_Q$ by at most $1$, we hence still have $m_Q \geq \fv(Q)$ after the decrement of $m_t$.
 
-  Consider $Q \subseteq T$ s.t.\ $t \in Q$ and $v(t') < k - 1$ for some $t'$.
-  At the step in $\pltr$ considered by us, we hence have $m_{t'} \geq k - 1 > v(t')$ and therefore before our decrement of $m_t$ we had $m_Q > \vol(Q) \geq \fv(Q)$ which implies $m_Q \geq \fv(Q)$ after the decrement of $m_t$.
+  Consider $Q \subseteq T$ s.t.\ $t \in Q$ and $\vol(t') < k - 1$ for some $t'$.
+  At the step in $\PLTR$ considered by us, we hence have $m_{t'} \geq k - 1 > \vol(t')$.
+  Before our decrement of $m_t$ we therefore have $m_Q > \vol(Q) \geq \fv(Q)$, which implies $m_Q \geq \fv(Q)$ after the decrement.
 
-  Finally, consider $Q \subseteq T$ s.t.\ $t \in Q$ and $v(t') < k$ for some $t' > t$.
-  Again at the step in $\pltr$ considered by us, we have $m_{t'} \geq k > v(t')$ which implies $m_Q \geq \fv(Q)$ after our decrement of $m_t$.
-
-  If for $t$ no $Q$ exists as characterized in the proposition, $t$ cannot have been the result of $\keepidle$ at this step in $\pltr$, which is a contradiction.
+  Finally, consider $Q \subseteq T$ s.t.\ $t \in Q$ and $\vol(t') < k$ for some $t' > t$.
+  At the step in $\PLTR$ considered by us, we again have $m_{t'} \geq k > \vol(t')$, which implies $m_Q \geq \fv(Q)$ after our decrement of $m_t$.
+  In summary, if for $t$ no $Q$ exists as characterized in the proposition, the activation of processor $k$ at $t$ could not have been the result of $\keepidle$ on processor $k$.
 \end{proof}
 
 \begin{definition}
-  We call such $Q$ for activations $t$ of processor $k$ characterized by Lemma~\ref{lemma:critical} \emph{tight set $Q_t$ over activation $t$ of processor $k$}.
+  We call such $Q \subseteq T$ for activations $t$ of processor $k$ characterized by Lemma~\ref{lemma:critical} \emph{tight set $Q_t$ over activation $t$ of processor $k$}.
 \end{definition}
 
 \begin{definition}
@@ -390,7 +397,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   \begin{align}
     C_t \coloneqq \argmax \{ \phi(Q) \mid Q \subseteq T~\text{is tight set over}~t \} \text{.}
   \end{align}
-  As the set of these critical sets $C_t$ for fixed $t$ is closed under union, for the sake of uniqueness, we take $C_t$ to be the inclusion-maximal critical set over activation $t$.
+  As the set of these critical sets $C_t$ for fixed $t$ is closed under union, we take $C_t$ to be the inclusion-maximal critical set over activation $t$ for the sake of uniqueness.
 \end{definition}
 \subsection{Definitions based on critical sets}
 \begin{definition}
