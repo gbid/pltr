@@ -48,7 +48,7 @@
 \DeclareMathOperator{\opt}{opt}
 \DeclareMathOperator{\pltr}{pltr}
 \DeclareMathOperator{\PLTR}{PLTR}
-\DeclareMathOperator{\ltr}{PLTR}
+\DeclareMathOperator{\ltr}{LTR}
 \DeclareMathOperator{\aug}{aug}
 \DeclareMathOperator{\real}{real}
 \DeclareMathOperator{\fv}{fv}
@@ -502,20 +502,21 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
 \end{proof}
 
 \section{Modification of our Schedule}
-We modify the schedule $S_{\pltr}$ returned by our algorithm in two steps.
-The first step augments specific processors with auxiliary busy slots, s.t.\ in every critical set $C$, there are at least the first $crit(C)$ processors busy.
-Recall that for the single processor $\ltr$ algorithm, the crucial property for the approximation guarantee was that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of $S_{\ltr}$.
+We modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
+The first step augments specific processors with auxiliary busy slots s.t.\ in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
+For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
 \todo{Give some high level explanation that we realign the jobs of $J_{V_l}, J_{V_r}$ to higher processors where necessary.}
-The second modification step is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
+The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
 It is important to note that these modification steps are only done for the sake of the analysis.
-By making sure that the costs can only be increased by this modification, we get an upper bound for the costs of $S_{\pltr}$.
+By making sure that these modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
 
 \subsection{Augmentation}
-We transform $S_{\pltr}$ into $S_{\aug}$ by adding for every $t$ with $k \coloneqq crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
-This auxiliary busy slot does not count towards the volume.
+We transform $S_{\pltr}$ into the augmented schedule $S_{\aug}$ by adding for every $t$ with $k \coloneqq \crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
+No job is scheduled in this auxiliary busy slot on processor $k$ and it does also not count towards the volume of this slot.
+It merely forces processor $k$ to be in the on-state at time $k$ and allows us to keep thinking in terms of $\idle$ and $\busy$ intervals in our analysis of the costs.
 
 \begin{lemma}\label{lemma:augmented}
-  In $S_{\aug}$, in every $t \in T$ with $crit(t) \geq 2$ processors $1, \ldots, crit(t)$ are busy.
+  In $S_{\aug}$ processors $1, \ldots, \crit(t)$ are busy in every slot $t \in T$ with $\crit(t) \geq 2$.
 \end{lemma}
 \begin{proof}
   The property directly follows from our choice of the critical sets, the definition of $\crit(t)$ and the construction of $S_{\aug}$.
@@ -528,10 +529,16 @@ This auxiliary busy slot does not count towards the volume.
 \begin{algorithmic}
   \State{$\res(V) \gets 2 |J_V|$ for every valley $V$}
   \For{$k \gets m$ \textrm{to} $1$}
-    \State{\Call{$\fillop$}{$T$}}
-    \State{$\res(V) \gets \res(V) - 1$ for every $V$
+    \State{\Call{$\fillop$}{$k, T$}}
+    \State{$\res(V) \gets \res(V) - 1$ for every valley $V$
     s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on processor $k$}
   \EndFor{}
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}[H]
+  \caption{Subroutines for the realignment of $S_{\aug}$}\label{alg:real_suppl}
+\begin{algorithmic}
   \Function{$\fillop$}{$k, V$}
     \If{$\crit(V) \leq 1$}
       \State{\Return{}}
