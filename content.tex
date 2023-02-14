@@ -196,7 +196,7 @@ The mapping from the flow to an actual assignment of jobs to processors and time
 \end{algorithmic}
 \end{algorithm}
 
-The feasiblity check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $s$-$t$ flow in the flow network given in Figure~\ref{fig:flow}.
+The feasibility check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $s$-$t$ flow in the flow network given in Figure~\ref{fig:flow}.
 
 
 \begin{figure}[H]
@@ -212,7 +212,7 @@ The feasiblity check in subroutines $\keepidle$ and $\keepbusy$ can be performed
 \end{lemma}
 \begin{proof}
   Let $f$ be a $s$-$t$ flow of value $|f| = P$.
-  We construct a feasbile schedule from $f$ respecting the lower and upper bounds given by $l_t$ and $m_t$.
+  We construct a feasible schedule from $f$ respecting the lower and upper bounds given by $l_t$ and $m_t$.
   For every $j \in J$ and  $t \in T$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$ on the lowest-numbered processor not scheduling some other job.
   Since $|f| = P$ and the capacity $c(\{s\}, V \setminus \{s\}) = P$, we have $f_{in}(u_j) = p_j$ for every $j \in J$.
   Hence $f_{out}(u_j) = \sum_{t \in E_j} f_{in}(v_t) = p_j$.
@@ -506,7 +506,7 @@ We modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
 The first step augments specific processors with auxiliary busy slots s.t.\ in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
-More specificially, it will establish that $\hat \phi(A) > k - 1$ for every $\busy$ interval $A$ on processor $k$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $A$.
+More specifically, it will establish that $\hat \phi(A) > k - 1$ for every $\busy$ interval $A$ on processor $k$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $A$.
 
 These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
 By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
@@ -530,7 +530,7 @@ Lemma~\ref{lemma:augmented} guarantees us that every busy interval $A$ on proces
 It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $A$ do not end within an idle interval on processor $k$, provided that they are defined.
 Lemma~\ref{lemma:valley} in turn guarantees us that if the density of $A$ does not guarantee that $S_{\opt}$ has to use processor $k$ during $A$, i.e.\ if $\hat \phi(A) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
 Let $V$ be the corresponding left or right valley of $C$ and $D$ for which such a job exists.
-Instead of scheduling this job on the processors below $k$, we can schdule the job on processor $k$ in idle time slots during $V$ instead of the lower processors, merging the busy interval $A$ with at least one neighbouring busy interval on processor $k$.
+Instead of scheduling this job on the processors below $k$, we can schedule the job on processor $k$ in idle time slots during $V$ instead of the lower processors, merging the busy interval $A$ with at least one neighbouring busy interval on processor $k$.
 In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ closing of valley $V$ on processor $k$.
 
 The crucial part is making sure that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
@@ -721,7 +721,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
 
       We consider two subcases.
       If during $\fillop(k, T)$, no valley $V'$ intersecting $V$ was closed on $k$, then $\res(V)$ does not change and Invariant 1 follows from the induction hypothesis and $k'_V \leq k_V$.
-      If on the other hand some valley $V'$ intersecting $V$ was closed on $k$ during $\fillop(k, T)$, then $\res(V)$ is decresed by $1$ to $\res'(V) \coloneqq \res(V) - 1$.
+      If on the other hand some valley $V'$ intersecting $V$ was closed on $k$ during $\fillop(k, T)$, then $\res(V)$ is decreased by $1$ to $\res'(V) \coloneqq \res(V) - 1$.
       As seen in cases 1 to 3, $k_V$ decreases monotonically during $\fillop(k, T)$.
       Consider the schedule right before the first valley $V'$ intersecting $V$ is closed on $k$.
       Let $k^0_V$ be the critical processor for $V$ at this point of the realignment and $k^1_V$ the critical processor right after $V'$ is closed.
@@ -735,7 +735,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
       Since $\res$ is decreased by at most $1$, we have after the close $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
 
   We conclude by showing that Invariant 2 implies Invariant 3.
-  Let $V$ be an arbitrary valley during the realignemnt of $S_{aug}$ and $A \subseteq V$ a busy interval on processor $k_V$ with $A \sim V$.
+  Let $V$ be an arbitrary valley during the realignment of $S_{aug}$ and $A \subseteq V$ a busy interval on processor $k_V$ with $A \sim V$.
   Let $C$ be the critical set with $C \sim V$.
   Note that $A \sim V$ implies that $A$ intersects $C$.
   Assume for contradiction that $A$ does not span $C$.
@@ -753,7 +753,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
   The result $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
 \end{lemma}
 \begin{proof}
-  The Invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of $\fillop$, the corresponding busy interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$, hence $V_r$ or $V_l$ exists and there is suffcient $\res$ to close some valley.
+  The Invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of $\fillop$, the corresponding busy interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$, hence $V_r$ or $V_l$ exists and there is sufficient $\res$ to close some valley.
 
   Since in the while-loop of $\fillop(k, V)$ the busy interval $A \subseteq V$ on $k_V$ always spans $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $A$ are properly defined.
   Also since $\phi(A) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
@@ -773,7 +773,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
   Consider then the point in $\fillop(k, V)$ when the while-loop terminates.
   Clearly at this point all $A' \subseteq V$ with $A' \sim V$ on processor $k$ have $\hat \phi(A') > k - 1$.
   There must also be at least one such $A'$ at this point for $A \subseteq V$ to be a busy interval on $k$ in $\S_{real}$ with $A \sim V$.
-  In particaular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
+  In particular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
 \end{proof}
 
 \begin{lemma}\label{lemma:activations}
@@ -834,7 +834,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
   We conclude by showing that $E_j \subseteq I \cup A_r$ and therefore $\hat \phi(I \cup A_r) > 0$.
   Otherwise, $j$ could be scheduled at $\min I$ or $\max A_r + 1$.
   In the first case, $\pltr$ would have extended $A_l$ by scheduling $j$ at time $\min I$ instead of at $\min A_r$.
-  In the second case, $\pltr$ would have extended the idle interval $I$ by scheduling $j$ at $\max A_r + 1$ intead of at $\min A_r$.
+  In the second case, $\pltr$ would have extended the idle interval $I$ by scheduling $j$ at $\max A_r + 1$ instead of at $\min A_r$.
 \end{proof}
 
 \begin{lemma}\label{lemma:intersection}
@@ -906,7 +906,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
   Let $A'$ be the last plateau with $A' \subseteq A$ and let $k' \geq k$ be the processor of this plateau $A'$.
   By construction of $f$ and the choice of $A'$, there are at most $k' - (k + 1)$ distinct jobs $j$ with $d_j \in [\min A', \max A]$ already mapped to by $f$.
   This is since at most $k' - (k+1)$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min A', \max A]$.
-  Refer to Figure~\ref{fig:running_time} for a visaul sketch.
+  Refer to Figure~\ref{fig:running_time} for a visual sketch.
 
   \begin{figure}[H]
     \centering
