@@ -505,13 +505,15 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
 We modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
 The first step augments specific processors with auxiliary busy slots s.t.\ in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
-\todo{Give some high level explanation that we realign the jobs of $J_{V_l}, J_{V_r}$ to higher processors where necessary.}
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
-It is important to note that these modification steps are only done for the sake of the analysis.
-By making sure that these modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
+More specificially, it will establish that $\hat \phi(A) > k - 1$ for every $\busy$ interval $A$ on processor $k$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $A$.
+
+These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
+By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
 
 \subsection{Augmentation}
-We transform $S_{\pltr}$ into the augmented schedule $S_{\aug}$ by adding for every $t$ with $k \coloneqq \crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
+\todo{Make this into a proper definition of $S_{\aug}$?}
+We transform $S_{\pltr}$ into the \emph{augmented schedule $S_{\aug}$} by adding for every $t$ with $k \coloneqq \crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
 No job is scheduled in this auxiliary busy slot on processor $k$ and it does also not count towards the volume of this slot.
 It merely forces processor $k$ to be in the on-state at time $k$ and allows us to keep thinking in terms of $\idle$ and $\busy$ intervals in our analysis of the costs.
 
@@ -523,6 +525,20 @@ It merely forces processor $k$ to be in the on-state at time $k$ and allows us t
 \end{proof}
 
 \subsection{Realignment}
+The intuition of the realignment of $S_{\aug}$ is the following.
+Lemma~\ref{lemma:augmented} guarantees us that every busy interval $A$ on processor $k$ spans the critical set $C$ with $C \sim A$.
+It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $A$ do not end within an idle interval on processor $k$, provided that they are defined.
+Lemma~\ref{lemma:valley} in turn guarantees us that if the density of $A$ does not guarantee that $S_{\opt}$ has to use processor $k$ during $A$, i.e.\ if $\hat \phi(A) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
+Let $V$ be the corresponding left or right valley of $C$ and $D$ for which such a job exists.
+Instead of scheduling this job on the processors below $k$, we can schdule the job on processor $k$ in idle time slots during $V$ instead of the lower processors, merging the busy interval $A$ with at least one neighbouring busy interval on processor $k$.
+In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ closing of valley $V$ on processor $k$.
+
+The crucial part is making sure that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
+For this purpose, we go through the busy intervals on each processor in the order of their rank, i.e.\ in the order of $\succeq$.
+We also allow every job to be used twice for the realignment by introducing further auxiliary busy slots (for an interval $D$ spanning the critical set $C$, both the right and the left valley might be closed in the worst case).
+This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogous to Lemma~\ref{lemma:augmented} and Lemma~\ref{lemma:valley} during the realignment process.
+
+
 
 \begin{algorithm}[H]
   \caption{Realignment of $S_{\aug}$}\label{alg:real}
@@ -536,14 +552,16 @@ It merely forces processor $k$ to be in the on-state at time $k$ and allows us t
 \end{algorithmic}
 \end{algorithm}
 
+\todo{Explicitly define \emph{valley $V$ having been closed on processor $k$} as $\close(k, V)$ having been called.}
+
 \begin{algorithm}[H]
-  \caption{Subroutines for the realignment of $S_{\aug}$}\label{alg:real_suppl}
+  \caption{Subroutines for the Realignment of $S_{\aug}$}\label{alg:real_suppl}
 \begin{algorithmic}
   \Function{$\fillop$}{$k, V$}
     \If{$\crit(V) \leq 1$}
       \State{\Return{}}
     \EndIf{}
-    \State{let $C$ be critical set s.t.\ $C \sim V$}
+    \State{let $C$ be the critical set s.t.\ $C \sim V$}
     \While{exists busy interval $A \subseteq V$ on processor $k$
     with $A \sim V$ and $\hat \phi(A) \leq k - 1$}
       \State{let $V_l, V_r$ be the left and right valley for $C$ and interval $A$ (if $A$ spans $C$)}
@@ -573,7 +591,7 @@ It merely forces processor $k$ to be in the on-state at time $k$ and allows us t
 
 \subsection{Invariants for Realignment}
 \begin{lemma}\label{lemma:invariant}
-  For an arbitrary step during the realignment of $S_{\aug}$ let $k_V$ be the highest processor s.t.\
+  For an arbitrary step during the realignment of $S_{\aug}$ and a valley $V \subseteq T$, let $k_V$ be the highest processor s.t.\
   \begin{itemize}
     \item
       processor $k_V$ is not fully filled yet, i.e.\ $\fillop(k_V, T)$ has not yet returned,
