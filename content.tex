@@ -129,14 +129,14 @@ In Graham's notation \citep{graham}, this setting can be described with $m \mid 
 \subsection{Busy and idle intervals}
 We say a processor is \emph{busy} at time $t$ if some job is scheduled on this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
-Clearly, a processor cannot be busy and off at the same time.
+Clearly a processor cannot be busy and off at the same time.
 Also note that if a processor is idle for more than $q$ units of time, it is worth turning the processor off during this idle interval.
 Our algorithm will specify for each processor when it is busy and when it is idle.
 Each processor is then defined to be in the off-state during idle intervals of length at least $q$ and otherwise in the on-state.
 
 \subsection{Lower and upper bounds for the amount of busy processors}
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
-Where in the original problem, for each time slot $t$, between $0$ and $m$ processors where allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$. 
+Where in the original problem, for each time slot $t$, between $0$ and $m$ processors where allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$.
 For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we will denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
 Note that this generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by lower bounds.
 
@@ -277,12 +277,12 @@ The feasiblity check in subroutines $\keepidle$ and $\keepbusy$ can be performed
     \pv(j, Q) \coloneqq \min\{ p_j, | E_j \cap Q | \} \text{.}
   \end{align}
 \end{definition}
-\begin{definition}
-  We define the \emph{space $\spac_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ for schedule $S$} as the number of additional time slots, which $j$ can be scheduled in $Q$, i.e.\
-  \begin{align}
-    \spac_S(j, Q) \coloneqq \pv(j, Q) - \vol_S(j, Q) \text{.}
-  \end{align}
-\end{definition}
+%\begin{definition}
+%  We define the \emph{space $\spac_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ for schedule $S$} as the number of additional time slots, which $j$ can be scheduled in $Q$, i.e.\
+%  \begin{align}
+%    \spac_S(j, Q) \coloneqq \pv(j, Q) - \vol_S(j, Q) \text{.}
+%  \end{align}
+%\end{definition}
 Since the corresponding schedule $S$ will always be clear from context, we drop the subscript for $\vol, \uv$ and $\spac$.
 We extend our volume definitions to single timeslots $t\in T$ and to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
 \begin{align}
@@ -474,7 +474,7 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
 \end{lemma}
 \todo{Provide a rough visual sketch here}
 \begin{proof}
-  \todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math or by replacing division by multiplication}
+  \todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math, by replacing division by multiplication, or by introducing $l \coloneq |C \cap D|$}
   By choice of $C$ as critical set with $c = \crit(C)$ we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
   If this inequality is fulfilled strictly, i.e.\ if
   $\vol(C \cap D) > (c-1) \cdot |C \cap D|$, then with the premise
@@ -486,20 +486,19 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   If on the other hand we have equality, i.e.\ $\vol(C \cap D) = (c-1) \cdot |C \cap D|$, then let $t$ be the activation of processor $c$ for which $C$ is the critical set.
   Since $\vol(t) > c-1$, we must have $t \notin C \cap D$.
   By the same argument as before, we have that if $\fv(C \cap D) / |C \cap D| \leq c - \delta$, then $\uv(C \cap D) / |C \cap D| \geq \delta - 1$.
-  Now suppose that there is no job $j$ scheduled in $C$ s.t.\ $\spac(j, C \cap D) > 0$.
-  Then $\fv(C \setminus D) = \vol(C \setminus D) > (c-1) \cdot | C \cap D|$.
-  Hence $\fv(C \setminus D) = \vol(C \setminus D) > (c - 1) \cdot |C \cap D|$.
-  We then get $\phi(C \setminus D) = \vol(C \setminus D) > (c-1) \cdot (C \cap D)$ since by case assumption $t \in C \setminus D$.
+  Let $J' \coloneqq \{ j \in J \mid \uv(j, C \cap D) > 0 \}$.
+  Clearly $|J'| \geq \delta - 1$.
+  If this lower bound is fulfilled with equality, every $j \in J'$ must be scheduled in every time slot of $C \cap D$.
+  Now suppose for contradiction that all jobs $j$ scheduled during $C$ which are not contained in $J'$ have $E_j \cap C \cap D = \emptyset$.
+  %Now suppose for contradiction that there is no job $j$ scheduled in $C \setminus D$ with $
+  %Now suppose that there is no job $j$ scheduled in $C$ s.t.\ $\spac(j, C \cap D) > 0$.
+  Then $\fv(C \setminus D) = \vol(C \setminus D)$ and
+  we get $\phi(C \setminus D) > \phi(C)$ since by case assumption $\vol(C \cap D) = (c-1) \cdot |C \cap D|$.
   In conclusion, $C \setminus D$ is still a tight set over $t$ but has higher density than $C$, contradicting the choice of $C$.
-  Therefore, there must exist a job $j$ scheduled in $C$ with $\spac(j, C \cap D) > 0$ and hence
-  \begin{align}
-    \frac
-    {\uv(C \cap D) + \spac(j, C \cap D)}
-    {|C \cap D|}
-    > \delta - 1 \text{,}
-  \end{align}
-  which again implies that there must be at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
-  This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exist and that at least $\delta$ jobs are contained in $J_{V_l}$ or $J_{V_r}$.
+  Therefore, there must exist a job $j \notin J'$ scheduled in $C$ which can be scheduled $C \cap D$.
+
+  In total, we have at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
+  This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J_{V_l}$ or $J_{V_r}$.
 \end{proof}
 
 \section{Modification of our Schedule}
