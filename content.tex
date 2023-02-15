@@ -62,7 +62,7 @@
 %\DeclareMathOperator{\keepactive}{keepActive}
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\crit}{crit}
-\DeclareMathOperator{\spac}{space}
+%\DeclareMathOperator{\spac}{space}
 \DeclareMathOperator{\fillop}{fill}
 \DeclareMathOperator{\close}{close}
 \DeclareMathOperator{\res}{Res}
@@ -160,17 +160,18 @@ Note that this generalizes the problem of \emph{deadline-scheduling-on-intervals
   Jobs are only moved between processor at the same time slot and only to slots of processor $k'$ which are idle, hence the resulting schedule is still feasible.
   This modification can be repeated until the schedule has the desired property.
 \end{proof}
+From now on, when considering an optimal schedule, we will silently assume that it fulfills the stair property based on Lemma~\ref{lemma:stair_property_opt}.
 
 \todo{Define busy, idle, off, on intervals.}
 \section{Algorithm}
 
 The following algorithm \emph{Parallel Left-to-Right} ($\PLTR$) iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
 Once the current processor cannot be kept idle for any longer, it becomes busy and $\PLTR$ keeps it and all lower-numbered processors busy for as long as possible while again maintaining feasibility.
-The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ more restrictive.
+The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ of the corresponding instance of \emph{power-down scheduling with lower and upper bounds} more restricitve.
 Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
 
 Once the algorithm returns, an actual schedule can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation done during the algorithm.
-The mapping from the flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it uses the lower-numbered processors first.
+The mapping from the flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it always uses the lower-numbered processors first.
 
 \begin{algorithm}[H]
 \caption{Parallel Left-to-Right}\label{alg:pltr}
@@ -301,7 +302,7 @@ The feasiblity check in subroutines $\keepidle$ and $\keepbusy$ can be performed
 %    \spac_S(j, Q) \coloneqq \pv(j, Q) - \vol_S(j, Q) \text{.}
 %  \end{align}
 %\end{definition}
-Since the corresponding schedule $S$ will always be clear from context, we drop the subscript for $\vol, \uv$ and $\spac$.
+Since the corresponding schedule $S$ will always be clear from context, we drop the subscript for $\vol$ and $\uv$.
 We extend our volume definitions to single timeslots $t\in T$ and to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
 \begin{align}
   \vol(J', Q) &\coloneqq \sum_{j \in J'} \vol(j, Q)\text{,}
