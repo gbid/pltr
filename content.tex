@@ -65,7 +65,7 @@
 %\DeclareMathOperator{\spac}{space}
 \DeclareMathOperator{\fillop}{fill}
 \DeclareMathOperator{\close}{close}
-\DeclareMathOperator{\res}{Res}
+\DeclareMathOperator{\res}{Sup}
 
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -495,24 +495,25 @@ A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval
 \end{definition}
 
 \begin{definition}
-  \todo{Use $J(V)$ everywhere to not have double subscripts later?}
-  For a valley $V$, we define the jobs $J_V \subseteq J$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
+  For a valley $V$, we define the jobs $J(V) \subseteq J$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
+  %If $V$ is not defined, we define $J(V) \coloneqq \emptyset$.
 \end{definition}
 
 \begin{lemma}\label{lemma:valley}
-  For every critical set $C$ with $c \coloneqq \crit(C)$, every interval $D \subseteq T$ spanning $C$:
-  if $\phi(C \cap D) \leq c - \delta$ for some $\delta \in \mathbb{N}$, then the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ is defined and $|J_{V_l}| + |J_{V_r}| \geq \delta$, where we take $|J_V| \coloneqq 0$ if $V$ is not defined.
+  For every critical set $C$, every interval $D \subseteq T$ spanning $C$:
+  if $\phi(C \cap D) \leq \crit(C) - \delta$ for some $\delta \in \mathbb{N}$, then the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ is defined and $|J(V_l)| + |J(V_r)| \geq \delta$.
+  Here, we take $|J(V)| \coloneqq 0$ if $V$ is not defined.
 \end{lemma}
 \todo{Provide a rough visual sketch here}
 \begin{proof}
   \todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math, by replacing division by multiplication, or by introducing $l \coloneq |C \cap D|$}
-  By choice of $C$ as critical set with $c = \crit(C)$ we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
+  By choice of $C$ as critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
   If this inequality is fulfilled strictly, i.e.\ if
   $\vol(C \cap D) > (c-1) \cdot |C \cap D|$, then with the premise
   $\fv(C \cap D) / |C \cap D| \leq c - \delta$ we directly get $\uv(C \cap D) / |C \cap D| > \delta - 1$.
   This implies that there are at least $\delta$ jobs $j$ scheduled in $C \cap D$ with $\uv(j, C \cap D) > 0$.
-  Such jobs can be scheduled in the part of $C$ not contained in $D$, i.e.\ we must have $E_j \cap (C \setminus D) \neq \emptyset$ and hence the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ must exist.
-  These jobs must be contained in $J_{V_l}$ or $J_{V_r}$ since they are scheduled in $C$ and the schedule is feasible.
+  Such jobs can be scheduled in the part of $C$ not contained in $D$, i.e.\ we must have $E_j \cap (C \setminus D) \neq \emptyset$ and hence the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ must be defined.
+  These jobs must be scheduled in every $t \in V_l$ or in every $t \in V_r$ and hence be contained in $J(V_l)$ or $J(V_r)$ since they are scheduled in $C$ and the schedule is feasible.
 
   If on the other hand we have equality, i.e.\ $\vol(C \cap D) = (c-1) \cdot |C \cap D|$, then let $t$ be the activation of processor $c$ for which $C$ is the critical set.
   Since $\vol(t) > c-1$, we must have $t \notin C \cap D$.
@@ -529,7 +530,7 @@ A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval
   Therefore, there must exist a job $j \notin J'$ scheduled in $C$ which can be scheduled $C \cap D$.
 
   In total, we have at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
-  This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J_{V_l}$ or $J_{V_r}$.
+  This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J(V_l)$ or $J(V_r)$.
 \end{proof}
 
 \section{Modification of our Schedule}
@@ -561,8 +562,10 @@ Lemma~\ref{lemma:augmented} guarantees us that every busy interval $A$ on proces
 It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $A$ do not end within an idle interval on processor $k$, provided that they are defined.
 Lemma~\ref{lemma:valley} in turn guarantees us that if the density of $A$ does not guarantee that $S_{\opt}$ has to use processor $k$ during $A$, i.e.\ if $\hat \phi(A) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
 Let $V$ be the corresponding left or right valley of $C$ and $D$ for which such a job exists.
-Instead of scheduling this job on the processors below $k$, we can schedule the job on processor $k$ in idle time slots during $V$ instead of the lower processors, merging the busy interval $A$ with at least one neighbouring busy interval on processor $k$.
-In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ closing of valley $V$ on processor $k$.
+Instead of scheduling this job on the processors below $k$, we can schedule the job on processor $k$ in idle time slots during $V$.
+This merges the busy interval $A$ with at least one neighbouring busy interval on processor $k$.
+In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ \emph{closing of valley $V$ on processor $k$}.
+The corresponding subroutine is called $\close(k, V)$.
 
 The crucial part is making sure that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
 For this purpose, we go through the busy intervals on each processor in the order of their rank, i.e.\ in the order of $\succeq$.
@@ -574,7 +577,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 \begin{algorithm}[H]
   \caption{Realignment of $S_{\aug}$}\label{alg:real}
 \begin{algorithmic}
-  \State{$\res(V) \gets 2 |J_V|$ for every valley $V$}
+  \State{$\res(V) \gets 2 |J(V)|$ for every valley $V$}
   \For{$k \gets m$ \textrm{to} $1$}
     \State{\Call{$\fillop$}{$k, T$}}
     \State{$\res(V) \gets \res(V) - 1$ for every valley $V$
@@ -609,7 +612,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 
   \Function{$\close$}{$k, V$}
     \For{every $t \in V$ which is idle on processor $k$}
-      \If{processors $1, \ldots, k-1$ idle at $t$}
+      \If{processors $1, \ldots, k-1$ are idle at $t$}
         \State{introduce new auxiliary busy slot on processor $k$ at time $t$}
       \Else{}
         \State{move busy slot at time $t$ of highest processor
@@ -627,7 +630,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
     \item
       processor $k_V$ is not fully filled yet, i.e.\ $\fillop(k_V, T)$ has not yet returned,
     \item
-      no $V' \supseteq V$ has been closed on $k_V$ so far and
+      no $V' \supseteq V$ has been closed on $k_V$ so far, and
     \item
       there is a (full) busy interval $A \subseteq V$ on processor $k_V$.
   \end{itemize}
@@ -645,17 +648,17 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 \begin{proof}
   We show Invariants 1 and 2 via structural induction on the realigned schedule $S_{\real}$.
   Then we show that Invariant 2 implies Invariant 3.
-  For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ with $\crit(V) \geq 2$ and let $C$ the critical set with $C \sim V, c \coloneqq \crit(V)$.
+  For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ with $\crit(V) \geq 2$ and let $C$ be the critical set with $C \sim V, c \coloneqq \crit(V)$.
 
   We must have $k_V \leq c$, otherwise $V$ would contain a full busy interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$.
   This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
 
   Invariant 2 now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are busy at $t$. For Invariant 1, let $D$ be an interval spanning $C$ with $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$.
-  With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and $|J_{V_l}| + |J_{V_r}| \geq \delta$.
-  With the initial definition of $\res(V)$ we get the desired lower bound of $\res(V_l) + \res(V_r) \geq 2 \delta$.
+  With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and $|J(V_l)| + |J(V_r)| \geq \delta$.
+  With the initial definition of the supply $\res(V)$ of a valley, we get the desired lower bound of $\res(V_l) + \res(V_r) \geq 2 \delta$.
 
   Now suppose that Invariants 1 and 2 hold at all steps of the realignment up to a specific next step.
-  Let $V$ again be an arbitrary valley of $\crit(V) \geq 2$ and $k$ the processor currently being filled.
+  Let $V$ again be an arbitrary valley of $\crit(V) \geq 2$ and let $k$ be the processor currently being filled.
   Let furthermore $k_V, k'_V$ be the critical processor for $V$ before and after, respectively, the next step in the realignment.
   There are four cases to consider for this next step.
 
@@ -672,32 +675,34 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
   \paragraph{Case 1:}
       Some $V' \supseteq V$ is closed on processor $k$.
       Then no valley $W$ intersecting $V$ has been closed so far on $k$.
-      Also, since $\close(k, \_)$ only moves the busy slot of the highest busy processor below $k$, we know that the stair property \todo{define stair property} holds within $V$ on processors $1, \ldots, k$.
+      Also, since $\close(k, \_)$ only moves the busy slot of the highest busy processor below $k$, we know that the stair property holds within $V$ on processors $1, \ldots, k$.
       We show that the closing of $V'$ on $k$ reduces the critical processor of $V$ by at least $1$, i.e. $k'_V \leq k_V - 1$.
       If $k_V = k$, then $V' \supseteq V$ is closed on processor $k_V$ and hence by definition we have $k'_V \leq k_V - 1$.
-      If $k_V < k$, suppose for contradiction that $k_V \leq k'_V \leq k$, where $k'_V \leq k$ again by definition since $V' \subseteq V$ is closed on processor $k$.
+      If $k_V < k$, suppose for contradiction that $k_V \leq k'_V \leq k$, where $k'_V \leq k$ again holds by definition of $k'$ since $V' \subseteq V$ is closed on processor $k$.
 
       Let $A \subseteq V$ be a full busy interval on $k_V$ before the close of $V'$.
-      We show that $A \subset V$, i.e.\ that there must be some $t \in V$ idle on $k_V$ before the close and hence by the stair-property processors $k_V, \ldots, k$ idle at $t$ before the close.
-      If $V' \supseteq V$ is closed, clearly $V \subset T$ by the choice of $V_l$ and $V_r$ as valleys of some critical set in the realignment definition.
-      Hence we know that $\min V - 1 \in T$ and $\max V + 1 \in T$.
-      \todo{Double check if this is true (or if we only have one of the two guaranteed): Since $V$ must be valley \emph{of} some $C$, we should have both $0 \notin V$ and $d^* \notin V$.}
-      We show that $t \coloneqq \min V - 1$ must be busy on $k_V$ before the close.
-      Let $W \supseteq V$ be the valley with $W \sim t$ and $t \in W$.
-      We know that $W \supseteq V$ since $W \sim t \succ V$ since $V$ is a valley.
-      By our case assumption, no $W' \subseteq W$ can have been closed on processor $k$ so far.
+      We show that $A \subset V$, i.e.\ that there must be some $t \in V$ idle on $k_V$ before the close.
+      The stair-property then implies that processors $k_V, \ldots, k$ are idle at $t$ before the close.
+      Since some $V' \supseteq V$ is closed, clearly $V \subset T$ by the choice of $V'$ as valley of some critical set in the realignment definition.
+      Therefore we have $\min V - 1 \in T$ or $\max V + 1 \in T$, without loss of generality we assume the former.
+      %This choice of $V'$ also implies that $\min V - 1 \in T$ and $\max V + 1 \in T$.
+      We show that $t \coloneqq \min V - 1$ must be busy on processor $k_V$ before the close.
+      Let $W$ be the valley with $W \sim t$ and $t \in W$.
+      We know that $W \supseteq V$ since $V$ is a valley and hence $V \prec t \sim W$.
+      By our case assumption and the definition of the realignment, no $W' \supseteq W$ can have been closed on processor $k$ so far.
       With $W \supseteq V$ and the definition of $k_W$ we get $k_W \geq k_V$, where $k_W$ is the critical processor of $W$ before the close.
       Our induction hypothesis now implies that processors $1, \ldots, k_V, \ldots, k_W$ are busy at $t$ before the close.
       For $A \subseteq V$ to be a (full) busy interval on $k_V$ before the close, we hence must have $\min V \notin A$.
-      We know by definition of the realignment and function $\close$, that for every $k'$ with $k_V \leq k' < k$ and every $t \in V$:
+      We know by definition of the realignment and the subroutine $\close$ that for every $k'$ with $k_V \leq k' < k$ and every $t \in V$:
       \begin{itemize}
         \item
           If $t$ was idle on $k'$ before the close, then $t$ is still idle on $k'$ after the close (definition of $\close$, $k' < k$).
         \item
-          If $t$ was idle on $k_V$ before the close, then $t$ was idle on $k'$ before (stair-property) and hence $t$ is still idle on $k'$ after the close.
+          If $t$ was idle on $k_V$ before the close, then $t$ was idle on $k'$ before (stair-property with $k_V \leq k'$) and hence $t$ is still idle on $k'$ after the close.
         \item
-          If $t$ was part of full a busy interval $A \subset V$ on $k_V$ before the close, then $t$ was idle on $k_V + 1$ before the close (choice of $k_V$).
-          Hence $t$ was idle on $k$ before (stair-property) and hence $t$ is idle on $k_V$ after the close.
+          If $t$ was part of a full busy interval $A \subseteq V$ on $k_V$ before the close, then $t$ was idle on $k_V + 1$ before the close.
+          Otherwise, by the stair property there would have been a full busy interval $A' \subseteq A \subseteq V$ on processor $k_V + 1 \leq k$ before the close, contradicting the definition of $k_V$.
+          Hence $t$ was idle on $k$ before (by stair-property) and therefore $t$ is idle on $k_V$ after the close (definition of close).
       \end{itemize}
       Taken together, for $t \in V$ to be busy on $k'$ after the close, $t$ must have been busy on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full busy interval $A \subseteq V$.
       Hence $t \in A$ for some \todo{properly define partial busy intervals} \emph{partial} busy interval $A \subseteq V$ on $k'$ before the close.
@@ -707,74 +712,75 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
         \includegraphics[width=0.5\textwidth]{graphics/sketches/invariant_case1.png}\label{fig:invariant_case1}
         \caption{The situation for case $1$ in Lemma~\ref{lemma:invariant}.}
       \end{figure}
-      Hence there must have been a busy interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the definition of $k_V < k$.
-      In conclusion, we have $k'_V \leq k_V - 1$ which allows us to prove our invariants 1 and 2.
+      Hence there must have been a busy interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
+
+      In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
       If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
-      Our induction hypothesis also implies that for every $t \in C \cap V$ processors $1, \ldots, k_V$ are busy before the close.
+      Our induction hypothesis also implies that for every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy before the close.
       Since at most the uppermost busy slot is moved by $\close$, after the close of $V'$ we still have processors $1, \ldots, k_V - 1 \geq k'_V$ busy.
 
-  \paragraph{Case 2:}
+  \paragraph{Case 2:}\label{case:2}
       Some $V' \subset V$ is closed on processor $k$.
-      Again, no $V'' \supseteq V$ can have been close on processor $k$ so far.
+      Again, no $V'' \supseteq V$ can have been closed on processor $k$ so far.
       We show that $k_V = k \geq k'_V$, i.e.\ that the critical processor of $V$ before the close of $V'$ is the processor currently being filled.
       Let $W$ be the valley for which $V'$ is closed, i.e.\ $V'$ is closed during $\fillop(k, W)$.
       We must have $W \supset V'$ and therefore no $W' \supseteq W$ has been closed on $k$ so far.
       Also, for $V'$ to be closed in $\fillop(k, W)$, there must be some busy interval $A \subseteq W$ on $k$ before the close, hence $k_W = k$.
       Since $V' \subset V$ and $V' \subset W$, $V$ and $W$ intersect ($V' \neq \emptyset$ by definition of $V'$ as valley).
-      If $V \prec W$, then by choice of $V'$ as valley of $C_W$
-      \todo{introduce this notation for critical set $C_V$ of valley $V$, i.e.\ $C_V \sim V$.}
-      we must have $V \subseteq V'$, which contradicts our case assumption.
-      Therefore $V \succeq W$ and $V \supseteq W$ implying $k_V \leq k_W = k$ and since processor $k+1$ is already filled before the close we have $k_V = k \geq k'_V$.
+      Let $C_W$ be the critical set with $C_W \sim W$.
+      If $V \prec W$, then by choice of $V'$ as valley of $C_W$ we must have $V \subseteq V'$, which contradicts our case assumption.
+      Therefore $V \succeq W$ and $V \supseteq W$, which in turn implies $k_V \leq k_W = k$.
+      Since processor $k+1$ is already completely filled before the close, we have $k_V = k \geq k'_V$.
 
-      For invariant 1, again let $\phi(C \cap D) \leq k'_V - \delta \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$.
+      For Invariant 1, again let $\phi(C \cap D) \leq k'_V - \delta$ and hence $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$.
       Our induction hypothesis implies that the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and that both before and after the close we have $\res(V_l) + \res(V_r) \geq 2 \delta$.
-
-      For invariant 2, observe that $V' \cap C = \emptyset$ since $V' \prec C$ by our case assumption.
-      Our invariant 2 now directly follows from the induction hypothesis and $k'_V \leq k_V$.
+      For Invariant 2, observe that $V' \cap C = \emptyset$ since our case assumption $V' \subset V$ implies $V' \prec C$.
+      Therefore, no slots of $C$ are modified when $V'$ is closed.
+      Invariant 2 now directly follows from the induction hypothesis and $k'_V \leq k_V$.
 
 
   \paragraph{Case 3:}
       Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
       We first show that $\min V - 1 \notin V'$ and symmetrically $\max V + 1 \notin V'$.
-      Consider $t \coloneqq \min V - 1$.
-      We know $t \in T$ since $V'$ is valley of some critical set.
+      Consider $t \coloneqq \min V - 1$ and assume $t \in T$.
+      %We know $t \in T$ since $V'$ is valley of some critical set.
       By choice of $V$ and $t$ we must have $t \succ V$.
       If $t \in V'$, we would have $V' \succ V$ and hence $V' \supseteq V$, which contradicts our case assumption.
       Symmetrically, we know that $\max V + 1 \notin V'$.
       Therefore the close of $V'$ does not modify the schedule within $[\min V - 1, \max V + 1]$, implying that no partial busy interval in $V$ before the close can become a full busy interval.
-      In summary we have $k_V = k'_V$ and invariants 1 and 2 follow as in case 2.
+      Hence we have $k_V = k'_V$ and Invariants 1 and 2 follow as in Case 2.
 
   \paragraph{Case 4:}
-      The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
+      The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every valley $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
       First observe that the schedule itself does not change by this step but processor $k$ is now fully filled, which implies $k'_V \leq k_V$.
       Invariant 2 then follows directly from the induction hypothesis.
 
       We consider two subcases.
       If during $\fillop(k, T)$, no valley $V'$ intersecting $V$ was closed on $k$, then $\res(V)$ does not change and Invariant 1 follows from the induction hypothesis and $k'_V \leq k_V$.
       If on the other hand some valley $V'$ intersecting $V$ was closed on $k$ during $\fillop(k, T)$, then $\res(V)$ is decreased by $1$ to $\res'(V) \coloneqq \res(V) - 1$.
-      As seen in cases 1 to 3, $k_V$ decreases monotonically during $\fillop(k, T)$.
+      As argued in Cases 1 to 3, the critical processor of $V$ decreases monotonically during $\fillop(k, T)$.
       Consider the schedule right before the first valley $V'$ intersecting $V$ is closed on $k$.
       Let $k^0_V$ be the critical processor for $V$ at this point of the realignment and $k^1_V$ the critical processor right after $V'$ is closed.
 
       We have $k'_V \leq k^0_V - 1$:
-      If $V' \supseteq V$, then as argued in case 1 $k^1_V \leq k^0_V - 1$ and hence $k'_V \leq k_V \leq k^1_V \leq k^0_V -1$.
-      If $V' \subset V$, then as argued in case 2 we have $k^0_V = k$.
-      Since $\fillop(k, T)$ returns in the next step of our case assumption, we have $k'_V \leq k - 1$ and hence $k'_V \leq k^0_V -1$.
-      Invariant 2 now follows by our (strong) induction hypothesis.
-      If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and before the close $\res(V_l) + \res(V_r) \geq 2 (\delta + 1)$.
-      Since $\res$ is decreased by at most $1$, we have after the close $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
+      If $V' \supseteq V$, then as argued in Case 1, we have $k^1_V \leq k^0_V - 1$ and hence $k'_V \leq k_V \leq k^1_V \leq k^0_V -1$.
+      If $V' \subset V$, then as argued in Case 2 we have $k^0_V = k$.
+      Since by our case assumption $\fillop(k, T)$ returns in the next step, we have $k'_V \leq k - 1$ and hence $k'_V \leq k^0_V -1$.
+      Invariant 2 now follows by our induction hypothesis.
+      If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence by our induction hypothesis the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and before the close we have $\res(V_l) + \res(V_r) \geq 2 (\delta + 1)$.
+      Since $\res$ is decreased for every valley by at most $1$, we have after the close that $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
 
   We conclude by showing that Invariant 2 implies Invariant 3.
-  Let $V$ be an arbitrary valley during the realignment of $S_{aug}$ and $A \subseteq V$ a busy interval on processor $k_V$ with $A \sim V$.
+  Let $V$ be an arbitrary valley during the realignment of $S_{\aug}$ and $A \subseteq V$ a busy interval on processor $k_V$ with $A \sim V$.
   Let $C$ be the critical set with $C \sim V$.
   Note that $A \sim V$ implies that $A$ intersects $C$.
   Assume for contradiction that $A$ does not span $C$.
-  The $\min A$ is within subinterval of $C$ or symmetrically $\max A$ within subinterval of $C$.
+  Then $\min A$ lies strictly within a subinterval of $C$ or symmetrically $\max A$ lies strictly within a subinterval of $C$.
   We assume the first case, i.e.\ $t\coloneqq \min A - 1 \in C$ and $\min A \in C$.
   The second case follows by symmetry.
   If $t \in V$, then time slot $t$ is busy on processor $k_V$ by Invariant 2.
   Therefore, $A$ cannot be a (full) busy interval on processor $k_V$, contradicting the choice of $A$.
-  If $t = \min V-1$, then consider valley $W$ with $t \in W$ and $t \sim W$.
+  If $t = \min V-1$, then consider the valley $W$ with $t \in W$ and $t \sim W$ and let $C_W$ be the critical set with $C_W \sim W$.
   We must have $W \supset V$, $W \succ V$ and $t \in C_W$.
   Therefore $k_W \geq k_V$ and Invariant 2 implies that $t = \min A - 1$ is busy on processor $k_V$, again contradicting the choice of $A$ as full busy interval on processor $k_V$.
 \end{proof}
@@ -783,19 +789,19 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
   The result $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
 \end{lemma}
 \begin{proof}
-  The Invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of $\fillop$, the corresponding busy interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$, hence $V_r$ or $V_l$ exists and there is sufficient $\res$ to close some valley.
+  %The invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of the subroutine $\fillop$, the corresponding busy interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$ and that the left valley $V_r$ or the left valley $V_l$ is and there is sufficient $\res$ that one of them is closed.
 
   Since in the while-loop of $\fillop(k, V)$ the busy interval $A \subseteq V$ on $k_V$ always spans $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $A$ are properly defined.
-  Also since $\phi(A) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
+  Also since $\hat \phi(A) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
   This reduces the number of idle intervals on processor $k$ by at least $1$, since Invariant 2 implies that $V_l$ or $V_r$ cannot end strictly within an idle interval on $k$.
   Hence all terms in the realignment are well defined and the realignment terminates.
 \end{proof}
 
 \begin{lemma}\label{lemma:phi_prop}
-  For every processor $k \in [m]$, every busy interval $A$ on processor $k$ in $S_{\real}$ with $\crit(A) \geq 2$ we have $\hat \phi(A) > k - 1$.
+  For every processor $k \in [m]$ and every busy interval $A$ on processor $k$ in $S_{\real}$ with $\crit(A) \geq 2$, we have $\hat \phi(A) > k - 1$.
 \end{lemma}
 \begin{proof}
-  We show that $\fillop(k, T)$ establishes the property on $k$.
+  We show that $\fillop(k, T)$ establishes the property on processor $k$.
   The claim then follows since $\fillop(k, T)$ does not change the schedules of processors above $k$.
   Since in $\fillop(k, T)$, we always close valleys for busy intervals $A$ on $k$ spanning a corresponding critical set $C$, we know that on processor $k$, busy intervals are only extended.
   Let $A \subseteq V$ be a busy interval on processor $k$ in $S_{\real}$ with $A \sim V$ and $\crit(A) \geq 2$.
@@ -846,7 +852,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 \begin{proof}
   By Lemma~\ref{lemma:activations} and $\crit(A_r) \leq 1$, we know that $\min A_r$ is an activation of processor $1$ in $S_{\aug}$.
   Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence on all processors (stair-property in $S_{\aug}$).
-  Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J_V = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
+  Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
   Therefore, no $V$ intersecting $[\max I, \max A_r]$ was closed during realignment on any processor, since this $V$ would contain $\max I$.
   Since $A_r$ is a busy interval with $\crit(A_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
 
@@ -894,7 +900,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
   We continue by showing that $\busy(S_{real}) \leq 2 P$.
   By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$:
   For $S_{\aug}$, an auxiliary busy slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
-  Furthermore, initially $\res(V) = 2 |J_V|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
+  Furthermore, initially $\res(V) = 2 |J(V)|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
   During $\fillop(k, T)$ every $t \in T$ is at most closed once (or rather one $V'$ containing $t$ is closed).
   Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in $\close$.
   In conclusion, we have $\costs(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$.
