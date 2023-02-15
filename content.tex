@@ -16,7 +16,7 @@
 \usepackage[normalem]{ulem}
 %\usepackage{float}
 %\usepackage{cite}
-\counterwithin{figure}{section}
+%\counterwithin{figure}{section}
 \newcommand{\sectionbreak}{\clearpage}
 \usepackage[round]{natbib}
 \usepackage{float}
@@ -93,9 +93,10 @@
 
 %\maketitle
 \begin{abstract}
-  We study a particular scheduling setting in which a set of $n$ jobs with individual release times, deadlines, and processing volumes has to be scheduled across $m$ homogeneous processors while minimizing consumed energy.
+  We study energy-efficient scheduling across multiple homogeneous processors with a power-down mechanism.
+  In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes has to be scheduled across $m$ homogeneous processors while minimizing the consumed energy.
   Idle processors can be turned off at no cost to save energy, while turning them on requires a fixed amount of energy.
-  For the special case of a single processor, the greedy Left-toRight algorithm guarantees an approximation factor of $2$.
+  For the special case of a single processor, the greedy Left-to-Right algorithm guarantees an approximation factor of $2$.
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $P$ is the total processing volume.
   Our algorithm has a running time of $O(F n \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $F$ is the running time required by a maximum-flow calculation for checking feasibility of an instance.
 \end{abstract}
@@ -110,7 +111,7 @@ Each job has an individual time interval during which it has to be processed.
 Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
 Intuitively one aims for few but long idle periods during which it is worthwhile to turn a processor off.
 
-More specifically, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
+Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
 Without loss of generality, we assume the earliest release time $r_{\min}$ to be $1$ and denote the last deadline by $d^*$.
@@ -814,7 +815,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 \end{proof}
 While with Lemma~\ref{lemma:phi_prop} we have our desired property for busy intervals of $\crit \geq 2$, we still have to handle busy intervals of $\crit \leq 1$.
 To be precise, we have to handle idle intervals which are surrounded only by busy intervals of $\crit \leq 1$.
-We will show that this constellation can only occur in $S_{\real}$ on processor $1$ and that the realignment has not done any modifications in these intervals, i.e.\ $S_{\pltr}$ and $S_{\real}$ do not differ.
+We will show that this constellation can only occur in $S_{\real}$ on processor $1$ and that the realignment has not done any modifications in these intervals, i.e.\ $S_{\pltr}$ and $S_{\real}$ do not differ for these intervals.
 
 \begin{lemma}\label{lemma:activations}
   The realignment of $S_{\aug}$ does not create new activation times but may only change the corresponding processor being activated, i.e.\ if $t \in T$ is an activation of some processor $k$ in $S_{\real}$, then $t$ is also an activation of some processor $k'$ in $S_{\aug}$.
@@ -920,32 +921,33 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   We do this by transforming $S_{\real}$ back into $S_{\pltr}$ without increasing the costs of the schedule.
   Removing the auxiliary busy slots clearly cannot increase the costs.
   Since the realignment of $S_{\aug}$ only moves busy slots between processors, but not between different time slots, we can easily restore $S_{\pltr}$ (up to permutations of the jobs scheduled on the busy processors at the same time slot) by moving all busy slots back down to the lower numbered processors.
-  \todo{Define Lemma stair property somewhere}
   By the same argument as in Lemma~\ref{lemma:stair_property_opt}, this does not increase the total costs of the schedule.
 \end{proof}
 
 \section{Running Time}
 \begin{theorem}
-  Algorithm $\pltr$ has a running time of $O(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
+  Algorithm $\PLTR$ has a running time of $O(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
 \begin{proof}
-  First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$.
-  Every call to $\keepidle$ searches for the maximal slot $t \in T$ (after the current time slot) such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
-  Using binary search this can be done in $O(F \cdot \log(d^*))$ with $F$ denoting the time required for finding the maximum flow.
+  First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$, respectively.
+  Every call to $\keepidle$ searches for the maximal slot $t \in T$ after the current time slot such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
+  Using binary search this can be done in $O(F \log(d^*))$ with $F$ denoting the time required for finding the maximum flow.
 
   We bound the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
   Note that if $\keepidle$ returns $d^*$, then we do not have to calculate $\keepbusy$ from $d^*$ on.
-  Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is bounded by $n + m$.
+  Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is then bounded by $n + m$.
   If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
   We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $f$ from the set of busy intervals to the jobs $J$.
   For this construction of $f$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
-  We construct $f$ such that $f(A) = j$ for some busy interval $A$ only if $d_j \in A$.
+  We construct $f$ such that $f(A) = j$ only if $d_j \in A$.
 
-  Suppose we have constructed such a partial mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $A$ on $k$.
-  \todo{Define plateaus: busy intervals which are completely idle on higher processors}
-  Let $A'$ be the last plateau with $A' \subseteq A$ and let $k' \geq k$ be the processor of this plateau $A'$.
-  By construction of $f$ and the choice of $A'$, there are at most $k' - (k + 1)$ distinct jobs $j$ with $d_j \in [\min A', \max A]$ already mapped to by $f$.
-  This is since at most $k' - (k+1)$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min A', \max A]$.
+  Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $A$ on $k$.
+  %\todo{Define plateaus: busy intervals which are completely idle on higher processors}
+  We call a busy interval $A'$ in $S_{\pltr}$ on processor $k' \in [m]$ a \emph{plateau on processor $k'$}, if all slots of $A'$ are idle for all processors above $k'$.
+  Observe that plateaus (even across different processors) cannot intersect, which implies an ordering of the plateaus from left to right.
+  Let $A'$ be the last plateau with $A' \subseteq A$ and let $k' \geq k$ be the processor for which this busy interval $A'$ is a plateau.
+  By construction of $f$ and the choice of $A'$, there are at most $k' - k$ distinct jobs $j$ with $d_j \in [\min A', \max A]$ already mapped to by $f$.
+  This is since at most $k' - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min A', \max A]$.
   Refer to Figure~\ref{fig:running_time} for a visual sketch.
 
   \begin{figure}[H]
@@ -956,9 +958,9 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 
   Let $C_t$ be the critical set over activation $t \coloneqq \min A'$ of processor $k'$.
   Let $J' \coloneqq \{ j_1, \ldots, j_{k'} \}$ be the $k'$ distinct jobs scheduled at $t$.
-  We now that $\max A + 1 \notin C_t$ since $\vol(\max A + 1) < k \leq k'$ and $\max A + 1 > t$.
+  We know that $\max A + 1 \notin C_t$ since $\vol(\max A + 1) < k \leq k'$ and $\max A + 1 > t$.
   Therefore, every job $j \in J'$ with $d_j \geq \max A + 1$ is scheduled at slot $\max A + 1$.
-  Hence there are at least $k' - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min A', \max A]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can use for $f(A)$.
+  Hence there are at least $k' - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min A', \max A]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $A$.
 \end{proof}
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
