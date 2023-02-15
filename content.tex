@@ -214,8 +214,7 @@ The mapping from the flow to an actual assignment of jobs to processors and time
   %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
-
-The feasibility check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $s$-$t$ flow in the flow network given in Figure~\ref{fig:flow}.
+As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $s$-$t$ flow in the flow network given in Figure~\ref{fig:flow}.
 
 
 \begin{figure}[H]
@@ -276,7 +275,7 @@ The feasibility check in subroutines $\keepidle$ and $\keepbusy$ can be performe
 \subsection{Preliminary Definitions}
 \begin{definition}
   Let $S$ be a schedule.
-  The \emph{volume} $\vol_S(j, Q)$ of a job $j \in J$ in a set $Q \subseteq T$ of time slots is the number of time slots of $Q$ for which $j$ is scheduled at by $S$.
+  The \emph{volume} $\vol_S(j, Q)$ of a job $j \in J$ in a set $Q \subseteq T$ of time slots is the number of time slots of $Q$ for which $j$ is scheduled by $S$.
 \end{definition}
 \todo{Use just one definition environment for all volume definitions?}
 \begin{definition}
@@ -346,15 +345,15 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
     \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
     \\ &\geq P - \opdef(Q(S))\text{.}
   \end{align}
-  If $w \in S$, we have the following contributions of nodes in $S$:
+  If $w \in S$, we have the following contributions of nodes in $S$ to the capacity of the cut:
   \begin{itemize}
-    \item Node $s$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$.
+    \item Node $s$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$
     \item Node $u_j$: $| E_j \setminus Q(S) |
       = | E_j \cap Q(\bar S)| \geq \pv(j, Q(\bar S))$
     \item Node $v_t$: $l_t$
     \item Node $w$: $P - \sum_{t \in T} l_t$
   \end{itemize}
-  In total, we obtain the lower bound
+  In total, we obtain the alternative lower bound
   \begin{align}
     c(S) &\geq P + \pv(Q(\bar S))
     - \sum_{t \in Q(\bar S)} l_t
@@ -447,7 +446,8 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   \end{align}
 \end{definition}
 \begin{definition}
-  We extend these definitions \todo{welche? rank?} to general time slots $t \in T$ as follows.
+  We extend definitions of $\rank$ and $\crit$ to general time slots $t \in T$ and intervals $D \subseteq T$ as follows.
+  We also take the order $\succeq$ to be correspondingly extended based on this extension of $\rank$.
   \begin{align}
     \rank(t) \coloneqq
     \begin{cases}
@@ -466,10 +466,9 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
       & \text{otherwise}
     \end{cases}
   \end{align}
-  We also extend the definitions to intervals $D \subseteq T$ with
   \begin{align}
-    \rank(D) &\coloneqq \max \{ \rank(t) \mid t \in D \} \text{,}
-    \\ \crit(D) &\coloneqq \max \{ \rank(t) \mid t \in D \} \text{.}
+    \rank(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
+    \\ \crit(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
   \end{align}
 \end{definition}
 \begin{definition}
@@ -478,8 +477,8 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$.
 \end{definition}
 \begin{definition}
-  \todo{Think about using a different term than \emph{to span} here, e.g.\ \emph{to partially span}.}
-  For a critical set $C$, an interval $D$ \emph{spans} $C$ if $D \cap C$ contains only full subintervals of $C$ and at least one subinterval of $C$.
+  \todo{Think about using a different term than \emph{to span} here, e.g.\ \emph{to partially span} or \emph{is a section of $C$}.}
+  For a critical set $C$, an interval $D \subseteq T$ \emph{spans} $C$ if $D \cap C$ contains only full subintervals of $C$ and at least one subinterval of $C$.
   The \emph{left valley} $V_l$ of $C$ and an interval $D$ spanning $C$ is the valley of $C$ ending at $\min (C \cap D) - 1$ if such a valley of $C$ exists.
   Symmetrically, the \emph{right valley} $V_r$ of $C$ and an interval $D$ spanning $C$ is the valley of $C$ starting at $\max (C \cap D) + 1$ if such a valley of $C$ exists.
 \end{definition}
