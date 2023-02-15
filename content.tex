@@ -114,8 +114,8 @@ Intuitively one aims for few but long idle periods during which it is worthwhile
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
-Without loss of generality, we assume the earliest release time $r_{\min}$ to be $1$ and denote the last deadline by $d^*$.
-The set of discrete time slots is denoted by $T \coloneqq \{1, \ldots, d^*\}$.
+Without loss of generality, we assume the earliest release time $r_{\min}$ to be $0$ and denote the last deadline by $d^*$.
+The set of discrete time slots is denoted by $T \coloneqq \{0, \ldots, d^*\}$.
 The total amount of processing volume is $P \coloneqq \sum_{j \in J} p_j$.
 
 Every processor is either completely off or completely on in every discrete time slot $t \in T$.
@@ -125,21 +125,25 @@ All processors start in the off-state.
 The objective now is to find a feasible schedule which minimizes the expended energy $E$, which is defined as follows.
 Each processor consumes $1$ unit of energy for every timeslot it is in the on-state and $0$ units of energy if it is in the off-state.
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
-In Graham's notation \citep{graham}, this setting can be described with $m \mid r_j; \overline{d_j}; pmtn \mid E$ \todo{Sollte $pmtn$ here $\mathrm{pmtn}$ sein?}.
+In Graham's notation \citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
 
 \subsection{Busy and idle intervals}
 We say a processor is \emph{busy} at time $t$ if some job is scheduled on this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
 Clearly a processor cannot be busy and off at the same time.
-Also note that if a processor is idle for more than $q$ units of time, it is worth turning the processor off during this idle interval.
+An interval $I \subseteq T$ is a (full) \emph{busy interval} on processor $k \in [m]$ if $I$ is inclusion maximal on condition that processor $k$ is busy in every $t \in I$.
+Correspondingly, an interval $I \subseteq T$ is a \emph{partial busy interval} on processor $k$ if $I$ is not inclusion maximal on condition that processor $k$ is busy in very $t \in I$.
+We define (partial and full) \emph{idle intervals}, \emph{on intervals}, and \emph{off intervals} of a processor analogously via inclusion maximality.
+
+Observe that if a processor is idle for more than $q$ units of time, it is worth turning the processor off during the corresponding idle interval.
 Our algorithm will specify for each processor when it is busy and when it is idle.
 Each processor is then defined to be in the off-state during idle intervals of length greater than $q$ and otherwise in the on-state.
 
 \subsection{Lower and upper bounds for the amount of busy processors}
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors were allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$.
-For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we will denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
-Note that this generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by lower bounds.
+For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
+This generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
 
 \subsection{Properties of an optimal schedule}
 \begin{definition}\label{def:stair_property}
@@ -168,7 +172,7 @@ From now on, when considering an optimal schedule, we will silently assume that 
 
 The following \emph{Parallel Left-to-Right} ($\PLTR$) algorithm iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
 Once the current processor cannot be kept idle for any longer, it becomes busy and $\PLTR$ keeps it and all lower-numbered processors busy for as long as possible while again maintaining feasibility.
-The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ of the corresponding instance of \emph{power-down scheduling with lower and upper bounds} more restricitve.
+The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ of the corresponding instance of \emph{power-down scheduling with lower and upper bounds} more restrictive.
 Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
 
 Once the algorithm returns, an actual schedule can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation done during the algorithm.
@@ -481,7 +485,7 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   \end{align}
 \end{definition}
 \begin{definition}
-A nonempty interval $V \subseteq T$ is a \emph{valley} if $V$ is inclusion maximal under the condition that $C \sim V$ for some fixed critical set $C$.
+A nonempty interval $V \subseteq T$ is a \emph{valley} if $V$ is inclusion maximal on condition that $C \sim V$ for some fixed critical set $C$.
 Let $C_1, \ldots, C_l$ be the maximal intervals contained in a critical set $C$.
 A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$, and if $V \prec C$.
 \todo{Sketch some valley $V$ of some critical set $C$.}
