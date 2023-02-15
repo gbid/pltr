@@ -132,7 +132,7 @@ Otherwise, the processor is \emph{idle}.
 Clearly a processor cannot be busy and off at the same time.
 Also note that if a processor is idle for more than $q$ units of time, it is worth turning the processor off during this idle interval.
 Our algorithm will specify for each processor when it is busy and when it is idle.
-Each processor is then defined to be in the off-state during idle intervals of length at least $q$ and otherwise in the on-state.
+Each processor is then defined to be in the off-state during idle intervals of length greater than $q$ and otherwise in the on-state.
 
 \subsection{Lower and upper bounds for the amount of busy processors}
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
@@ -140,8 +140,26 @@ Where in the original problem, for each time slot $t$, between $0$ and $m$ proce
 For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we will denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
 Note that this generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by lower bounds.
 
+\subsection{Properties of an optimal schedule}
+\begin{definition}\label{def:stair_property}
+  Given some arbitrary but fixed order on the number of processors, a schedule $S$ fulfills the \emph{stair-property} if it uses the lower numbered processors first, i.e.\ for every $t \in T$, if processor $k \in [m]$ is busy at $t$, then every processor $k' \leq k$ is busy at $t$.
+  This symmetrically implies that if processor $k \in [m]$ is idle at $t$, then every processor $k' \geq k$ is idle at $t$.
+\end{definition}
 
-\todo{How to replace the term \emph{activation}? Candidates: \emph{start-of-work}.}
+\begin{lemma}\label{lemma:stair_property_opt}
+  For every feasible problem instance, there exists an optimal schedule $S_{\opt}$ which fulfills the stair-property.
+\end{lemma}
+\begin{proof}
+  Let $S$ be an optimal schedule.
+  We transform $S$ such that it fulfills the stair-property without increasing its costs and while maintaining feasibility.
+  Let $k, k' \in [m]$ be two processors with $k' < k$, job $j \in J$ scheduled on processor $k$ in time slot $t \in T$ while $k'$ is idle in $t$.
+  Let $I$ be the idle interval on processor $k'$ containing $t$.
+  We now move all jobs scheduled on processor $k$ during $I$ to be scheduled on processor $k'$ instead.
+  Since $I$ is a maximal interval for which processor $k'$ is idle, this modification does not increase the combined costs of processors $k'$ and $k$.
+  The modification also moves at least job $j$ from processor $k$ down to $k'$ while not moving any job from processor $k'$ to $k$.
+  Jobs are only moved between processor at the same time slot and only to slots of processor $k'$ which are idle, hence the resulting schedule is still feasible.
+  This modification can be repeated until the schedule has the desired property.
+\end{proof}
 
 \todo{Define busy, idle, off, on intervals.}
 \section{Algorithm}
@@ -152,7 +170,7 @@ The algorithm enforces these restrictions on the busy processors by iteratively 
 Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
 
 Once the algorithm returns, an actual schedule can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation done during the algorithm.
-The mapping from the flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}.
+The mapping from the flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it uses the lower-numbered processors first.
 
 \begin{algorithm}[H]
 \caption{Parallel Left-to-Right}\label{alg:pltr}
@@ -354,10 +372,12 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   Hence, there must be a $s$-$t$ cut $(S, \bar S)$ of capacity $c(S) < P$.
   Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
 \end{proof}
+
 \begin{definition}
   A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if processor $k$ is idle at $t-1$ and busy at $t$.
   A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
 \end{definition}
+\todo{How to replace the term \emph{activation}? Candidates: \emph{start-of-work}.}
 The following lemma provides the crucial structure required for the proof of the approximation guarantee.
 Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which an activation of processor $k$ is necessary in every feasible schedule.
 \begin{lemma}\label{lemma:critical}
@@ -403,7 +423,6 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
 
 \subsection{Definitions based on critical sets}
 \begin{definition}
-  \todo{Use $\succeq$ instead of $\preceq$ here}
   We define a total order $\succeq$ on the set of critical sets $C_t$ across all activations $t$.
   For activations $t, t' \in T$ of processors $k$ and $k'$ respectively, we define $C_t \succeq C_{t'}$ if and only if $k > k'$ or $k = k'$ and $t \leq t'$.
   In other words, $\succeq$ defines the same order in which $\PLTR$ calculates the activations: from Top-Left to Bottom-Right.
@@ -536,7 +555,7 @@ In the definition of the realignment, we will call this process of filling the i
 The crucial part is making sure that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
 For this purpose, we go through the busy intervals on each processor in the order of their rank, i.e.\ in the order of $\succeq$.
 We also allow every job to be used twice for the realignment by introducing further auxiliary busy slots (for an interval $D$ spanning the critical set $C$, both the right and the left valley might be closed in the worst case).
-This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogous to Lemma~\ref{lemma:augmented} and Lemma~\ref{lemma:valley} during the realignment process.
+This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which are analogous to Lemma~\ref{lemma:valley} and Lemma~\ref{lemma:augmented}.
 
 
 
@@ -591,7 +610,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
 
 \subsection{Invariants for Realignment}
 \begin{lemma}\label{lemma:invariant}
-  For an arbitrary step during the realignment of $S_{\aug}$ and a valley $V \subseteq T$, let $k_V$ be the highest processor s.t.\
+  For an arbitrary step during the realignment of $S_{\aug}$ and a valley $V \subseteq T$, let the \emph{critical processor $k_V$ for $V$} be the highest processor s.t.\
   \begin{itemize}
     \item
       processor $k_V$ is not fully filled yet, i.e.\ $\fillop(k_V, T)$ has not yet returned,
@@ -601,10 +620,10 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
       there is a (full) busy interval $A \subseteq V$ on processor $k_V$.
   \end{itemize}
   We take $k_V \coloneqq 0$ if no such processor exists.
-  At every step in realignment of $S_{\aug}$ the following invariants hold.
+  At every step in the realignment of $S_{\aug}$ the following invariants holds for every valley $V$, where $C$ denotes the critical set with $C \sim V$.
   \begin{enumerate}
     \item
-      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D \subseteq T$ spanning $C$, then the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
+      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$, some interval $D \subseteq V$ spanning $C$, then the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
     \item
       For every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy at $t$.
     \item
@@ -612,22 +631,21 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
   \end{enumerate}
 \end{lemma}
 \begin{proof}
-  We show properties 1 and 2 via structural induction on the realigned schedule $S_{\real}$.
-  Then we show that invariant 2 implies invariant 3.
-  For the induction base, consider $S_{\aug}$ and let $V$ be an arbitrary valley in $S_{\aug}$ and $C$ the critical set with $C \sim V, \crit(V) \coloneqq c$.
+  We show Invariants 1 and 2 via structural induction on the realigned schedule $S_{\real}$.
+  Then we show that Invariant 2 implies Invariant 3.
+  For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ with $\crit(V) \geq 2$ and let $C$ the critical set with $C \sim V, c \coloneqq \crit(V)$.
 
-  We have $k_V \leq c$, otherwise $V$ contains a full busy interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$. This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
+  We must have $k_V \leq c$, otherwise $V$ would contain a full busy interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$.
+  This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
 
-  The second invariant now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are busy at $t$.
-
-  For the first invariant, let $D$ be an interval spanning $C$ with $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$.
+  Invariant 2 now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are busy at $t$. For Invariant 1, let $D$ be an interval spanning $C$ with $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$.
   With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and $|J_{V_l}| + |J_{V_r}| \geq \delta$.
   With the initial definition of $\res(V)$ we get the desired lower bound of $\res(V_l) + \res(V_r) \geq 2 \delta$.
 
-  Now suppose that invariants 1 and 2 hold at all steps of the realignment up to a specific next step.
+  Now suppose that Invariants 1 and 2 hold at all steps of the realignment up to a specific next step.
   Let $V$ again be an arbitrary valley of $\crit(V) \geq 2$ and $k$ the processor currently being filled.
   Let furthermore $k_V, k'_V$ be the critical processor for $V$ before and after, respectively, the next step in the realignment.
-  We consider four cases for the next step in the realignment.
+  There are four cases to consider for this next step.
 
   %\begin{enumerate}
   %  \item
@@ -642,7 +660,7 @@ This allows us to maintain the Invariants of Lemma~\ref{lemma:invariant} analogo
   \paragraph{Case 1:}
       Some $V' \supseteq V$ is closed on processor $k$.
       Then no valley $W$ intersecting $V$ has been closed so far on $k$.
-      Also, since $\close$ only moves the busy slot of the highest busy processor below $k$, we know that the stair property \todo{define stair property} holds within $V$ on processors $1, \ldots, k$.
+      Also, since $\close(k, \_)$ only moves the busy slot of the highest busy processor below $k$, we know that the stair property \todo{define stair property} holds within $V$ on processors $1, \ldots, k$.
       We show that the closing of $V'$ on $k$ reduces the critical processor of $V$ by at least $1$, i.e. $k'_V \leq k_V - 1$.
       If $k_V = k$, then $V' \supseteq V$ is closed on processor $k_V$ and hence by definition we have $k'_V \leq k_V - 1$.
       If $k_V < k$, suppose for contradiction that $k_V \leq k'_V \leq k$, where $k'_V \leq k$ again by definition since $V' \subseteq V$ is closed on processor $k$.
