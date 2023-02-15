@@ -167,7 +167,6 @@ This generalizes the problem of \emph{deadline-scheduling-on-intervals} introduc
 \end{proof}
 From now on, when considering an optimal schedule, we will silently assume that it fulfills the stair property based on Lemma~\ref{lemma:stair_property_opt}.
 
-\todo{Define busy, idle, off, on intervals.}
 \section{Algorithm}
 
 The following \emph{Parallel Left-to-Right} ($\PLTR$) algorithm iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
@@ -175,8 +174,8 @@ Once the current processor cannot be kept idle for any longer, it becomes busy a
 The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ of the corresponding instance of \emph{power-down scheduling with lower and upper bounds} more restrictive.
 Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
 
-Once the algorithm returns, an actual schedule can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation done during the algorithm.
-The mapping from the flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it always uses the lower-numbered processors first.
+Once the algorithm returns, an actual schedule can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation performed during $\PLTR$.
+The mapping from this flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it always uses the lower-numbered processors first.
 
 \begin{algorithm}[H]
 \caption{Parallel Left-to-Right}\label{alg:pltr}
@@ -226,6 +225,22 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in 
   \centering
   \includegraphics[width=0.6\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
   \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t$.}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{tikzpicture}[node distance={25mm}, thick, main/.style = {draw, circle}]
+    \node[main] (1) {$s$}; 
+    \node[main] (2) [right of=1] {$u_j$}; 
+    \node[main] (3) [right of=2] {$v_t$}; 
+    \node[main] (4) [above right of=3] {$w$}; 
+    \node[main] (5) [below right of=4] {$t$}; 
+    \draw[->] (1) -- node[midway, above] {$p_j$} (2);
+    \draw[->] (2) -- node[midway, above] {$1$ if $t \in E_j$} node[midway, below] {$0$ otherwise} (3);
+    \draw[->] (3) -- node[midway, above left] {$m_t - l_t$} (4);
+    \draw[->] (3) -- node[midway, above] {$l_t$} (5);
+    \draw[->] (4) -- node[midway, above right] {$P - \sum_{t \in T} l_t$} (5);
+    %\draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
+  \end{tikzpicture} 
 \end{figure}
 
 \todo{Ambiguity of $t$ used for time slots and sink in flow-network: Use $\alpha$-$\omega$ flow}
@@ -380,10 +395,10 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{proof}
 
 \begin{definition}
-  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if processor $k$ is idle at $t-1$ and busy at $t$.
+  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if $t = \min A$ for some active interval $A$ on processor $k$.
   A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
 \end{definition}
-\todo{How to replace the term \emph{activation}? Candidates: \emph{start-of-work}.}
+\todo{How to replace the term \emph{activation} (Antoniadis uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work}.}
 The following lemma provides the crucial structure required for the proof of the approximation guarantee.
 Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which an activation of processor $k$ is necessary in every feasible schedule.
 \begin{lemma}\label{lemma:critical}
@@ -946,7 +961,6 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   We construct $f$ such that $f(A) = j$ only if $d_j \in A$.
 
   Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $A$ on $k$.
-  %\todo{Define plateaus: busy intervals which are completely idle on higher processors}
   We call a busy interval $A'$ in $S_{\pltr}$ on processor $k' \in [m]$ a \emph{plateau on processor $k'$}, if all slots of $A'$ are idle for all processors above $k'$.
   Observe that plateaus (even across different processors) cannot intersect, which implies an ordering of the plateaus from left to right.
   Let $A'$ be the last plateau with $A' \subseteq A$ and let $k' \geq k$ be the processor for which this busy interval $A'$ is a plateau.
