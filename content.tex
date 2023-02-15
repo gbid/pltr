@@ -472,9 +472,10 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   \end{align}
 \end{definition}
 \begin{definition}
-  Let $C$ be a critical set. A nonempty interval $V \subseteq T$ is a \emph{valley of $\rank(C)$} if $C \sim V$ and $V$ is inclusion maximal.
-  Let $C_1, \ldots, C_l$ be the intervals contained in $C$.
-  A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$.
+A nonempty interval $V \subseteq T$ is a \emph{valley} if $V$ is inclusion maximal under the condition that $C \sim V$ for some fixed critical set $C$.
+Let $C_1, \ldots, C_l$ be the maximal intervals contained in a critical set $C$.
+A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$, and if $V \prec C$.
+\todo{Sketch some valley $V$ of some critical set $C$.}
 \end{definition}
 \begin{definition}
   \todo{Think about using a different term than \emph{to span} here, e.g.\ \emph{to partially span} or \emph{is a section of $C$}.}
