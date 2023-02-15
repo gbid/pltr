@@ -218,68 +218,68 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
-As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $s$-$t$ flow in the flow network given in Figure~\ref{fig:flow}.
+As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow}.
 
+
+%\begin{figure}[H]
+%  \centering
+%  \includegraphics[width=0.6\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
+%  \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t$.}
+%\end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.6\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
-  \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t$.}
-\end{figure}
-
-\begin{figure}[H]
   \begin{tikzpicture}[node distance={25mm}, thick, main/.style = {draw, circle}]
-    \node[main] (1) {$s$}; 
-    \node[main] (2) [right of=1] {$u_j$}; 
-    \node[main] (3) [right of=2] {$v_t$}; 
-    \node[main] (4) [above right of=3] {$w$}; 
-    \node[main] (5) [below right of=4] {$t$}; 
+    \node[main] (1) {$\alpha$};
+    \node[main] (2) [right of=1] {$u_j$};
+    \node[main] (3) [right of=2] {$v_t$};
+    \node[main] (4) [below right of=3] {$\gamma$};
+    \node[main] (5) [above right of=4] {$\omega$};
     \draw[->] (1) -- node[midway, above] {$p_j$} (2);
     \draw[->] (2) -- node[midway, above] {$1$ if $t \in E_j$} node[midway, below] {$0$ otherwise} (3);
-    \draw[->] (3) -- node[midway, above left] {$m_t - l_t$} (4);
+    \draw[->] (3) -- node[midway, left] {$m_t - l_t$} (4);
     \draw[->] (3) -- node[midway, above] {$l_t$} (5);
-    \draw[->] (4) -- node[midway, above right] {$P - \sum_{t \in T} l_t$} (5);
+    \draw[->] (4) -- node[midway, right] {$P - \sum_{t \in T} l_t$} (5);
     %\draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
-  \end{tikzpicture} 
+  \end{tikzpicture}
+  \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t \in T$.}\label{fig:flow}
 \end{figure}
 
-\todo{Ambiguity of $t$ used for time slots and sink in flow-network: Use $\alpha$-$\omega$ flow}
+%\todo{Ambiguity of $t$ used for time slots and sink in flow-network: Use $\alpha$-$\omega$ flow}
 
 \begin{lemma}\label{lemma:flow_feasibility}
-  There exists a feasible solution to a scheduling instance with lower and upper bounds $l_t, m_t$ if and only if the maximum $s$-$t$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
+  There exists a feasible solution to a scheduling instance with lower and upper bounds $l_t, m_t$ if and only if the maximum $\alpha$-$\omega$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
 \end{lemma}
 \begin{proof}
-  Let $f$ be a $s$-$t$ flow of value $|f| = P$.
+  Let $f$ be an $\alpha$-$\omega$ flow of value $|f| = P$.
   We construct a feasible schedule from $f$ respecting the lower and upper bounds given by $l_t$ and $m_t$.
   For every $j \in J$ and  $t \in T$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$ on the lowest-numbered processor not scheduling some other job.
-  Since $|f| = P$ and the capacity $c(\{s\}, V \setminus \{s\}) = P$, we have $f_{in}(u_j) = p_j$ for every $j \in J$.
+  Since $|f| = P$ and the capacity $c(\{\alpha\}, V \setminus \{\alpha\}) = P$, we have $f_{in}(u_j) = p_j$ for every $j \in J$.
   Hence $f_{out}(u_j) = \sum_{t \in E_j} f_{in}(v_t) = p_j$.
   Hence every job $j$ is scheduled in $p_j$ distinct time slots within its execution interval.
 
-  The schedule respects the upper bounds $m_t$, since $c(v_t, w) + c(v_t, t) \leq m_t - l_t + l_t$ and hence for every $t$ at most $m_t$ jobs are scheduled at $t$.
-
+  The schedule respects the upper bounds $m_t$, since $c(v_t, \gamma) + c(v_t, \omega) \leq m_t - l_t + l_t$ and hence for every $t$ at most $m_t$ jobs are scheduled at $t$.
   The schedule respects the lower bounds $l_t$, since
-  $c(V \setminus \{t\}, \{t\}) = P$ and hence
-  $f(v_t, t) = l_t$ for every slot $t$.
-  By flow conservation we then have $f_{in}(v_t) \geq l_t$ which implies that at least $l_t$ jobs are scheduled at every slot $t$.
+  $c(V \setminus \{\omega\}, \{\omega\}) = P$ and hence
+  $f(v_t, \omega) = l_t$ for every slot $t \in T$.
+  By flow conservation we then have $f_{in}(v_t) \geq l_t$, which implies that at least $l_t$ jobs are scheduled at every slot $t$.
 
   For the other direction consider a feasible schedule respecting the lower and upper bounds $l_t, m_t$.
   We construct a flow $f$ of value $P$ and show that it is maximal.
-
   If $j$ is scheduled at slot $t$ and hence $t \in E_j$,
   define $f(u_j, v_t) = 1$, otherwise $f(u_j, v_t) = 0$.
-  Define $f(s, u_j) = p_j$ for every $j \in J$.
+  Define $f(\alpha, u_j) = p_j$ for every $j \in J$.
   Hence we have $f_{in}(u_j) = p_j$
   and $f_{out}(u_j)$ must be  $p_j$ since this corresponds to the number of distinct time slots in which $j$ is scheduled.
-  Define $f(v_t, t) = l_t$ for every slot $t$.
-  Define $f(v_t, w) = f_{in}(v_t) - l_t$.
-  We have $f(v_t, w) \leq m_t - l_t$ since $f_{in}(v_t)$ corresponds to the number $\vol(t)$ of jobs scheduled at $t$, which is at most $m_t$.
+  Define $f(v_t, \omega) = l_t$ for every slot $t \in T$.
+  Define $f(v_t, \gamma) = f_{in}(v_t) - l_t$.
+  We have $f(v_t, \gamma) \leq m_t - l_t$ since $f_{in}(v_t)$ corresponds to the number $\vol(t)$ of jobs scheduled at $t$, which is at most $m_t$.
   We also have $f_{out}(v_t) = f_{in}(v_t) - l_t + l_t = f_{in}(v_t)$.
 
-  Define $f(w, t) = P - \sum_{t \in T} l_t$.
-  Then $f_{in}(w) = \sum_{t \in T} f_{in}(v_t) - l_t
+  Define $f(\gamma, \omega) = P - \sum_{t \in T} l_t$.
+  Then $f_{in}(\gamma) = \sum_{t \in T} f_{in}(v_t) - l_t
   = \sum_{t \in T} \vol(t) - \sum_{t \in T} l_t$.
-  Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(w) = P - \sum_{t \in T} l_t = f_{out}(w)$.
+  Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(\gamma) = P - \sum_{t \in T} l_t = f_{out}(\gamma)$.
 
 \end{proof}
 
@@ -346,15 +346,15 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{definition}
 \subsection{Critical set of time slots}
 \begin{lemma}\label{lemma:cut}
-  For every $s$-$t$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
+  For every $\alpha$-$\omega$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
   $c(S) \geq P - \opdef(Q(S))$ or $c(S) \geq P - \exc(Q(\bar S))$, where $Q(S) \coloneqq \{ t \mid v_t \in S \}$.
 \end{lemma}
 \begin{proof}
-  Let $(S, \bar S)$ be an $s$-$t$ cut, let $J(S) \coloneqq \{j \mid u_j \in S\}$.
+  Let $(S, \bar S)$ be an $\alpha$-$\omega$ cut, let $J(S) \coloneqq \{j \mid u_j \in S\}$.
   We consider the contribution of every node of $S$ to the capacity $c(S)$ of the cut.
-  First consider the case that $w \notin S$.
+  First consider the case that $\gamma \notin S$.
   \begin{itemize}
-    \item Node $s$: $\sum_{j \in J(\bar S)} p_j$.
+    \item Node $\alpha$: $\sum_{j \in J(\bar S)} p_j$.
     \item Node $u_j$: $|\{v_t \in \bar S \mid t \in E_j\}| = | E_j \setminus Q(S) | \geq p_j - \fv(j, Q(S))$
     \item Node $v_t$: $l_t + m_t - l_t = m_t$
   \end{itemize}
@@ -365,13 +365,13 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
     \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
     \\ &\geq P - \opdef(Q(S))\text{.}
   \end{align}
-  If $w \in S$, we have the following contributions of nodes in $S$ to the capacity of the cut:
+  If $\gamma \in S$, we have the following contributions of nodes in $S$ to the capacity of the cut:
   \begin{itemize}
-    \item Node $s$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$
+    \item Node $\alpha$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$
     \item Node $u_j$: $| E_j \setminus Q(S) |
       = | E_j \cap Q(\bar S)| \geq \pv(j, Q(\bar S))$
     \item Node $v_t$: $l_t$
-    \item Node $w$: $P - \sum_{t \in T} l_t$
+    \item Node $\gamma$: $P - \sum_{t \in T} l_t$
   \end{itemize}
   In total, we obtain the alternative lower bound
   \begin{align}
@@ -390,7 +390,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   If $\exc(Q) > 0$ for some $Q$, then some lower bound $l_t$ cannot be met.
   For the direction from right to left, consider an infeasible scheduling instance with lower and upper bounds.
   By Lemma~\ref{lemma:flow_feasibility} we have that the maximum flow $f$ for this instance has value $|f| < P$.
-  Hence, there must be a $s$-$t$ cut $(S, \bar S)$ of capacity $c(S) < P$.
+  Hence, there must be an $\alpha$-$\omega$ cut $(S, \bar S)$ of capacity $c(S) < P$.
   Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
 \end{proof}
 
