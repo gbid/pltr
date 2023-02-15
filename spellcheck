@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Prints potentially misspelled words
+cat content.tex | aspell list -t | grep -v -x -F -f spellcheck-whitelist | sort | uniq
