@@ -806,14 +806,18 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
   Since in $\fillop(k, T)$, we always close valleys for busy intervals $A$ on $k$ spanning a corresponding critical set $C$, we know that on processor $k$, busy intervals are only extended.
   Let $A \subseteq V$ be a busy interval on processor $k$ in $S_{\real}$ with $A \sim V$ and $\crit(A) \geq 2$.
   No valley $W \supseteq V$ can have been closed on $k$ since otherwise there would be no $A \subseteq V$ in $S_{\real}$.
-  Consider then the point in $\fillop(k, V)$ when the while-loop terminates.
-  Clearly at this point all $A' \subseteq V$ with $A' \sim V$ on processor $k$ have $\hat \phi(A') > k - 1$.
-  There must also be at least one such $A'$ at this point for $A \subseteq V$ to be a busy interval on $k$ in $\S_{real}$ with $A \sim V$.
+  Therefore, at some point $\fillop(k, V)$ must be called.
+  Consider the point in $\fillop(k, V)$ when the while-loop terminates.
+  Clearly at this point all busy intervals $A' \subseteq V$ with $A' \sim V$ on processor $k$ have $\hat \phi(A') > k - 1$.
+  At this point there must also be at least one such $A'$ for $A$ to be a busy interval on $k$ in $S_{\real}$ with $A \sim V$ and $A \subseteq V$.
   In particular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
 \end{proof}
+While with Lemma~\ref{lemma:phi_prop} we have our desired property for busy intervals of $\crit \geq 2$, we still have to handle busy intervals of $\crit \leq 1$.
+To be precise, we have to handle idle intervals which are surrounded only by busy intervals of $\crit \leq 1$.
+We will show that this constellation can only occur in $S_{\real}$ on processor $1$ and that the realignment has not done any modifications in these intervals, i.e.\ $S_{\pltr}$ and $S_{\real}$ do not differ.
 
 \begin{lemma}\label{lemma:activations}
-  The realignment of $S_{\aug}$ does not create new activation times but may only change the corresponding processor being activated, i.e.\ if $t \in T$ is an activation of some processor $k$ in $S_{real}$, then $t$ is also an activation of some processor $k'$ in $S_{\aug}$.
+  The realignment of $S_{\aug}$ does not create new activation times but may only change the corresponding processor being activated, i.e.\ if $t \in T$ is an activation of some processor $k$ in $S_{\real}$, then $t$ is also an activation of some processor $k'$ in $S_{\aug}$.
 \end{lemma}
 \begin{proof}
   Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an activation of some processor $k'$ where $t$ was no activation of any processor before this step.
@@ -845,9 +849,9 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
   Hence, $t$ was activation before the close already, again contradicting our initial choice of $t$.
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
-  Let $I$ an idle interval in $S_{real}$ on some processor $k$ and $A_l, A_r$ the busy intervals to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
+  Let $I$ an idle interval in $S_{\real}$ on some processor $k$ and $A_l, A_r$ the busy intervals to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
   Allow $A_l$ to be empty, i.e.\ we might have $\min I = 0$, but $A_r$ must be nonempty, i.e.\ $\max I < d^*$.
-  Then $k = 1$ and $\hat \phi(A_l \cup I \cup A_r) > 0$.
+  Then we must have $k = 1$ and $\hat \phi(A_l \cup I \cup A_r) > 0$.
 \end{lemma}
 \begin{proof}
   By Lemma~\ref{lemma:activations} and $\crit(A_r) \leq 1$, we know that $\min A_r$ is an activation of processor $1$ in $S_{\aug}$.
@@ -877,7 +881,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
   For every processor $k$, every idle interval on processor $k$ in $S_{\opt}$ intersects at most two distinct idle intervals of processor $k$ in $S_{\real}$.
 \end{lemma}
 \begin{proof}
-  Let $I_{\opt}$ be an idle interval in $S_{\opt}$ on processor $k$ intersecting three distinct idle intervals of processor $k$ in $S_{real}$.
+  Let $I_{\opt}$ be an idle interval in $S_{\opt}$ on processor $k$ intersecting three distinct idle intervals of processor $k$ in $S_{\real}$.
   Let $I$ be the middle of these idle intervals.
   Lemma~\ref{lemma:constellation} and Lemma~\ref{lemma:phi_prop} imply that $k$ busy processors are required during $I$ and its neighboring busy intervals.
   This makes it impossible for $S_{\opt}$ to be idle on processor $k$ during the whole interval $I_{\opt}$.
@@ -886,18 +890,18 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 
 \subsection{Approximation Guarantee}
 \begin{lemma}\label{lemma:costs_s_real}
-  $\costs(S_{real}) \leq 2 \OPT + P$
+  $\costs(S_{\real}) \leq 2 \OPT + P$
 \end{lemma}
 \begin{proof}
   We first show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
-  Let $mathcal{I}_1$ be the set of idle intervals on $S^k_{real}$ intersecting some $\off$-interval of $S^k_{\opt}$.
+  Let $mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ intersecting some $\off$-interval of $S^k_{\opt}$.
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
   Therefore, the costs of these idle intervals is bounded by $2 \off(S^k_{\opt})$.
 
   Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ not intersecting any $\off$-interval in $S^k_{\opt}$.
   The total length of these intervals is bounded by $\on(S^k_{\opt})$.
 
-  We continue by showing that $\busy(S_{real}) \leq 2 P$.
+  We continue by showing that $\busy(S_{\real}) \leq 2 P$.
   By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$:
   For $S_{\aug}$, an auxiliary busy slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
   Furthermore, initially $\res(V) = 2 |J(V)|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
