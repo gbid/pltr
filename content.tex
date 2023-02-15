@@ -429,6 +429,14 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   In other words, $\succeq$ defines the same order in which $\PLTR$ calculates the activations: from Top-Left to Bottom-Right.
   Equality in regard to $\succeq$ is denoted with $\sim$.
 \end{definition}
+
+%\begin{lemma}\label{lemma:critical_sets_inclusion}
+%  If $C \succeq C'$ for critical sets $C, C'$, then $C \supseteq C'$.
+%\end{lemma}
+%\begin{proof}
+%  Let $t, t' \in T$ be the activations for which $C, C'$ are critical sets for and $k, k'$ the highest processors which are activated at $t, t'$ respectively.
+%  If $C \succeq C'$, we have by definition that $k \geq k'$.
+%\end{proof}
 \begin{definition}
   Let $\rank: \{C_t\} \rightarrow \mathbb{N}$ be a mapping to the natural numbers corresponding to $\succeq$, i.e.
   \begin{align}
@@ -446,7 +454,7 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   \end{align}
 \end{definition}
 \begin{definition}
-  We extend definitions of $\rank$ and $\crit$ to general time slots $t \in T$ and intervals $D \subseteq T$ as follows.
+  We extend the definitions of $\rank$ and $\crit$ to general time slots $t \in T$ and intervals $D \subseteq T$ as follows.
   We also take the order $\succeq$ to be correspondingly extended based on this extension of $\rank$.
   \begin{align}
     \rank(t) \coloneqq
@@ -476,6 +484,8 @@ A nonempty interval $V \subseteq T$ is a \emph{valley} if $V$ is inclusion maxim
 Let $C_1, \ldots, C_l$ be the maximal intervals contained in a critical set $C$.
 A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$, and if $V \prec C$.
 \todo{Sketch some valley $V$ of some critical set $C$.}
+\todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
+  Possible fixes: require $V \prec C$ or define $\succeq$ based on $\crit$ only (Lemma valley should still work).}
 \end{definition}
 \begin{definition}
   \todo{Think about using a different term than \emph{to span} here, e.g.\ \emph{to partially span} or \emph{is a section of $C$}.}

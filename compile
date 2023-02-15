@@ -4,7 +4,7 @@ cmd='latexmk -outdir=target --pdf'
 
 if [ "$1" = "--watch" ]; then
   $cmd
-  while inotifywait -e close_write content.tex references.bib graphics/sketches/*; do
+  while inotifywait -e close_write -e modify content.tex references.bib graphics/sketches/*; do
 		$cmd
 	done;
 else
