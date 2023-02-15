@@ -1,1 +1,12 @@
-latexmk -outdir=target --pdf
+#!/bin/sh
+
+cmd='latexmk -outdir=target --pdf'
+
+if [ "$1" = "--watch" ]; then
+  $cmd
+  while inotifywait -e close_write content.tex references.bib graphics/sketches/*; do
+		$cmd
+	done;
+else
+  $cmd
+fi
