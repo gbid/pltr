@@ -245,8 +245,6 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in 
   \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t \in T$.}\label{fig:flow}
 \end{figure}
 
-%\todo{Ambiguity of $t$ used for time slots and sink in flow-network: Use $\alpha$-$\omega$ flow}
-
 \begin{lemma}\label{lemma:flow_feasibility}
   There exists a feasible solution to a scheduling instance with lower and upper bounds $l_t, m_t$ if and only if the maximum $\alpha$-$\omega$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
 \end{lemma}
@@ -725,11 +723,26 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
           Hence $t$ was idle on $k$ before (by stair-property) and therefore $t$ is idle on $k_V$ after the close (definition of close).
       \end{itemize}
       Taken together, for $t \in V$ to be busy on $k'$ after the close, $t$ must have been busy on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full busy interval $A \subseteq V$.
-      Hence $t \in A$ for some \todo{properly define partial busy intervals} \emph{partial} busy interval $A \subseteq V$ on $k'$ before the close.
+      Hence $t \in A$ for some \emph{partial} busy interval $A \subseteq V$ on $k'$ before the close.
       For $A' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$.
       \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{graphics/sketches/invariant_case1.png}\label{fig:invariant_case1}
+
+        \begin{tikzpicture}
+
+          \draw (2,0) -- (6,0) ;
+          \draw node[anchor=south west] {$k'_V$} (2,0.5) -- (6,0.5);
+
+          %\node[rectangle,
+          %draw = lightgray,
+          %text = olive,
+          %fill = green!30!black,
+          %minimum width = 4cm,
+          %minimum height = 0.5cm] (r) at (0,0) {};
+
+        \end{tikzpicture}
+
         \caption{The situation for case $1$ in Lemma~\ref{lemma:invariant}.}
       \end{figure}
       Hence there must have been a busy interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
@@ -887,14 +900,14 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{graphics/sketches/constellation.png}\label{fig:constellation}
-    \caption{}
+    \includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
+    \caption{}\label{fig:constellation}
   \end{figure}
   Let $j$ be the single job scheduled at $\min A_r$.
   We conclude by showing that $E_j \subseteq I \cup A_r$ and therefore $\hat \phi(I \cup A_r) > 0$.
   Otherwise, $j$ could be scheduled at $\min I$ or $\max A_r + 1$.
-  In the first case, $\pltr$ would have extended $A_l$ by scheduling $j$ at time $\min I$ instead of at $\min A_r$.
-  In the second case, $\pltr$ would have extended the idle interval $I$ by scheduling $j$ at $\max A_r + 1$ instead of at $\min A_r$.
+  In the first case, $\PLTR$ would have extended $A_l$ by scheduling $j$ at time $\min I$ instead of at $\min A_r$.
+  In the second case, $\PLTR$ would have extended the idle interval $I$ by scheduling $j$ at $\max A_r + 1$ instead of at $\min A_r$.
 \end{proof}
 
 \begin{lemma}\label{lemma:intersection}
@@ -961,24 +974,24 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   We construct $f$ such that $f(A) = j$ only if $d_j \in A$.
 
   Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $A$ on $k$.
-  We call a busy interval $A'$ in $S_{\pltr}$ on processor $k' \in [m]$ a \emph{plateau on processor $k'$}, if all slots of $A'$ are idle for all processors above $k'$.
+  We call a busy interval $B$ in $S_{\pltr}$ on processor $l \in [m]$ a \emph{plateau on processor $l$}, if all slots of $B$ are idle for all processors above $l$.
   Observe that plateaus (even across different processors) cannot intersect, which implies an ordering of the plateaus from left to right.
-  Let $A'$ be the last plateau with $A' \subseteq A$ and let $k' \geq k$ be the processor for which this busy interval $A'$ is a plateau.
-  By construction of $f$ and the choice of $A'$, there are at most $k' - k$ distinct jobs $j$ with $d_j \in [\min A', \max A]$ already mapped to by $f$.
-  This is since at most $k' - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min A', \max A]$.
+  Let $B$ be the last plateau with $B \subseteq A$ and let $l \geq k$ be the processor for which this busy interval $B$ is a plateau.
+  By construction of $f$ and the choice of $B$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B, \max A]$ already mapped to by $f$.
+  This is since at most $l - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min B, \max A]$.
   Refer to Figure~\ref{fig:running_time} for a visual sketch.
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{graphics/sketches/running_time.png}\label{fig:running_time}
+    \includegraphics[width=0.5\textwidth]{graphics/running_time.jpg}\label{fig:running_time}
     \caption{}
   \end{figure}
 
-  Let $C_t$ be the critical set over activation $t \coloneqq \min A'$ of processor $k'$.
-  Let $J' \coloneqq \{ j_1, \ldots, j_{k'} \}$ be the $k'$ distinct jobs scheduled at $t$.
-  We know that $\max A + 1 \notin C_t$ since $\vol(\max A + 1) < k \leq k'$ and $\max A + 1 > t$.
+  Let $C_t$ be the critical set over activation $t \coloneqq \min B$ of processor $l$.
+  Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
+  We know that $\max A + 1 \notin C_t$ since $\vol(\max A + 1) < k \leq l$ and $\max A + 1 > t$.
   Therefore, every job $j \in J'$ with $d_j \geq \max A + 1$ is scheduled at slot $\max A + 1$.
-  Hence there are at least $k' - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min A', \max A]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $A$.
+  Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B, \max A]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $A$.
 \end{proof}
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
