@@ -98,7 +98,7 @@
   Idle processors can be turned off at no cost to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy Left-to-Right algorithm guarantees an approximation factor of $2$.
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $P$ is the total processing volume.
-  Our algorithm has a running time of $O(F n \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $F$ is the running time required by a maximum-flow calculation for checking feasibility of an instance.
+  Our algorithm has a running time of $\mathcal{O}(F n \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $F$ is the running time required by a maximum-flow calculation for checking feasibility of an instance.
 \end{abstract}
 
 \tableofcontents
@@ -958,12 +958,12 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 
 \section{Running Time}
 \begin{theorem}
-  Algorithm $\PLTR$ has a running time of $O(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
+  Algorithm $\PLTR$ has a running time of $\mathcal{O}(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
 \begin{proof}
   First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$, respectively.
   Every call to $\keepidle$ searches for the maximal slot $t \in T$ after the current time slot such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
-  Using binary search this can be done in $O(F \log(d^*))$ with $F$ denoting the time required for finding the maximum flow.
+  Using binary search this can be done in $\mathcal{O}(F \log(d^*))$ with $F$ denoting the time required for finding the maximum flow.
 
   We bound the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
   Note that if $\keepidle$ returns $d^*$, then we do not have to calculate $\keepbusy$ from $d^*$ on.
