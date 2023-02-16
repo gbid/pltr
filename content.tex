@@ -727,23 +727,23 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
       For $A' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$.
       \begin{figure}[H]
         \centering
-        \includegraphics[width=0.5\textwidth]{graphics/sketches/invariant_case1.png}\label{fig:invariant_case1}
+        \includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}\label{fig:invariant_case1}
 
-        \begin{tikzpicture}
+        %\begin{tikzpicture}
 
-          \draw (2,0) -- (6,0) ;
-          \draw node[anchor=south west] {$k'_V$} (2,0.5) -- (6,0.5);
+        %  \draw (2,0) -- (6,0) ;
+        %  \draw node[anchor=south west] {$k'_V$} (2,0.5) -- (6,0.5);
 
-          %\node[rectangle,
-          %draw = lightgray,
-          %text = olive,
-          %fill = green!30!black,
-          %minimum width = 4cm,
-          %minimum height = 0.5cm] (r) at (0,0) {};
+        %  %\node[rectangle,
+        %  %draw = lightgray,
+        %  %text = olive,
+        %  %fill = green!30!black,
+        %  %minimum width = 4cm,
+        %  %minimum height = 0.5cm] (r) at (0,0) {};
 
-        \end{tikzpicture}
+        %\end{tikzpicture}
 
-        \caption{The situation for case $1$ in Lemma~\ref{lemma:invariant}.}
+        \caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}
       \end{figure}
       Hence there must have been a busy interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
 
