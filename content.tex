@@ -127,7 +127,7 @@ Each processor consumes $1$ unit of energy for every timeslot it is in the on-st
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
 In Graham's notation \citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
 
-\subsection{Busy and idle intervals}
+\subsection{Busy and Idle Intervals}
 We say a processor is \emph{busy} at time $t$ if some job is scheduled on this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
 Clearly a processor cannot be busy and off at the same time.
@@ -139,13 +139,13 @@ Observe that if a processor is idle for more than $q$ units of time, it is worth
 Our algorithm will specify for each processor when it is busy and when it is idle.
 Each processor is then defined to be in the off-state during idle intervals of length greater than $q$ and otherwise in the on-state.
 
-\subsection{Lower and upper bounds for the amount of busy processors}
+\subsection{Lower and Upper Bounds for the Amount of Busy Processors}
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors were allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$.
 For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
 This generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
 
-\subsection{Properties of an optimal schedule}
+\subsection{Properties of an Optimal Schedule}
 \begin{definition}\label{def:stair_property}
   Given some arbitrary but fixed order on the number of processors, a schedule $S$ fulfills the \emph{stair-property} if it uses the lower numbered processors first, i.e.\ for every $t \in T$, if processor $k \in [m]$ is busy at $t$, then every processor $k' \leq k$ is busy at $t$.
   This symmetrically implies that if processor $k \in [m]$ is idle at $t$, then every processor $k' \geq k$ is idle at $t$.
@@ -342,7 +342,7 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \begin{definition}
   We define the \emph{excess $\exc(Q)$ of a set $Q \subseteq T$ of time slots} as the difference between the processor utilization required in $Q$ and the amount of processing volume available in $Q$, i.e. $\exc(Q) \coloneqq \sum_{t \in Q} l_t - \pv(Q)$.
 \end{definition}
-\subsection{Critical set of time slots}
+\subsection{Critical Sets of Time Slots}
 \begin{lemma}\label{lemma:cut}
   For every $\alpha$-$\omega$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
   $c(S) \geq P - \opdef(Q(S))$ or $c(S) \geq P - \exc(Q(\bar S))$, where $Q(S) \coloneqq \{ t \mid v_t \in S \}$.
@@ -551,7 +551,7 @@ A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval
   This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J(V_l)$ or $J(V_r)$.
 \end{proof}
 
-\section{Modification of our Schedule}
+\section{Modification of the PLTR-Schedule for Analysis}
 We modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
 The first step augments specific processors with auxiliary busy slots such that in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
@@ -894,16 +894,16 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   Since $A_r$ is a busy interval with $\crit(A_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
 
   For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
-  Therefore $\crit(I) \leq q$ and no valley $V$ with $V \cap [\min A_l - 1, \max A_r + 1] \neq \emptyset$ can have been closed.
+  Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min A_l - 1, \max A_r + 1] \neq \emptyset$ can have been closed during the realignment.
   \todo{Properly define what `the constellation occurs in the same way in $S_{\aug}$` means.}
-  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ on processor $1$, see Figure~\ref{fig:constellation}.
+  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $A_l$, $A_r$ are busy intervals and $I$ is an idle interval, see Figure~\ref{fig:constellation}.
 
   \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
     \caption{}\label{fig:constellation}
   \end{figure}
-  Let $j$ be the single job scheduled at $\min A_r$.
+  Let $j$ be the single job scheduled at time slot $\min A_r$.
   We conclude by showing that $E_j \subseteq I \cup A_r$ and therefore $\hat \phi(I \cup A_r) > 0$.
   Otherwise, $j$ could be scheduled at $\min I$ or $\max A_r + 1$.
   In the first case, $\PLTR$ would have extended $A_l$ by scheduling $j$ at time $\min I$ instead of at $\min A_r$.
@@ -939,7 +939,7 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   For $S_{\aug}$, an auxiliary busy slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
   Furthermore, initially $\res(V) = 2 |J(V)|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
   During $\fillop(k, T)$ every $t \in T$ is at most closed once (or rather one $V'$ containing $t$ is closed).
-  Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in $\close$.
+  Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in the subroutine $\close$.
   In conclusion, we have $\costs(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$.
 \end{proof}
 
