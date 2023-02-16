@@ -727,7 +727,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
       For $A' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$.
       \begin{figure}[H]
         \centering
-        \includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}\label{fig:invariant_case1}
+        \includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}
 
         %\begin{tikzpicture}
 
@@ -743,9 +743,9 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 
         %\end{tikzpicture}
 
-        \caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}
+        \caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}\label{fig:invariant_case1}
       \end{figure}
-      Hence there must have been a busy interval $A'' \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
+      Hence there must have been a busy interval $B \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
 
       In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
       If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
@@ -864,8 +864,8 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{graphics/sketches/activations.png}\label{fig:activations}
-    \caption{}
+    \includegraphics[width=0.5\textwidth]{graphics/sketches/activations.png}
+    \caption{}\label{fig:activations}
   \end{figure}
 
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
@@ -983,8 +983,8 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\textwidth]{graphics/running_time.jpg}\label{fig:running_time}
-    \caption{}
+    \includegraphics[width=0.5\textwidth]{graphics/running_time.jpg}
+    \caption{}\label{fig:running_time}
   \end{figure}
 
   Let $C_t$ be the critical set over activation $t \coloneqq \min B$ of processor $l$.
