@@ -343,6 +343,11 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
   We define the \emph{excess $\exc(Q)$ of a set $Q \subseteq T$ of time slots} as the difference between the processor utilization required in $Q$ and the amount of processing volume available in $Q$, i.e. $\exc(Q) \coloneqq \sum_{t \in Q} l_t - \pv(Q)$.
 \end{definition}
 \subsection{Critical Sets of Time Slots}
+
+The following Lemma~\ref{lemma:critical} provides the crucial structure required for the proof of the approximation guarantee.
+Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$. This in turn implies that an activation of processor $k$ is necessary in every feasible schedule.
+The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of $Q \subseteq T$.
+\todo{Also mention here, that this is a generalization of the feasibility characterization of~\cite{antoniadis}?}
 \begin{lemma}\label{lemma:cut}
   For every $\alpha$-$\omega$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
   $c(S) \geq P - \opdef(Q(S))$ or $c(S) \geq P - \exc(Q(\bar S))$, where $Q(S) \coloneqq \{ t \mid v_t \in S \}$.
@@ -398,12 +403,12 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \end{definition}
 \todo{How to replace the term \emph{activation} (Antoniadis uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work}.}
 The following lemma provides the crucial structure required for the proof of the approximation guarantee.
-Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which an activation of processor $k$ is necessary in every feasible schedule.
+Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$. This in turn implies that an activation of processor $k$ is necessary in every feasible schedule.
 \begin{lemma}\label{lemma:critical}
   For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
     \fv(Q) &= \vol(Q) \text{,}\\
-    \vol(t') &\geq k-1 &~\text{for all}~t' \in Q~\text{and}\\
+    \vol(t') &\geq k-1 &~\text{for all}~t' \in Q~\text{, and}\\
     \vol(t') &\geq k &~\text{for all}~t' \in Q~\text{with}~t' \geq t \text{.}
   \end{align}
 \end{lemma}
@@ -604,7 +609,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 \end{algorithmic}
 \end{algorithm}
 
-\todo{Explicitly define \emph{valley $V$ having been closed on processor $k$} as $\close(k, V)$ having been called.}
+%\todo{Explicitly define \emph{valley $V$ having been closed on processor $k$} as $\close(k, V)$ having been called.}
 
 \begin{algorithm}[H]
   \caption{Subroutines for the Realignment of $S_{\aug}$}\label{alg:real_suppl}
