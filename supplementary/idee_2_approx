@@ -2,3 +2,5 @@ Inklusionsminimale Kritsche Mengen betrachten, die dann auch "kleiner", also wen
 Können Teilintervalle dieser Critical Sets einfach immer gemerged werden?
 Betrachte hier jeweils J_V der valleys innerhalb von C und nicht V_l, V_r für Teilabschnitte von C
   => J_V sollte immer ausreichend groß sein
+
+Tracke Eigenschaften wieder nur innerhalb von Valley V für Aktivierungen von k_V
