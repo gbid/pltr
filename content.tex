@@ -345,7 +345,8 @@ If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in 
 \subsection{Critical Sets of Time Slots}
 
 The following Lemma~\ref{lemma:critical} provides the crucial structure required for the proof of the approximation guarantee.
-Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$. This in turn implies that an activation of processor $k$ is necessary in every feasible schedule.
+Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$.
+This in turn implies that an activation of processor $k$ is necessary in every feasible schedule.
 The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of $Q \subseteq T$.
 \todo{Also mention here, that this is a generalization of the feasibility characterization of~\cite{antoniadis}?}
 \begin{lemma}\label{lemma:cut}
@@ -402,15 +403,16 @@ The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a neces
   A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
 \end{definition}
 \todo{How to replace the term \emph{activation} (Antoniadis uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work}.}
-The following lemma provides the crucial structure required for the proof of the approximation guarantee.
-Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$. This in turn implies that an activation of processor $k$ is necessary in every feasible schedule.
 \begin{lemma}\label{lemma:critical}
-  For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
+  Let $Q \subseteq T$ be a set of time slots and $t \in T$ an activation of processor $k \in [m]$.
+  We call $Q$ is a \emph{tight set for activation $t$ of processor $k$} if $t \in Q$ and
+  %For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
     \fv(Q) &= \vol(Q) \text{,}\\
     \vol(t') &\geq k-1 &~\text{for all}~t' \in Q~\text{, and}\\
     \vol(t') &\geq k &~\text{for all}~t' \in Q~\text{with}~t' \geq t \text{.}
   \end{align}
+  For every activation $t$ of some processor $k \in [m]$ in $S_{\pltr}$, there exists a tight set $Q_t \subseteq T$ for activation $t$ of processor $k$.
 \end{lemma}
 \begin{proof}
   Suppose for contradiction that there is some activation $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
@@ -433,79 +435,77 @@ Intuitively, it states that for every activation $t$ of processor $k$ in the sch
   In summary, if for $t$ no $Q$ exists as characterized in the proposition, the activation of processor $k$ at $t$ could not have been the result of $\keepidle$ on processor $k$.
 \end{proof}
 
-\begin{definition}
-  We call such $Q \subseteq T$ for activations $t$ of processor $k$ characterized by Lemma~\ref{lemma:critical} \emph{tight set $Q_t$ over activation $t$ of processor $k$}.
-\end{definition}
+\begin{lemma}
+  We call a set $C_k \subseteq T$ \emph{critical set for processor $k$}, if $C_k$ fulfills that
+  \begin{itemize}
+    \item
+      $C_k \supseteq C_{k'}$ for every critical set for processor $k' > k$,
+    \item
+      $t \in C_k$ for every activation $t$ of processor $k$,
+    \item
+      $\fv(C_k) = \vol(C_k)$,
+    \item
+      $\vol(t) \geq k - 1$ for every $t \in C_k$, and
+    \item
+      $\phi(Q_k)$ is maximal.
+  \end{itemize}
+  For every processor $k \in [m]$ of $S_{\pltr}$ which is not completely idle, there exists a critical set $C_k$ for processor $k$.
+  %The set of critical processors is closed under union and for the sake of simplicity we^ 
 
-\begin{definition}
-  A \emph{critical set $C_t \subseteq T$ over an activation $t$} is the maximum of the set of tight sets $Q_t$ over activation $t$ in regard to the density $\phi$, i.e.
-  \begin{align}
-    C_t \coloneqq \argmax \{ \phi(Q) \mid Q \subseteq T~\text{is tight set over}~t \} \text{.}
-  \end{align}
-  As the set of these critical sets $C_t$ for fixed $t$ is closed under union, we take $C_t$ to be the inclusion-maximal critical set over activation $t$ for the sake of uniqueness.
-\end{definition}
+  %A set $Q_k \subseteq T$ is a \emph{tight set for processor $k$}, if $Q_k$ is a tight set for all activations $t$ of processor $k$.
+  %Lemma~\ref{lemma:critical} implies that such a $Q_k$ exists for every processor which is busy at some point in $S_{\pltr}$.
+  %Observe that for a fixed processor $k$, the set $\mathcal{Q}_k$ of tight sets $Q_k$ for processor $k$ with maximum density $\phi(Q_k)$ is closed under union.
+  %For the sake of uniqueness, we define \emph{the critical set $C_k \subseteq T$ for processor $k$} as the inclusion maximal element in this set $\mathcal{Q}_k$.
+  %A \emph{critical set $C \subseteq T$} is the critical set $C_k$ for some processor $k \in [m]$.
+\end{lemma}
+\begin{proof}
+  We show the existance by induction over the processors $m, \ldots 1$.
+  We construct a critical set $C_m$ for processor $m$ taking the union over all tight sets over activations of processor $m$.
+  This set fulfills all conditions necessary except for the maximality in regard to $\phi$.
+  Suppose that the critical sets $C_m, \ldots, C_{k+1}$ exist.
+  Take $Q_k \subseteq T$ as the union of $C_{k+1}$ and all tight sets over activations of processor $k$.
+  By our induction hypothesis, $Q_k \supseteq C_{k'}$ for all $k' > k$.
+  By construction, every activation $t$ of processor $k$ is contained in $Q_k$.
+  Finally, we have $\fv[Q_k] = \vol[Q_k]$ and $\vol(t) \geq t-1$ for every $t \in Q_k$ since all sets in the union fulfill these properties.
+\end{proof}
+
+%\begin{definition}
+%  A \emph{critical set $C_t \subseteq T$ over an activation $t$} is the maximum of the set of tight sets $Q_t$ over activation $t$ in regard to the density $\phi$, i.e.
+%  \begin{align}
+%    C_t \coloneqq \argmax \{ \phi(Q) \mid Q \subseteq T~\text{is tight set over}~t \} \text{.}
+%  \end{align}
+%  As the set of these critical sets $C_t$ for fixed $t$ is closed under union, we take $C_t$ to be the inclusion-maximal critical set over activation $t$ for the sake of uniqueness.
+%\end{definition}
 
 \subsection{Definitions based on critical sets}
-\begin{definition}
-  We define a total order $\succeq$ on the set of critical sets $C_t$ across all activations $t$.
-  For activations $t, t' \in T$ of processors $k$ and $k'$ respectively, we define $C_t \succeq C_{t'}$ if and only if $k > k'$ or $k = k'$ and $t \leq t'$.
-  In other words, $\succeq$ defines the same order in which $\PLTR$ calculates the activations: from Top-Left to Bottom-Right.
-  Equality in regard to $\succeq$ is denoted with $\sim$.
-\end{definition}
 
-%\begin{lemma}\label{lemma:critical_sets_inclusion}
-%  If $C \succeq C'$ for critical sets $C, C'$, then $C \supseteq C'$.
-%\end{lemma}
-%\begin{proof}
-%  Let $t, t' \in T$ be the activations for which $C, C'$ are critical sets for and $k, k'$ the highest processors which are activated at $t, t'$ respectively.
-%  If $C \succeq C'$, we have by definition that $k \geq k'$.
-%\end{proof}
 \begin{definition}
-  Let $\rank: \{C_t\} \rightarrow \mathbb{N}$ be a mapping to the natural numbers corresponding to $\succeq$, i.e.
-  \begin{align}
-    \rank(C_t) \geq \rank(C_{t'})
-    \iff
-    C_t \succeq C_{t'} \text{.}
-  \end{align}
-\end{definition}
-\begin{definition}
-  Let $\crit: \{C_t\} \rightarrow [m]$ be a mapping to the processors s.t.
-  \begin{align}
-    \crit(C_t) = c
-    \iff
-    c~\text{is the highest processor activated at}~t \text{.}
-  \end{align}
-\end{definition}
-\begin{definition}
-  We extend the definitions of $\rank$ and $\crit$ to general time slots $t \in T$ and intervals $D \subseteq T$ as follows.
-  We also take the order $\succeq$ to be correspondingly extended based on this extension of $\rank$.
-  \begin{align}
-    \rank(t) \coloneqq
-    \begin{cases}
-      \max \{\rank(C) \mid t \in C \}
-      & \text{if}~t \in C~\text{for some critical set}~C
-      \\0
-      & \text{otherwise}
-    \end{cases}
-  \end{align}
+  For the critical set $C_k$ of some processor $k \in [m]$, we define $\crit(C_k) \coloneqq k$.
+  Let $\succeq$ be the total order on the set of critical sets $C$ across all processors which corresponds to $\crit$, i.e.\ $C \succeq C'$ if and only if $\crit(C) \geq \crit(C')$.
+  Equality in regard to $\succeq$ is denoted with $\sim$.
+
+  We extend the definition of $\crit$ to general time slots $t \in T$ and intervals $D \subseteq T$ as follows.
+  We also take the order $\succeq$ to be correspondingly extended based on this extension of $\crit$.
   \begin{align}
     \crit(t) \coloneqq
     \begin{cases}
-      \max \{\crit(C) \mid t \in C \}
+      \max \{\crit(C) \mid C~\text{is critical set},  t \in C \}
       & \text{if}~t \in C~\text{for some critical set}~C
       \\0
       & \text{otherwise}
     \end{cases}
   \end{align}
   \begin{align}
-    \rank(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
-    \\ \crit(D) &\coloneqq \max \{ \rank(t) \mid t \in D \}
+    \crit(D) &\coloneqq \max \{ \crit(t) \mid t \in D \}
   \end{align}
 \end{definition}
+
 \begin{definition}
 A nonempty interval $V \subseteq T$ is a \emph{valley} if $V$ is inclusion maximal on condition that $C \sim V$ for some fixed critical set $C$.
+
 Let $C_1, \ldots, C_l$ be the maximal intervals contained in a critical set $C$.
-A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$, and if $V \prec C$.
+A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the valley between $C_{a}$ and $C_{a+1}$ for some $a < l$, i.e. $V = [\max C_a + 1, \min C_{a+1} - 1]$.
+  We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
 \todo{Sketch some valley $V$ of some critical set $C$.}
 \todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
   Possible fixes: require $V \prec C$ or define $\succeq$ based on $\crit$ only (Lemma valley should still work).}
@@ -518,7 +518,6 @@ A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval
 \end{definition}
 
 \begin{definition}
-  For a valley $V$, we define the jobs $J(V) \subseteq J$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
   %If $V$ is not defined, we define $J(V) \coloneqq \emptyset$.
 \end{definition}
 
@@ -529,30 +528,30 @@ A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the interval
 \end{lemma}
 \todo{Provide a rough visual sketch here}
 \begin{proof}
-  \todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math, by replacing division by multiplication, or by introducing $l \coloneq |C \cap D|$}
+  %\todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math, by replacing division by multiplication, or by introducing $l \coloneq |C \cap D|$}
   By choice of $C$ as critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
   If this inequality is fulfilled strictly, i.e.\ if
   $\vol(C \cap D) > (c-1) \cdot |C \cap D|$, then with the premise
   $\fv(C \cap D) / |C \cap D| \leq c - \delta$ we directly get $\uv(C \cap D) / |C \cap D| > \delta - 1$.
   This implies that there are at least $\delta$ jobs $j$ scheduled in $C \cap D$ with $\uv(j, C \cap D) > 0$.
   Such jobs can be scheduled in the part of $C$ not contained in $D$, i.e.\ we must have $E_j \cap (C \setminus D) \neq \emptyset$ and hence the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ must be defined.
-  These jobs must be scheduled in every $t \in V_l$ or in every $t \in V_r$ and hence be contained in $J(V_l)$ or $J(V_r)$ since they are scheduled in $C$ and the schedule is feasible.
+  Since these jobs $j$ are scheduled in $C$ only for the minimum amount possible, i.e.\ $\vol(j, C) = \fv(j, C) > 0$, they must be scheduled in every $t \in E_j \setminus C$ and are therefore contained in $J(V_l)$ or $J(V_r)$.
 
-  If on the other hand we have equality, i.e.\ $\vol(C \cap D) = (c-1) \cdot |C \cap D|$, then let $t$ be the activation of processor $c$ for which $C$ is the critical set.
+  If on the other hand we have equality, i.e.\ $\vol(C \cap D) = (c-1) \cdot |C \cap D|$, then let $t$ be an activation of processor $c$.
   Since $\vol(t) > c-1$, we must have $t \notin C \cap D$.
   By the same argument as before, we have that if $\fv(C \cap D) / |C \cap D| \leq c - \delta$, then $\uv(C \cap D) / |C \cap D| \geq \delta - 1$.
   Let $J' \coloneqq \{ j \in J \mid \uv(j, C \cap D) > 0 \}$.
-  Clearly $|J'| \geq \delta - 1$.
-  If this lower bound is fulfilled with equality, every $j \in J'$ must be scheduled in every time slot of $C \cap D$.
-  Now suppose for contradiction that all jobs $j$ scheduled during $C$ which are not contained in $J'$ have $E_j \cap C \cap D = \emptyset$.
+  Since $\uv(j, C \cap D) \leq | C \cap D |$ for every $j \in J$, we have $|J'| \geq \delta - 1$.
+  If this lower bound is fulfilled with equality, then every $j \in J'$ must be scheduled in every time slot of $C \cap D$ and hence $\fv(J', C \setminus D) = \vol(J', C \setminus D)$.
+  Now suppose for contradiction that all jobs $j$ scheduled during $C \setminus D$ which are not contained in $J'$ have $E_j \cap C \cap D = \emptyset$.
   %Now suppose for contradiction that there is no job $j$ scheduled in $C \setminus D$ with $
   %Now suppose that there is no job $j$ scheduled in $C$ such that $\spac(j, C \cap D) > 0$.
   Then $\fv(C \setminus D) = \vol(C \setminus D)$ and
-  we get $\phi(C \setminus D) > \phi(C)$ since by case assumption $\vol(C \cap D) = (c-1) \cdot |C \cap D|$.
-  In conclusion, $C \setminus D$ is still a tight set over $t$ but has higher density than $C$, contradicting the choice of $C$.
-  Therefore, there must exist a job $j \notin J'$ scheduled in $C$ which can be scheduled $C \cap D$.
+  we get $\phi(C \setminus D) > \phi(C)$ since by case assumption $\vol(C \cap D) / |C \cap D| = (c-1) < \phi(C)$.
+  With $\vol(t) \leq c - 1$ for every $t \in C \cap D$, we know that $\crit(C \cap D) \leq k$ and therefore $C \setminus D$ is still a critical set for processor $c$ but has higher density than $C$, contradicting the choice of $C$.
+  Therefore, there must exist a job $j \notin J'$ scheduled in $C \setminus D$ with an execution interval intersecting $C \cap D$.
 
-  In total, we have at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
+  In any case, we have at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
   This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J(V_l)$ or $J(V_r)$.
 \end{proof}
 
@@ -561,7 +560,8 @@ We modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
 The first step augments specific processors with auxiliary busy slots such that in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
-More specifically, it will establish that $\hat \phi(A) > k - 1$ for every $\busy$ interval $A$ on processor $k$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $A$.
+More specifically, it will establish the stronger property that $\hat \phi(A) > k - 1$ for every $\busy$ interval $A$ on processor $k$ with $\crit(A) \geq 2$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $A$.
+Idle intervals surrounded by only busy intervals $A$ with $\crit(A) \leq 1$ are then handled in Lemma~\ref{lemma:constellation} with essentially the same argument as for the original Left-to-Right algorithm.
 
 These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
 By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
@@ -591,7 +591,7 @@ In the definition of the realignment, we will call this process of filling the i
 The corresponding subroutine is called $\close(k, V)$.
 
 The crucial part is making sure that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
-For this purpose, we go through the busy intervals on each processor in the order of their rank, i.e.\ in the order of $\succeq$.
+For this purpose, we go through the busy intervals on each processor in the order of their criticality, i.e.\ in the order of $\succeq$.
 We also allow every job to be used twice for the realignment by introducing further auxiliary busy slots (for an interval $D$ spanning the critical set $C$, both the right and the left valley might be closed in the worst case).
 This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which are analogous to Lemma~\ref{lemma:valley} and Lemma~\ref{lemma:augmented}.
 
@@ -671,7 +671,7 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
 \begin{proof}
   We show Invariants 1 and 2 via structural induction on the realigned schedule $S_{\real}$.
   Then we show that Invariant 2 implies Invariant 3.
-  For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ with $\crit(V) \geq 2$ and let $C$ be the critical set with $C \sim V, c \coloneqq \crit(V)$.
+  For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ with $c \coloneqq \crit(V) \geq 2$ and let $C$ be the critical set with $C \sim V$.
 
   We must have $k_V \leq c$, otherwise $V$ would contain a full busy interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$.
   This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
@@ -751,7 +751,6 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
         \caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}\label{fig:invariant_case1}
       \end{figure}
       Hence there must have been a busy interval $B \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
-
       In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
       If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some interval $D$ spanning $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
       Our induction hypothesis also implies that for every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy before the close.
@@ -850,9 +849,10 @@ This allows us to maintain the Invariants stated in Lemma~\ref{lemma:invariant} 
   At this point there must also be at least one such $A'$ for $A$ to be a busy interval on $k$ in $S_{\real}$ with $A \sim V$ and $A \subseteq V$.
   In particular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
 \end{proof}
-While with Lemma~\ref{lemma:phi_prop} we have our desired property for busy intervals of $\crit \geq 2$, we still have to handle busy intervals of $\crit \leq 1$.
-To be precise, we have to handle idle intervals which are surrounded only by busy intervals of $\crit \leq 1$.
+While with Lemma~\ref{lemma:phi_prop} we have our desired property for busy intervals $A$ of $\crit(A) \geq 2$, we still have to handle busy intervals of $\crit(A) \leq 1$.
+To be precise, we have to handle idle intervals which are surrounded only by busy intervals $A$ of $\crit(A) \leq 1$.
 We will show that this constellation can only occur in $S_{\real}$ on processor $1$ and that the realignment has not done any modifications in these intervals, i.e.\ $S_{\pltr}$ and $S_{\real}$ do not differ for these intervals.
+With the same argument as for the original single-processor Left-to-Right algorithm, we then get that at least one processor has to be busy in any schedule during these intervals.
 
 \begin{lemma}\label{lemma:activations}
   The realignment of $S_{\aug}$ does not create new activation times but may only change the corresponding processor being activated, i.e.\ if $t \in T$ is an activation of some processor $k$ in $S_{\real}$, then $t$ is also an activation of some processor $k'$ in $S_{\aug}$.
@@ -863,19 +863,15 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   \todo{Explicitly make this into a separate lemma?}
   On processor $k$, we have seen that closing of some valley can only merge busy intervals.
   On processors above $k$, the schedule does not change.
-
   Busy slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.
   Refer to Figure~\ref{fig:activations} for a visual sketch of the situation.
-
   \begin{figure}[H]
     \centering
     \includegraphics[width=0.25\textwidth]{graphics/activations.jpg}
     \caption{}\label{fig:activations}
   \end{figure}
-
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
   Hence $t$ was already an activation before the close, contradicting our initial choice of $t$.
-
   If $t \notin V$, then $t \succ V$.
   Let $W$ be the valley such that $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
   If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
@@ -887,7 +883,7 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   Hence, $t$ was activation before the close already, again contradicting our initial choice of $t$.
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
-  Let $I$ an idle interval in $S_{\real}$ on some processor $k$ and $A_l, A_r$ the busy intervals to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
+  Let $I$ be an idle interval in $S_{\real}$ on some processor $k$ and let $A_l, A_r$ be the busy intervals directly to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
   Allow $A_l$ to be empty, i.e.\ we might have $\min I = 0$, but $A_r$ must be nonempty, i.e.\ $\max I < d^*$.
   Then we must have $k = 1$ and $\hat \phi(A_l \cup I \cup A_r) > 0$.
 \end{lemma}
@@ -895,18 +891,17 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
   By Lemma~\ref{lemma:activations} and $\crit(A_r) \leq 1$, we know that $\min A_r$ is an activation of processor $1$ in $S_{\aug}$.
   Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence on all processors (stair-property in $S_{\aug}$).
   Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
-  Therefore, no $V$ intersecting $[\max I, \max A_r]$ was closed during realignment on any processor, since this $V$ would contain $\max I$.
+  Therefore, no $V$ intersecting $[\max I, \max A_r]$ was closed during the realignment on any processor, since this $V$ would contain $\max I$.
   Since $A_r$ is a busy interval with $\crit(A_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
-
   For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
   Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min A_l - 1, \max A_r + 1] \neq \emptyset$ can have been closed during the realignment.
-  \todo{Properly define what `the constellation occurs in the same way in $S_{\aug}$` means.}
-  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $A_l$, $A_r$ are busy intervals and $I$ is an idle interval, see Figure~\ref{fig:constellation}.
+  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $A_l$, $A_r$ are busy intervals and $I$ is an idle interval, see the following figure.
 
   \begin{figure}[H]
     \centering
     \includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
-    \caption{}\label{fig:constellation}
+    %\caption{}
+    \label{fig:constellation}
   \end{figure}
   Let $j$ be the single job scheduled at time slot $\min A_r$.
   We conclude by showing that $E_j \subseteq I \cup A_r$ and therefore $\hat \phi(I \cup A_r) > 0$.
@@ -932,11 +927,11 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 \end{lemma}
 \begin{proof}
   We first show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
-  Let $mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ intersecting some $\off$-interval of $S^k_{\opt}$.
+  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) and intersecting some $\off$-interval of $S^k_{\opt}$.
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
-  Therefore, the costs of these idle intervals is bounded by $2 \off(S^k_{\opt})$.
+  Since the costs of each idle interval are at most $q$, and the costs of each off interval are exactly $q$, the costs of all idle intervals in $\mathcal{I}_1$ is bounded by $2 \off(S^k_{\opt})$.
 
-  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ not intersecting any $\off$-interval in $S^k_{\opt}$.
+  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) not intersecting any $\off$-interval in $S^k_{\opt}$.
   The total length of these intervals is bounded by $\on(S^k_{\opt})$.
 
   We continue by showing that $\busy(S_{\real}) \leq 2 P$.
@@ -992,12 +987,14 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
     \caption{}\label{fig:running_time}
   \end{figure}
 
-  Let $C_t$ be the critical set over activation $t \coloneqq \min B$ of processor $l$.
+  Let $Q_t \subseteq T$ be a tight set over activation $t \coloneqq \min B$ of processor $l$.
   Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
   We know that $\max A + 1 \notin C_t$ since $\vol(\max A + 1) < k \leq l$ and $\max A + 1 > t$.
-  Therefore, every job $j \in J'$ with $d_j \geq \max A + 1$ is scheduled at slot $\max A + 1$.
+  With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max A$ is scheduled at slot $\max A + 1$.
   Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B, \max A]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $A$.
 \end{proof}
+
+\listoftodos{}
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
