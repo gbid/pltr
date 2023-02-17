@@ -497,7 +497,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{graphics/valleys_of.jpg}
-  \caption{The valleys $V_1, V_2$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
+  \caption{The valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
 \end{figure}
 %\todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
 %  Possible fixes: require $V \prec C$ or define $\succeq$ based on $\crit$ only (Lemma valley should still work).}
@@ -515,7 +515,12 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   if $\phi(C \cap D) \leq \crit(C) - \delta$ for some $\delta \in \mathbb{N}$, then the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ is defined and $|J(V_l)| + |J(V_r)| \geq \delta$.
   Here, we take $|J(V)| \coloneqq 0$ if $V$ is not defined.
 \end{lemma}
-\todo[inline]{Provide a visual sketch for the proposition of this lemma (\emph{Valley})}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{graphics/left_right_valleys.jpg}
+  \caption{The left and right valley $V_l$ and $V_r$ of the critical set $C_k$ for processor $k$ and an interval $D$ spanning $C_k$.
+  Lemma~\ref{lemma:valley} guarantees that $\delta$ jobs are scheduled at every slot of $V_l$ or $V_r$.}\label{fig:left_right_valleys}
+\end{figure}
 \begin{proof}
   %\todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math, by replacing division by multiplication, or by introducing $l \coloneq |C \cap D|$}
   By choice of $C$ as critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
