@@ -290,60 +290,47 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in 
 \end{proof}
 
 \section{Structure of the PLTR-Schedule}
-\subsection{Preliminary Definitions}
+\subsection{Types of Volume}
 \begin{definition}
-  Let $S$ be a schedule.
-  The \emph{volume} $\vol_S(j, Q)$ of a job $j \in J$ in a set $Q \subseteq T$ of time slots is the number of time slots of $Q$ for which $j$ is scheduled by $S$.
+  For a schedule $S$, a job $j \in J$, a set $Q \subseteq T$ of time slots, we define
+  \begin{enumerate}
+    \item
+      the \emph{volume} $\vol_S(j, Q)$ as the number of time slots of $Q$ for which $j$ is scheduled by $S$,
+    \item
+      the \emph{forced volume} $\fv(j, Q)$ as the minimum number of time slots of $Q$ for which $j$ has to be scheduled in every feasible schedule, i.e.\ $\fv(j, Q) \coloneqq \max\{0; p_j - |E_j \setminus Q|\}$,
+    \item
+      the \emph{unnecessary volume} $\uv_S(j, Q)$ as the amount of volume which does not have to scheduled during $Q$, i.e.\ $\uv_S(j, Q) \coloneqq \vol_S(j, Q) - \fv(j,Q)$,
+    \item
+      the \emph{possible volume} $\pv(j, Q)$ as the maximum amount of volume which $j$ can be feasibly scheduled in $Q$, i.e.
+    $\pv(j, Q) \coloneqq \min\{ p_j, | E_j \cap Q | \}$.
+  \end{enumerate}
 \end{definition}
-\todo{Use just one definition environment for all volume definitions?}
-\begin{definition}
-  We define the \emph{forced volume} $\fv(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ of time slots as the minimum number of time slots of $Q$ for which $j$ has to be scheduled in every feasible schedule, i.e.
-  \begin{align}
-    \fv(j, Q) \coloneqq \max\{0; p_j - |E_j \setminus Q|\} \text{.}
-  \end{align}
-\end{definition}
-\begin{definition}
-  We define the \emph{unnecessary volume} $\uv_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ of time slots as the amount of volume which does not have to scheduled during $Q$, i.e.
-  \begin{align}
-    \uv_S(j, Q) \coloneqq \vol_S(j, Q) - \fv(j,Q)\text{.}
-  \end{align}
-\end{definition}
-\begin{definition}
-  We define the \emph{possible volume} $\pv(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ of time slots as the maximum amount of volume which $j$ can be feasibly scheduled in $Q$, i.e.
-  \begin{align}
-    \pv(j, Q) \coloneqq \min\{ p_j, | E_j \cap Q | \} \text{.}
-  \end{align}
-\end{definition}
-%\begin{definition}
-%  We define the \emph{space $\spac_S(j, Q)$ of job $j \in J$ in a set $Q \subseteq T$ for schedule $S$} as the number of additional time slots, which $j$ can be scheduled in $Q$, i.e.\
-%  \begin{align}
-%    \spac_S(j, Q) \coloneqq \pv(j, Q) - \vol_S(j, Q) \text{.}
-%  \end{align}
-%\end{definition}
 Since the corresponding schedule $S$ will always be clear from context, we drop the subscript for $\vol$ and $\uv$.
 We extend our volume definitions to single timeslots $t\in T$ and to sets $J' \subseteq J$ of jobs by summing over all $j \in J'$, i.e.
-\begin{align}
-  \vol(J', Q) &\coloneqq \sum_{j \in J'} \vol(j, Q)\text{,}
-  \\
-  \vol(t) &\coloneqq \vol(J, \{t\})\text{.}
-\end{align}
+$\vol(J', Q) \coloneqq \sum_{j \in J'} \vol(j, Q)$ and
+$\vol(t) \coloneqq \vol(J, \{t\})$.
 If the first parameter is dropped, we refer to the whole set $J$, i.e.\ $\vol(Q) \coloneqq \vol(J, Q)$.
 Clearly we have for every feasible schedule, every $Q \subseteq T, j \in J$ that $\fv(j, Q) \leq \vol(j, Q) \leq \pv(j, Q)$.
-
+The following definitions are closly related to these types of volume.
 \begin{definition}
-  We define the \emph{density} $\phi(Q)$ for a set $Q \subseteq T$ as the average amount of processing volume which has to be completed in every slot of $Q$, i.e.
-  $\phi(Q) \coloneqq \fv(J, Q) / |Q|$.
-  We also define $\hat \phi(Q) \coloneqq \max_{Q' \subseteq Q} \phi(Q')$.
+  Let $Q \subseteq T$ be a set of time slots.
+  We define
+  \begin{enumerate}
+    \item
+      the \emph{density} $\phi(Q) \coloneqq \fv(J, Q) / |Q|$ as the average amount of processing volume which has to be completed in every slot of $Q$,
+    \item
+      the \emph{peak density} $\hat \phi(Q) \coloneqq \max_{Q' \subseteq Q} \phi(Q')$,
+    \item
+      the \emph{deficiency} $\opdef(Q) \coloneqq \fv(Q) - \sum_{t \in Q} m_t$ as the difference between the amount of volume which has to be completed in $Q$ and the processing capacity available in $Q$,
+    \item
+      the \emph{excess} $\exc(Q) \coloneqq \sum_{t \in Q} l_t - \pv(Q)$ as the difference between the processor utilization required in $Q$ and the amount of work available in $Q$.
+  \end{enumerate}
 \end{definition}
 If $\hat \phi(Q) > k - 1$, then clearly at least $k$ processors are required in some time slot $t \in Q$ for every feasible schedule.
-\begin{definition}
-  We define the \emph{deficiency $\opdef(Q)$ of a set $Q \subseteq T$ of time slots} as the difference between the amount of volume which has to be completed in $Q$ and the processing capacity available in $Q$, i.e. $\opdef(Q) \coloneqq \fv(Q) - \sum_{t \in Q} m_t$.
-\end{definition}
-\begin{definition}
-  We define the \emph{excess $\exc(Q)$ of a set $Q \subseteq T$ of time slots} as the difference between the processor utilization required in $Q$ and the amount of processing volume available in $Q$, i.e. $\exc(Q) \coloneqq \sum_{t \in Q} l_t - \pv(Q)$.
-\end{definition}
-\subsection{Critical Sets of Time Slots}
+If $\opdef(Q) > 0$ or $\exc(Q) > 0$ for some $Q \subseteq T$, then the problem instance is clearly infeasible.
 
+
+\subsection{Critical Sets of Time Slots}
 The following Lemma~\ref{lemma:critical} provides the crucial structure required for the proof of the approximation guarantee.
 Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$.
 This in turn implies that an activation of processor $k$ is necessary in every feasible schedule.
@@ -402,7 +389,7 @@ The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a neces
   A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if $t = \min A$ for some active interval $A$ on processor $k$.
   A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
 \end{definition}
-\todo{How to replace the term \emph{activation} (Antoniadis uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work}.}
+\todo{How to replace the term \emph{activation} (\cite{antoniadis} uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work}.}
 \begin{lemma}\label{lemma:critical}
   Let $Q \subseteq T$ be a set of time slots and $t \in T$ an activation of processor $k \in [m]$.
   We call $Q$ is a \emph{tight set for activation $t$ of processor $k$} if $t \in Q$ and
@@ -450,7 +437,7 @@ The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a neces
       $\phi(Q_k)$ is maximal.
   \end{itemize}
   For every processor $k \in [m]$ of $S_{\pltr}$ which is not completely idle, there exists a critical set $C_k$ for processor $k$.
-  %The set of critical processors is closed under union and for the sake of simplicity we^ 
+  %The set of critical processors is closed under union and for the sake of simplicity we^
 
   %A set $Q_k \subseteq T$ is a \emph{tight set for processor $k$}, if $Q_k$ is a tight set for all activations $t$ of processor $k$.
   %Lemma~\ref{lemma:critical} implies that such a $Q_k$ exists for every processor which is busy at some point in $S_{\pltr}$.
@@ -459,7 +446,7 @@ The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a neces
   %A \emph{critical set $C \subseteq T$} is the critical set $C_k$ for some processor $k \in [m]$.
 \end{lemma}
 \begin{proof}
-  We show the existance by induction over the processors $m, \ldots 1$.
+  We show the existence by induction over the processors $m, \ldots 1$.
   We construct a critical set $C_m$ for processor $m$ taking the union over all tight sets over activations of processor $m$.
   This set fulfills all conditions necessary except for the maximality in regard to $\phi$.
   Suppose that the critical sets $C_m, \ldots, C_{k+1}$ exist.
