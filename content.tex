@@ -219,8 +219,8 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
-\todo[inline]{Is is possible to formulate and format $\keepbusy$ and  $\keepidle$ nicer?}
-As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow}.
+\todo[inline]{Is is possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
+As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow}.
 
 
 %\begin{figure}[H]
@@ -245,7 +245,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in 
     %\draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
   \end{tikzpicture}
   \caption{The Flow-Network for checking feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
-  There is a node $u_j$ and $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
+  There is a node $u_j$, $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
   }\label{fig:flow}
 \end{figure}
 
@@ -396,7 +396,7 @@ The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a neces
 \todo[inline]{How to replace the term \emph{activation} (\cite{antoniadis} uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work}.}
 \begin{lemma}\label{lemma:critical}
   Let $Q \subseteq T$ be a set of time slots and $t \in T$ an activation of processor $k \in [m]$.
-  We call $Q$ is a \emph{tight set for activation $t$ of processor $k$} if $t \in Q$ and
+  We call $Q$ a \emph{tight set for activation $t$ of processor $k$} if $t \in Q$ and
   %For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
     \fv(Q) &= \vol(Q) \text{,}\\
