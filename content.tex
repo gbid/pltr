@@ -17,7 +17,7 @@
 %\usepackage{float}
 %\usepackage{cite}
 %\counterwithin{figure}{section}
-\newcommand{\sectionbreak}{\clearpage}
+%\newcommand{\sectionbreak}{\clearpage}
 \usepackage[round]{natbib}
 \usepackage{float}
 \usepackage{svg}
@@ -100,8 +100,10 @@
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $P$ is the total processing volume.
   Our algorithm has a running time of $\mathcal{O}(F n \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $F$ is the running time required by a maximum-flow calculation for checking feasibility of an instance.
 \end{abstract}
+\clearpage
 
 \tableofcontents
+\clearpage
 
 \section{Introduction}
 
@@ -197,7 +199,7 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
 \end{algorithm}
 
 \begin{algorithm}[H]
-\caption{Auxiliary subroutines for $\PLTR$}\label{alg:keep}
+\caption{Subroutines for $\PLTR$}\label{alg:keep}
 \begin{algorithmic}
   \Function{$\keepidle$}{$k, t$}
     \State{search for maximal $t' > t$ s.t.\
@@ -496,7 +498,7 @@ By choice of $C$ as critical set (property 1), a valley of $C$ is indeed a valle
 We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{graphics/valleys_of.jpg}
+  \includegraphics[width=1\textwidth]{graphics/valleys_of.jpg}
   \caption{The valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
 \end{figure}
 %\todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
@@ -561,7 +563,7 @@ These modification steps are only done for the sake of the analysis of the origi
 By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
 
 \subsection{Augmentation}
-\todo{Make this into a proper definition of $S_{\aug}$?}
+%\todo{Make this into a proper definition of $S_{\aug}$?}
 We transform $S_{\pltr}$ into the \emph{augmented schedule $S_{\aug}$} by adding for every $t$ with $k \coloneqq \crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
 No job is scheduled in this auxiliary busy slot on processor $k$ and it does also not count towards the volume of this slot.
 It merely forces processor $k$ to be in the on-state at time $k$ and allows us to keep thinking in terms of $\idle$ and $\busy$ intervals in our analysis of the costs.
@@ -587,7 +589,7 @@ The corresponding subroutine is called $\close(k, V)$.
 The crucial part is ensuring that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
 For this purpose, we go through the busy intervals on each processor in the order of their criticality, i.e.\ in the order of $\succeq$.
 We also allow every job to be used twice for the realignment by introducing further auxiliary busy slots (for an interval $D$ spanning the critical set $C$, both the right and the left valley might be closed in the worst case).
-This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which are roughly analogous to the properties of Lemma~\ref{lemma:valley} and~\ref{lemma:augmented}.
+This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which correspond to the properties of Lemma~\ref{lemma:valley} and~\ref{lemma:augmented}.
 
 
 
@@ -723,13 +725,11 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       \end{itemize}
       Taken together, for $t \in V$ to be busy on $k'$ after the close, $t$ must have been busy on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full busy interval $A \subseteq V$.
       Hence $t \in A$ for some \emph{partial} busy interval $A \subseteq V$ on $k'$ before the close.
-      For $A' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$.
+      For $A' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$, as shown in the following figure.
       \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}
-
         %\begin{tikzpicture}
-
         %  \draw (2,0) -- (6,0) ;
         %  \draw node[anchor=south west] {$k'_V$} (2,0.5) -- (6,0.5);
 
@@ -741,8 +741,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
         %  %minimum height = 0.5cm] (r) at (0,0) {};
 
         %\end{tikzpicture}
-
-        \caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}\label{fig:invariant_case1}
+        %\caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}\label{fig:invariant_case1}
       \end{figure}
       Hence there must have been a busy interval $B \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
