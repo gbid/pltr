@@ -180,7 +180,7 @@ Once the algorithm returns, an actual schedule can easily be constructed by runn
 The mapping from this flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it always uses the lower-numbered processors first.
 
 \begin{algorithm}[H]
-  \caption{Parallel Left-to-Right ($\PLTR$)}\label{alg:pltr}
+  \caption{Parallel Left-to-Right}\label{alg:pltr}
 \begin{algorithmic}
   \State{$m_t \gets m$ for all $t \in T$}
   \State{$l_t \gets 0$ for all $t \in T$}
@@ -244,8 +244,8 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the feasibility check in 
     \draw[->] (4) -- node[midway, right] {$P - \sum_{t \in T} l_t$} (5);
     %\draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
   \end{tikzpicture}
-  \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
-  There is a corresponding node $u_j$ for every job $j \in J$ and a node $v_t$ for every time slot $t \in T$.
+  \caption{The Flow-Network for checking feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
+  There is a node $u_j$ and $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
   }\label{fig:flow}
 \end{figure}
 
@@ -390,7 +390,7 @@ The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a neces
 \end{proof}
 
 \begin{definition}
-  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if $t = \min A$ for some active interval $A$ on processor $k$.
+  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if $t = \min A$ for some busy interval $A$ on processor $k$.
   A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
 \end{definition}
 \todo[inline]{How to replace the term \emph{activation} (\cite{antoniadis} uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work}.}
@@ -925,19 +925,19 @@ With the same argument as for the original single-processor Left-to-Right algori
 \end{lemma}
 \begin{proof}
   We first show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
-  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) and intersecting some $\off$-interval of $S^k_{\opt}$.
+  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) which intersect some $\off$-interval of $S^k_{\opt}$.
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
   Since the costs of each idle interval are at most $q$, and the costs of each off interval are exactly $q$, the costs of all idle intervals in $\mathcal{I}_1$ is bounded by $2 \off(S^k_{\opt})$.
-  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) not intersecting any $\off$-interval in $S^k_{\opt}$.
+  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) which do not intersect any $\off$-interval in $S^k_{\opt}$.
   The total length of these intervals is bounded by $\on(S^k_{\opt})$.
 
   We continue by showing that $\busy(S_{\real}) \leq 2 P$.
   By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$:
   For $S_{\aug}$, an auxiliary busy slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
   Furthermore, initially $\res(V) = 2 |J(V)|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
-  During $\fillop(k, T)$ every $t \in T$ is at most closed once (or rather one $V'$ containing $t$ is closed).
+  During $\fillop(k, T)$ every $t \in T$ is closed at most once (or rather one $V'$ containing $t$ is closed).
   Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in the subroutine $\close$.
-  In conclusion, we have $\costs(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$.
+  In conclusion, we have $\costs(S_{\real}) = \idle(S_{\real}) + \busy(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$.
 \end{proof}
 
 
