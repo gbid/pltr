@@ -1,0 +1,32 @@
+TODO
+Kürzen auf 12 Seiten
+  New-lines
+  Sketches
+  Lemmata zusammenfassen
+    Lemma 18 ff
+    Lemma 23, Theorem 24
+  Lemma 7 enger formattieren?
+  Kurze Paragraphen zusammenfassen oder rausschmeißen
+
+Abstract Akzent zu Einfachheit von LtR setzen
+Introduction
+  Previous Work
+  Left-to-Right (also proofs?)
+  .........
+
+Include Formal Definition of Costs as in Master's thesis:
+  On/Off
+  Idle/Busy
+  Handle idle-intervals ending at d^* separately?
+
+Algorithm description: mention correspondence of feasibility for LTR (EDF) to PLTR (Flow)
+Define Flow-Network not just with figure but also in text
+Lemma 3 schöner ausformulieren?
+Replace "activation" with "becomes busy"(?)
+Replace $A$ for busy intervals with $B$?
+Definition 12 zu \crit aufhübschen
+Replace "to span" with "section of"
+Include min V - 1, max V + 1 in Invariant 2?
+Realignment: don't list them as Algorithms
+Stress that realignment ist not part of algorithm
+
