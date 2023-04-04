@@ -205,13 +205,13 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
 \begin{algorithmic}
   \Function{$\keepidle$}{$k, t$}
     \State{search for maximal $t' > t$ s.t.\
-    exists feasible schedule with $m_{t''} \gets k-1$ for all $t'' \in [t, t')$}
+    exists feasible schedule with $m_{t''}$ set to $k-1$ for all $t'' \in [t, t')$}
     \State{$m_{t''} \gets k - 1$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
   \Function{$\keepbusy$}{$k, t$}
     \State{search for maximal $t' > t$ s.t.\
-    exists feasible schedule with $l_{t''} \gets \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
+    exists feasible schedule with $l_{t''}$ set to $\max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{$l_{t''} \gets \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
@@ -221,7 +221,7 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
-\todo[inline]{Is is possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
+\todo[inline]{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
 As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow}.
 
 
@@ -246,7 +246,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
     \draw[->] (4) -- node[midway, right] {$P - \sum_{t \in T} l_t$} (5);
     %\draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
   \end{tikzpicture}
-  \caption{The Flow-Network for checking feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
+  \caption{The Flow-Network for checking feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
   There is a node $u_j$, $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
   }\label{fig:flow}
 \end{figure}
@@ -589,7 +589,7 @@ In the definition of the realignment, we will call this process of filling the i
 The corresponding subroutine is called $\close(k, V)$.
 
 The crucial part is ensuring that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
-For this purpose, we go through the busy intervals on each processor in the order of their criticality, i.e.\ in the order of $\succeq$.
+For this purpose, we go through the busy intervals on each processor in decreasing order of their criticality, i.e.\ in the order of $\succeq$.
 We also allow every job to be used twice for the realignment by introducing further auxiliary busy slots (for an interval $D$ spanning the critical set $C$, both the right and the left valley might be closed in the worst case).
 This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which correspond to the properties of Lemma~\ref{lemma:valley} and~\ref{lemma:augmented}.
 
@@ -818,7 +818,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
 \end{proof}
 
 \begin{lemma}\label{lemma:s_real}
-  The result $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
+  The resulting schedule $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
 \end{lemma}
 \begin{proof}
   %The invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of the subroutine $\fillop$, the corresponding busy interval $A$ indeed spans the corresponding critical set $C$ with $C \sim A$ and that the left valley $V_r$ or the left valley $V_l$ is and there is sufficient $\res$ that one of them is closed.
@@ -934,10 +934,10 @@ With the same argument as for the original single-processor Left-to-Right algori
   The total length of these intervals is bounded by $\on(S^k_{\opt})$.
 
   We continue by showing that $\busy(S_{\real}) \leq 2 P$.
-  By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$:
+  By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$.
   For $S_{\aug}$, an auxiliary busy slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
   Furthermore, initially $\res(V) = 2 |J(V)|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
-  During $\fillop(k, T)$ every $t \in T$ is closed at most once (or rather at most a single $V'$ containing $t$ is closed).
+  During $\fillop(k, T)$ at most a single $V'$ containing $t$ is closed for every $t \in T$.
   Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in the subroutine $\close$.
   In conclusion, we have $\costs(S_{\real}) = \idle(S_{\real}) + \busy(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$.
 \end{proof}

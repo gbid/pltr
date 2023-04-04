@@ -1,0 +1,38 @@
+Nach Wiese:
+
+Abstract:
+Problem, Wichtigkeit, Previous results with approach
+In this paper: algorithm simpler than previous algorithms: algorithmic idea (greedy, combinatorial, natural extension of LTR as simplest algorithmic idea for single processor)
+
+Introduction:
+Informal Problem description:
+Scheduling Jobs with release times and deadlines on homogeneous processors with a power-down mechansim while minimizing consumed energy.
+"Classical Problem going back on Graham"
+=> Quite fundamental problem posed by Irani (2006 oder 2003?)
+
+?Simple greedy algorithm Left-to-Right for single processor.?
+
+Formal Problem definition
+Previous Work with comments
+Practical settings: "m small => consider m \in O(1)"
+Approaches of previous work (both in algorithm and analysis?)
+Our contribution:
+  "No LP, LP-hierachies"
+  => "We believe that this makes the algorithm and the analysis easier to understand"
+  "Running time is ... so asymptotically better than the running time by ..."
+  "Our algorithm is actually pretty simple: informal description"
+  ...
+  "While our analysis borrows ideas from the mentioned previous results, we believe that our algorithm and our analysis are simpler and more accessible"
+
+Main part:
+Algorithm
+Analysis:
+  Lemma: running time
+  Now: approximation ratio
+  Subsection: Laminar family of intervals (Definition without Def-Env
+  Subsection: Guessed, top, and bottom jobs
+  Subsection: Few rejected jobs
+    {(Lemma, Proof)} with small comments in between
+    Theorem: There exists an algorithm for problem ... that is a ... approximation and runs in time ...
+
+
