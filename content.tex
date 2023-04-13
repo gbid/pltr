@@ -106,6 +106,44 @@
 %\clearpage
 
 \section{Introduction}
+\todo{Energy consumption blabla: global energy consumption, battery powered devices}
+\paragraph{Informal problem description}
+One of the two fundamental power-management techniques are power-down mechanisms.
+In the most basic setting, the computing device has two possible states, the active and the sleep state.
+The active state allows the device to perform computations while consuming energy at a fixed rate.
+In the sleep state, no energy is consumed but also no computations can be performed.
+Transitioning from the sleep state to the active state incurs additonal energy consumption.
+The goal is to perform all necessary work while putting the device into the sleep state when it is idle for long periods such that the overall consumed energy is minimal.
+Intuitively, one aims for long but few idle intervals during which it is worthwhile to put the device into the sleep state.
+\todo{Talk about online/offline stuff?}
+\todo{More formally define problem.}
+\todo{Talk about parallel version already here}
+
+\subsection{Previous work}
+This fundamental problem in power management was first considered by~\cite{algorithmic_problems_in_power_management_irani} (TODO) in which they devised arguably the simplest algorithm one can think of for the case of a single processor.
+Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a 2-approximation and proceeds as follows.
+If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily keeps the processor busy for as long as possible, always working on the released job with the earliest deadline.
+Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed before their deadlines.
+At this point, the processor becomes active again and $\ltr$ proceeds recursively until all jobs are completed.
+(TODO) The processor is defined to be in the sleep state for idle intervals which are sufficiently long such that it is worthwhile to transition to the sleep state.
+
+\paragraph{Single Processor Setting}
+The problem for a single processor was solved optimally by~\cite{baptiste_general_jobs} in time $\mathcal{O}(n^5)$.
+Their dynamic programming algorithm is quite involved and builds upon the dynamic program devised by~\cite{baptiste_unit_jobs} for unit size jobs.
+
+\paragraph{Multi-Processor Setting}
+Current consumer-grade processors are equipped with multiple cores and modern data centers consist of thousands of processors which in turn might contain millions of cores in total.
+
+
+
+
+
+
+
+
+
+
+
 \todo[inline]{Previous work}
 \subsection{Previous work}
 

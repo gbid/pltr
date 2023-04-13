@@ -1,3 +1,24 @@
+Gliederung Introduction analog zu Antoniadis:
+  Energy blabala: battery powered devices, global energy consumption of ICT
+  Power-down mechanism
+  (More) Formal Problem description
+  Previous work
+    Fundamental problem posed by Irani, Left-to-Right
+    Single processor case: solved by Baptiste, Baptiste
+    Multiprocessor case:
+      First result for unit-case jobs: DP by Deamine
+        (building on involved DP by Baptiste)
+      x years later: first approximation guarantee by Antoniadis:
+        3-approx, improved to 2-approx
+        involved IP/LP relaxiation with rounding
+      Informal hardness reasons
+    NP-hardness?
+  Our contribution
+
+    
+
+
+
 Nach Wiese:
 
 Abstract:
@@ -5,6 +26,7 @@ Problem, Wichtigkeit, Previous results with approach
 In this paper: algorithm simpler than previous algorithms: algorithmic idea (greedy, combinatorial, natural extension of LTR as simplest algorithmic idea for single processor)
 
 Introduction:
+Decide: Energy-efficiency in computing blabla | Notoriously hard problem of power-down mechanism
 Informal Problem description:
 Scheduling Jobs with release times and deadlines on homogeneous processors with a power-down mechansim while minimizing consumed energy.
 "Classical Problem going back on Graham"
