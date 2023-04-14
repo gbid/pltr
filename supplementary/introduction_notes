@@ -11,6 +11,7 @@ Gliederung Introduction analog zu Antoniadis:
       x years later: first approximation guarantee by Antoniadis:
         3-approx, improved to 2-approx
         involved IP/LP relaxiation with rounding
+        TODO: describe what they are doing more thoroughly!
       Informal hardness reasons
     NP-hardness?
   Our contribution

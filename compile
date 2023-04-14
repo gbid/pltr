@@ -1,6 +1,7 @@
 #!/bin/sh
 
-cmd='latexmk -outdir=target --pdf'
+#latexmk -pvc -pdf "$1" </dev/null
+cmd='latexmk -pvc -outdir=target --pdf'
 
 if [ "$1" = "--watch" ]; then
   $cmd
