@@ -113,15 +113,15 @@ In the most basic setting, the computing device has two possible states, an acti
 The active state allows the device to perform computations while consuming energy at a fixed rate.
 In the sleep state, no energy is consumed but no computations can be performed.
 Transitioning from the sleep state to the active state consumes additonal energy.
-The device has to complete a number of jobs, each with it's own interval during which it can be executed.
+The device has to complete a number of jobs, each with it's own interval during which it has to be executed.
 The goal is to complete all jobs during their respective execution intervals while putting the device into the sleep state when it is idle for long periods such that the overall consumed energy is minimal.
 Intuitively, one aims for long but few idle intervals during which it is worthwhile to put the device into the sleep state.
 \todo[inline]{Talk about online/offline stuff?}
 \todo[inline]{More formally define problem.}
 \todo[inline]{Talk about parallel version already here}
 
-\subsection{Previous work}
-This fundamental problem in power management was first considered by~\cite{irani_left_to_right_soda_2003} in which they devised arguably the simplest algorithm one can think of for the case of a single processor.
+\paragraph{Previous work}
+This fundamental problem in power management was first considered by~\cite{irani_left_to_right_soda_2003} in which they devised arguably the simplest algorithm one can think of for the special case of a single processor.
 Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a 2-approximation and proceeds as follows.
 If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily keeps the processor busy for as long as possible, always working on the released job with the earliest deadline.
 Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
@@ -132,19 +132,21 @@ At this point, the processor becomes busy again and $\ltr$ proceeds recursively 
 \todo[inline]{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
 Also mention like Demaine that the problem without objective functions is one of the fundamental scheduling settings}
 The problem for a single processor was solved optimally by~\cite{baptiste_general_jobs} in time $\mathcal{O}(n^5)$.
-Their dynamic programming algorithm is quite involved and builds upon the dynamic program devised by~\cite{baptiste_unit_jobs} for unit size jobs.
-\todo[inline]{Describe DP approach?}
+Their dynamic programming algorithm is quite involved and builds upon the dynamic program devised by~\cite{baptiste_unit_jobs} for jobs with unit processing volume.
+\todo[inline]{Describe why DP approach and why it is very complex}
+\todo[inline]{Mention and/or describe approximation algorithms by~\cite{antoniadis} and~\cite{skeletons} or is this bad because it mentions a small running time?}
 
 \paragraph{Multi-Processor Setting}
-\todo[inline]{Cite that~\ref{baptiste_general_jobs} explicitly mentions multi-processor setting as open question?}
+\todo[inline]{Cite that~\cite{baptiste_general_jobs} explicitly mentions multi-processor setting as open question?}
+\todo[inline]{Move the motivation for multi-processor setting to first paragraph}
 Small battery powered state-of-the-art devices such as smartphones are already equipped with four to eight processors while modern data centers consist of thousands of servers which might in total contain millions of cores.
 The multi-processor case is therefore becoming more relevant than in recent years.
-The first result for an arbitrary number of processors $m$ was given by~\ref{demaine}.
-They solved the special case of jobs with unit processing volume by building on the dynamic program approach of~\cite{baptiste_unit_jobs}.
-Their algorithm gives an optimal schedule and runs in time $\mathcal{O(n^7p^5)}$.
+The first result for an arbitrary number of processors $m$ was given by~\cite{demaine}.
+They solved the special case of jobs with unit processing volume by building on the dynamic programming approach of~\cite{baptiste_unit_jobs}.
+Their algorithm gives an optimal schedule and runs in time $\mathcal{O}(n^7p^5)$.
 Obtaining good solutions for general job weights is difficult because every job can be worked on by at most a single processor at the same time.
 Note that this is no additional restriction for the former special case of unit processing volumes since time is discrete in our problem setting.
-Interestingly, it took $13$ further years for the first non-trivial result on the general case of multiple processors and general processing volumes to be published.
+Interestingly, it took further thirteen years for the first non-trivial result on the general case of multiple processors and general processing volumes to be developed.
 In their breakthrough paper,~\cite{antoniadis} developed the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
 This factor was further improved to $2$ in~\cite{skeletons}.
@@ -162,19 +164,19 @@ from just one to all available machines.}}
 
 It is an open problem whether constructing an optimal schedule is NP hard.
 
+\paragraph{Contribution}
+The previously mentioned greedy algorithm Left-to-Right is arguably the simplest algorithm one can think of for the case of a single processor.
+We show that the natural extension of Left-to-Right to multiple processors, which proceeds Top-Left-to-Bottom-Right when visually stacking the processors on top of each other, still guarantees a solution of costs $2 \OPT + P$, where $P$ is the total processing volume.
+In particular, our simple greedy algorithm does not rely on LP-relaxations and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
+It also does not rely on the concept of multi-processor skeletons which is fundamental for the combinatorial $6$-approximation of~\cite{skeletons}.
+More specifically, our simple generalization of Left-to-Right only relies on the original greedy policy: keep processors in their current state (busy or idle) as long as possible while guaranteeing feasibility.
+For the case of a single processor, Left-to-Right ensures feasibility by scheduling jobs according to the fundamental earliest-deadline-first policy (EDF).
+For the case of multiple processors, a simple flow calculation is required for calculating a feasible schedule, since EDF is not sufficient anymore.
+Correspondingly, our generalization of Left-to-Right uses these flow calculations for ensuring feasibility.
+\todo[inline]{The main technical contribution \ldots}
 
 
-
-
-\todo[inline]{Previous work}
-\subsection{Previous work}
-
-We study a scheduling setting with a \emph{power-down mechanism} and processors working in parallel.
-In this setting, a system consisting of multiple homogeneous processors has to process a set of jobs while minimizing the energy consumed.
-Each job has an individual time interval during which it has to be processed.
-Idle processors can be turned off so as to save energy, while turning them on requires a fixed amount of energy.
-Intuitively one aims for few but long idle periods during which it is worthwhile to turn a processor off.
-
+\paragraph{Formal problem description}
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
@@ -229,7 +231,7 @@ This generalizes the problem of \emph{deadline-scheduling-on-intervals} introduc
   Jobs are only moved between processor at the same time slot and only to slots of processor $k'$ which are idle, hence the resulting schedule is still feasible.
   This modification can be repeated until the schedule has the desired property.
 \end{proof}
-From now on, when considering an optimal schedule, we will silently assume that it fulfills the stair property based on Lemma~\ref{lemma:stair_property_opt}.
+From now on whenever we consider an optimal schedule, we will silently assume based on Lemma~\ref{lemma:stair_property_opt} that this optimal schedule fulfills the stair property.
 
 \section{Algorithm}
 

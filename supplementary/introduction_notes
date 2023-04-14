@@ -57,5 +57,3 @@ Analysis:
   Subsection: Few rejected jobs
     {(Lemma, Proof)} with small comments in between
     Theorem: There exists an algorithm for problem ... that is a ... approximation and runs in time ...
-
-
