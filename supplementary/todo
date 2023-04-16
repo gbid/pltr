@@ -38,8 +38,18 @@ Formattierungen:
     Als svg einbinden wie in Masterarbeit
 
 Polynomial time: 
-  Beweise durchgehen
-  Überlegen, wie viel und ob ich sie aufschreiben soll
+  Nach meinem Ansatz:
+    Anfangs T = { 0 } \cup { r_i, d_i | i \in J } = {0, T_1, ..., T_{2n} und entsprechende Kapazitäten
+    Suche in keepidle/keepactive nach t_2 immernoch in 1, ..., d_max
+    Füge t2 zu T hinzu
+    => |T| <= 3n zu allen Zeiten, damit |V| <= 4n + 2 Knoten
+    ? trotzdem \Omega(n^2) Kanten?
+    Aufpassen: Antoniadis vereinfacht Assignment zu "Anzahl der aktiven (on?) Prozessoren"
+      => Liefert das dieser Ansatz auch? (sollte passen, da PLTR ja gerade m_t, l_t tight spezifiziert)
+      => Für Flussberechnungen in keepidle/keepactive sollte es in jedem Fall ausreichen
+  Nach Antoniadis:
+    Beweise durchgehen
+    Überlegen, wie viel und ob ich sie aufschreiben soll
 
 Acknoledgement Albers
 

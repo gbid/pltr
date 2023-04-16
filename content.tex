@@ -49,6 +49,7 @@
 \DeclareMathOperator{\pltr}{pltr}
 \DeclareMathOperator{\PLTR}{PLTR}
 \DeclareMathOperator{\ltr}{LTR}
+\DeclareMathOperator{\LTR}{LTR}
 \DeclareMathOperator{\aug}{aug}
 \DeclareMathOperator{\real}{real}
 \DeclareMathOperator{\fv}{fv}
@@ -102,7 +103,7 @@
 \end{abstract}
 %\clearpage
 
-\tableofcontents
+%\tableofcontents
 %\clearpage
 
 \section{Introduction}
@@ -115,7 +116,7 @@ In the sleep state, no energy is consumed but no computations can be performed.
 Transitioning from the sleep state to the active state consumes additonal energy.
 The device has to complete a number of jobs, each with it's own interval during which it has to be executed.
 The goal is to complete all jobs during their respective execution intervals while putting the device into the sleep state when it is idle for long periods such that the overall consumed energy is minimal.
-Intuitively, one aims for long but few idle intervals during which it is worthwhile to put the device into the sleep state.
+Intuitively, one aims for long but few idle intervals, during which it is worthwhile to put the device into the sleep state.
 \todo[inline]{Talk about online/offline stuff?}
 \todo[inline]{More formally define problem.}
 \todo[inline]{Talk about parallel version already here}
@@ -166,14 +167,28 @@ It is an open problem whether constructing an optimal schedule is NP hard.
 
 \paragraph{Contribution}
 The previously mentioned greedy algorithm Left-to-Right is arguably the simplest algorithm one can think of for the case of a single processor.
-We show that the natural extension of Left-to-Right to multiple processors, which proceeds Top-Left-to-Bottom-Right when visually stacking the processors on top of each other, still guarantees a solution of costs $2 \OPT + P$, where $P$ is the total processing volume.
-In particular, our simple greedy algorithm does not rely on LP-relaxations and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
-It also does not rely on the concept of multi-processor skeletons which is fundamental for the combinatorial $6$-approximation of~\cite{skeletons}.
-More specifically, our simple generalization of Left-to-Right only relies on the original greedy policy: keep processors in their current state (busy or idle) as long as possible while guaranteeing feasibility.
-For the case of a single processor, Left-to-Right ensures feasibility by scheduling jobs according to the fundamental earliest-deadline-first policy (EDF).
-For the case of multiple processors, a simple flow calculation is required for calculating a feasible schedule, since EDF is not sufficient anymore.
-Correspondingly, our generalization of Left-to-Right uses these flow calculations for ensuring feasibility.
-\todo[inline]{The main technical contribution \ldots}
+$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
+We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
+Our simple greedy algorithm Parallel Left-to-Right ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
+It also does not rely on the concept of multi-processor skeletons at the heart of the combinatorial $6$-approximation algorithm of~\cite{skeletons}.
+Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: keep processors in their current state (busy or idle) for as long as feasibly possible.
+For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
+For checking feasibility in the case of multiple processors, a simple maximum flow calculation is required since EDF is not sufficient anymore.
+Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
+
+While our devised algorithm is very simple, the analysis is highly non-trivial.
+The structure exhibited by the Parallel $\LTR$ schedule is surprisingly rich.
+This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
+In Lemma~\ref{lemma:critical} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
+This in turn gives a lower bound for the number of busy processors required by any solution.
+Note that critical sets of timeslots are the kind of structure which~\cite{antoniadis} describe when they state that approximation algorithms are hard to develop, because \textit{$\ldots$ structural properties of an optimal schedule can be locally extracted in a single machine environment in contrast to
+the multi-machine case. As an example, we know that a single machine will be active for at least
+one time-point within the interval between the release time and the deadline of every job, but
+the number of active machines at such a time-point in the multiprocessor setting could range
+from just one to all available machines.}
+
+Devising an approximation guarantee from this structure is however much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
+Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, as described in Section~\ref{section:realignment}.
 
 
 \paragraph{Formal problem description}
@@ -639,7 +654,7 @@ It merely forces processor $k$ to be in the on-state at time $k$ while allowing 
   The property directly follows from our choice of the critical sets, the definition of $\crit(t)$ and the construction of $S_{\aug}$.
 \end{proof}
 
-\subsection{Realignment}
+\subsection{Realignment}\label{section:realignment}
 The intuition of the realignment of $S_{\aug}$ is the following.
 Lemma~\ref{lemma:augmented} guarantees us that every busy interval $A$ on processor $k$ spans the critical set $C$ with $C \sim A$.
 It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $A$ do not end within an idle interval on processor $k$, provided that they are defined.
