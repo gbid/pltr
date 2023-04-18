@@ -117,8 +117,6 @@ Transitioning from the sleep state to the active state consumes additonal energy
 The device has to complete a number of jobs, each with its own interval during which it has to be executed.
 The goal is to complete all jobs during their respective execution intervals while putting the device into the sleep state when it is idle for long periods such that the overall consumed energy is minimal.
 Intuitively, one aims for long but few idle intervals, during which it is worthwhile to put the device into the sleep state.
-\todo[inline]{Talk about online/offline stuff?}
-\todo[inline]{More formally define problem.}
 \todo[inline]{Talk about parallel version already here}
 
 \paragraph{Previous work}
@@ -213,8 +211,12 @@ Finally, in Section~\ref{section:running_time} we show that the simplicity of ou
 \todo[inline]{Compare the running time to some of the following: number of LP constraints in~\cite{antoniadis} and~\cite{skeletons}, combinatorial 6-approximation by~\cite{skeletons} (is the latter even really polynomial?) }
 \todo[inline]{Include faster Flow Calculation here and talk about pseudopolynomial, polynomial running time here?}
 
+\paragraph{Further related work}
+\todo[inline]{Talk about online/offline stuff?}
+\todo[inline]{Talk about speed scaling and combinations.}
 
-\paragraph{Formal problem statement and preliminaries}
+
+\subsection{Formal problem statement and preliminaries}
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
@@ -379,8 +381,10 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(\gamma) = P - \sum_{t \in T} l_t = f_{out}(\gamma)$.
 
 \end{proof}
-
-\begin{theorem}
+\todo[inline]
+{Move this Theorem~\ref{theorem:feasibility} to the back together with Lemma~\ref{lemma:flow_feasibility}.
+  Or even better yet, include this in the main theorem.}
+\begin{theorem}\label{theorem:feasibility}
   Given a feasible problem instance, algorithm $\PLTR$ constructs a feasible schedule.
 \end{theorem}
 \begin{proof}
