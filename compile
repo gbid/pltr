@@ -1,13 +1,14 @@
 #!/bin/sh
 
 #latexmk -pvc -pdf "$1" </dev/null
-cmd='latexmk -pvc -xelatex -interaction=nonstopmode -outdir=target --pdf'
+cmd1='latexmk -pvc -xelatex -interaction=nonstopmode -outdir=target --pdf'
+cmd2='latexmk -outdir=target --pdf'
 
 if [ "$1" = "--watch" ]; then
-  $cmd
+  $cmd1
   while inotifywait -e close_write -e modify content.tex references.bib graphics/sketches/*; do
 		$cmd
 	done;
 else
-  $cmd
+  $cmd2
 fi

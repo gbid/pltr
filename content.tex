@@ -114,7 +114,7 @@ In the most basic setting, the computing device has two possible states, an acti
 The active state allows the device to perform computations while consuming energy at a fixed rate.
 In the sleep state, no energy is consumed but no computations can be performed.
 Transitioning from the sleep state to the active state consumes additonal energy.
-The device has to complete a number of jobs, each with it's own interval during which it has to be executed.
+The device has to complete a number of jobs, each with its own interval during which it has to be executed.
 The goal is to complete all jobs during their respective execution intervals while putting the device into the sleep state when it is idle for long periods such that the overall consumed energy is minimal.
 Intuitively, one aims for long but few idle intervals, during which it is worthwhile to put the device into the sleep state.
 \todo[inline]{Talk about online/offline stuff?}
@@ -153,7 +153,7 @@ Their algorithm guarantees an approximation factor of $3$ and builds on the Line
 This factor was further improved to $2$ in~\cite{skeletons}.
 \todo[inline]{Describe their techniques and emphasise that they are complex.}
 \todo[inline]{Mention combinatorial $6$-approximation in~\cite{skeletons}.}
-\todo[inline]{Cite Antoniadis why this problem seems to be hard: \textit{The
+\todo[inline]{Cite~\cite{antoniadis} why this problem seems to be hard: \textit{The
 difficulty in obtaining a good approximation algorithm seems to arise from two aspects: First,
 it is not clear how to design a dynamic programming table of polynomial size when the jobs have
 arbitrary sizes, and a job is not allowed to run parallel to itself. Secondly, structural properties
@@ -162,8 +162,26 @@ the multi-machine case. As an example, we know that a single machine will be act
 one time-point within the interval between the release time and the deadline of every job, but
 the number of active machines at such a time-point in the multiprocessor setting could range
 from just one to all available machines.}}
+It is a major open problem whether the problem in the general case is NP hard.
+\todo[inline]{Get handle on running time of previous multi-processor algorithms:}
+\begin{enumerate}
+  \item Combinatorial 6-approximation by~\cite{skeletons}:
+    \begin{enumerate}
+      \item Computing lower bounds on required processors for every possible interval of $r_i, d_i$:
+        $O(F n^2 \log(m))$
+      \item Computing multi-processor skeleton based on these lower bounds, i.e. $m$ single processor skeletons for $n' = O(n^2)$ virtual unit-size jobs in $O(n' \log n')$:
+        $O(n^2 \log^2(n))$
+      \item Extension phase via Flow calculation: normally $O(P F)$, with standard technique big time slots $|W| \in O(n \log(d^*))$: active intervals are extended maximally, such that the deficiency is reduced by the same amount: $O(m |W|^3)$ iterations, so in total:
+        $O(F m |W|^3) = O(F m n^3 \log^3(d^*))$ with $F$ refering to flow caluclation with $O(|W|) = O(n \log(d^*))$ vertices $v_t$ (according to~\cite{antoniadis}, the ``size of the network after doing the above modification is $O(n|W|)$'').
+      \item Tripling phase: setting $m'_{t} \coloneqq \min\{m, 3 m_t\}$: $O(1)$?
+      \item In total dominated by extension phase requiring time $O(F m n^3 \log^3(d^*))$ with $F$ refering to flow calculation in network of size $O(n |W|) = O(n^2 \log(d^*))$.
+    \end{enumerate}
+  \item Original 3-approximation using LPs by~\cite{antoniadis}:
+    \begin{enumerate}
+      \item
+    \end{enumerate}
+\end{enumerate}
 
-It is an open problem whether constructing an optimal schedule is NP hard.
 
 \paragraph{Contribution}
 The previously mentioned greedy algorithm Left-to-Right is arguably the simplest algorithm one can think of for the case of a single processor.
@@ -173,7 +191,7 @@ Our simple greedy algorithm Parallel Left-to-Right ($\PLTR$) does not rely on Li
 It also does not rely on the concept of multi-processor skeletons at the heart of the combinatorial $6$-approximation algorithm of~\cite{skeletons}.
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: keep processors in their current state (busy or idle) for as long as feasibly possible.
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
-For checking feasibility in the case of multiple processors, a simple maximum flow calculation is required since EDF is not sufficient anymore.
+For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
 
 While our devised algorithm is very simple, the analysis is highly non-trivial.
@@ -181,17 +199,22 @@ The structure exhibited by the Parallel $\LTR$ schedule is surprisingly rich.
 This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
 In Lemma~\ref{lemma:critical} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
 This in turn gives a lower bound for the number of busy processors required by any solution.
-Note that critical sets of timeslots are the kind of structure which~\cite{antoniadis} describe when they state that approximation algorithms are hard to develop, because \textit{$\ldots$ structural properties of an optimal schedule can be locally extracted in a single machine environment in contrast to
+Note that critical sets of timeslots are the kind of structure which~\cite{antoniadis} describe when they state that approximation algorithms are hard to develop because ``$\ldots$ structural properties of an optimal schedule can be locally extracted in a single machine environment in contrast to
 the multi-machine case. As an example, we know that a single machine will be active for at least
 one time-point within the interval between the release time and the deadline of every job, but
 the number of active machines at such a time-point in the multiprocessor setting could range
-from just one to all available machines.}
+from just one to all available machines''.
+\todo[inline]{Delete this quote?}
 
 Devising an approximation guarantee from this structure is however much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
 Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, as described in Section~\ref{section:realignment}.
 
+Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the time required by the maximum flow calculation for checking feasibility.
+\todo[inline]{Compare the running time to some of the following: number of LP constraints in~\cite{antoniadis} and~\cite{skeletons}, combinatorial 6-approximation by~\cite{skeletons} (is the latter even really polynomial?) }
+\todo[inline]{Include faster Flow Calculation here and talk about pseudopolynomial, polynomial running time here?}
 
-\paragraph{Formal problem description}
+
+\paragraph{Formal problem statement and preliminaries}
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
@@ -300,13 +323,6 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
 \end{algorithm}
 \todo[inline]{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
 As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow}.
-
-
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[width=0.6\textwidth]{graphics/sketches/flow_network.png}\label{fig:flow}
-%  \caption{The Flow-Network for checking feasibility of a scheduling instance with lower and upper bounds $l_t$ and $m_t$ for the number of busy processors at $t$.}
-%\end{figure}
 
 \begin{figure}[H]
   \centering
@@ -1032,7 +1048,7 @@ With the same argument as for the original single-processor Left-to-Right algori
   By the same argument as in Lemma~\ref{lemma:stair_property_opt}, this does not increase the total costs of the schedule.
 \end{proof}
 
-\section{Running Time}
+\section{Running Time}\label{section:running_time}
 \begin{theorem}
   Algorithm $\PLTR$ has a running time of $\mathcal{O}(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
