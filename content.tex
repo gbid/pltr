@@ -108,47 +108,59 @@
 
 \section{Introduction}
 \todo[inline]{Energy consumption blabla: global energy consumption, battery powered devices}
+Energy-efficiency has become a major concern in most areas of computing even beyond the apparent ecological reasons.
+At the hardware level, excessive heat generation from power consumption has become one of the bottlenecks.
+For the billions of mobile devices, power consumption determines the length of operation and hence their usefulness.
+On the level of datacenters, electricity is often the largest cost factor and cooling is one of the major design constraints.
+Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, namely the option to power-down idle devices and speed-scaling of processors.
+In this paper, we study a fundamental scheduling setting with a power-down mechanism in a multi-device environment.
+
 \paragraph{Informal problem description}
-One of the two fundamental power-management techniques are power-down mechanisms.
-In the most basic setting, the computing device has two possible states, an active state and a sleep state.
+In this setting, a computing device or processor has two possible states, an active state and a sleep state.
 The active state allows the device to perform computations while consuming energy at a fixed rate.
-In the sleep state, no energy is consumed but no computations can be performed.
-Transitioning from the sleep state to the active state consumes additonal energy.
-The device has to complete a number of jobs, each with its own interval during which it has to be executed.
-The goal is to complete all jobs during their respective execution intervals while putting the device into the sleep state when it is idle for long periods such that the overall consumed energy is minimal.
-Intuitively, one aims for long but few idle intervals, during which it is worthwhile to put the device into the sleep state.
-\todo[inline]{Talk about parallel version already here}
+In the sleep state, the energy is consumed is negligible but no computations can be performed.
+However, transitioning from the sleep state back to the active state consumes additonal energy.
+The devices have to complete a number of tasks or jobs, each with its own processing volume and interval during which it has to be executed.
+The goal is to complete all jobs during their respective execution intervals while minimizing the consumed energy.
+Intuitively, one aims for long but few idle intervals, such that the energy required for transitioning between the states is low, while avoiding processors being in the active state but not performing work.
 
 \paragraph{Previous work}
-This fundamental problem in power management was first considered by~\cite{irani_left_to_right_soda_2003} in which they devised arguably the simplest algorithm one can think of for the special case of a single processor.
-Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a 2-approximation and proceeds as follows.
+This fundamental problem in power management was first considered by~\cite{irani_left_to_right_soda_2003} for a single processor.
+In their paper, they devise arguably the simplest algorithm one can think.
+Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a $2$-approximation and proceeds as follows.
 If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily keeps the processor busy for as long as possible, always working on the released job with the earliest deadline.
 Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
 At this point, the processor becomes busy again and $\ltr$ proceeds recursively until all jobs are completed.
-(TODO) The processor is defined to be in the sleep state for idle intervals which are sufficiently long such that it is worthwhile to transition to the sleep state.
+\todo[inline]{Formulate this better or leave it even out?}
+The processor is defined to be in the sleep state for idle intervals which are sufficiently long such that it is worthwhile to transition to the sleep state.
 
 \paragraph{Single Processor Setting}
 \todo[inline]{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
 Also mention like Demaine that the problem without objective functions is one of the fundamental scheduling settings}
-The problem for a single processor was solved optimally by~\cite{baptiste_general_jobs} in time $\mathcal{O}(n^5)$.
-Their dynamic programming algorithm is quite involved and builds upon the dynamic program devised by~\cite{baptiste_unit_jobs} for jobs with unit processing volume.
-\todo[inline]{Describe why DP approach and why it is very complex}
-\todo[inline]{Mention and/or describe approximation algorithms by~\cite{antoniadis} and~\cite{skeletons} or is this bad because it mentions a small running time?}
+The first optimal result for the case of a single processor and jobs with unit processing volume was developed by~\cite{baptiste_unit_jobs}.
+They devised a dynamic program that runs in time $\mathcal{O}(n^7)$, where $n$ denotes the number of jobs to be scheduled.
+Building on this result,~\cite{baptiste_general_jobs} solved the case of general processing volumes on a single processor in time $\mathcal{O}(n^5)$.
+Their sophisticated algorithm involves the computation of multiple dynamic programming tables, the introduction of a special method for speeding up the computation of these tables, and a final postprocessing phase.
+\todo[inline]{Mention that in their conclusion, they pose the multi-processor setting with general jobs as a natural generalization of the problem, as this was also an ESA paper? Beware: they already mention~\cite{demaine} here.}
 
 \paragraph{Multi-Processor Setting}
-\todo[inline]{Cite that~\cite{baptiste_general_jobs} explicitly mentions multi-processor setting as open question?}
-\todo[inline]{Move the motivation for multi-processor setting to first paragraph}
-Small battery powered state-of-the-art devices such as smartphones are already equipped with four to eight processors while modern data centers consist of thousands of servers which might in total contain millions of cores.
-The multi-processor case is therefore becoming more relevant than in recent years.
-The first result for an arbitrary number of processors $m$ was given by~\cite{demaine}.
-They solved the special case of jobs with unit processing volume by building on the dynamic programming approach of~\cite{baptiste_unit_jobs}.
-Their algorithm gives an optimal schedule and runs in time $\mathcal{O}(n^7p^5)$.
-Obtaining good solutions for general job weights is difficult because every job can be worked on by at most a single processor at the same time.
-Note that this is no additional restriction for the former special case of unit processing volumes since time is discrete in our problem setting.
-Interestingly, it took further thirteen years for the first non-trivial result on the general case of multiple processors and general processing volumes to be developed.
+The first result for an arbitrary number of processors $m$ was given by~\cite{demaine} for the special case of unit processing volumes.
+They solved this special case in time $~\mathcal{O}(n^7m^5)$ by building on the original dynamic programming approach of~\cite{baptiste_unit_jobs} while non-trivially obtaining additional structure.
+Obtaining good solutions for general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
+Note that this is not an additional restriction for the former special case of unit processing volumes since time is discrete in our problem setting.
+It took further thirteen years for the first non-trivial result on the general case of multiple processors and general processing volumes to be developed.
 In their breakthrough paper,~\cite{antoniadis} developed the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
-This factor was further improved to $2$ in~\cite{skeletons}.
+Their algorithm obtains an integer solution by building the convex hull of the corresponding fractional solution.
+Since this integer solution might not schedule all jobs, they develop an additional algorithm \textit{EXT-ALG} based on maximum flow calculations which iteratively searches for a time slot at which an additional active processor is able to schedule one processing unit of some unfinished job.
+By incorporating additional constraints for the number of processors required during all possible time intervals into this Linear Program and by modifying the rounding procedure,~\cite{skeletons} improve this approximation factor to $2$.
+This modified rounding procedure builds on their concept of a \textit{skeleton}.
+Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of active processors during specific intervals and which provides a lower bound for the cost of an optimal schedule.
+Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
+Both Linear Programs have $\mathcal{O}(d^2)$ constraints and $\mathcal{O}(d^2)$, where $d$ denotes the maximum deadline and hence the number of time slots.
+All three algorithms also critically rely on the $EXT-ALG$ to obtain a feasible solution, which requires time...
+
+\cite{skeleton} also gives a combinatorial $6$-approximation for the problem 
 \todo[inline]{Describe their techniques and emphasise that they are complex.}
 \todo[inline]{Mention combinatorial $6$-approximation in~\cite{skeletons}.}
 \todo[inline]{Cite~\cite{antoniadis} why this problem seems to be hard: \textit{The
@@ -210,6 +222,7 @@ Our main contribution in terms of techniques is a complex procedure which (for t
 Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the time required by the maximum flow calculation for checking feasibility.
 \todo[inline]{Compare the running time to some of the following: number of LP constraints in~\cite{antoniadis} and~\cite{skeletons}, combinatorial 6-approximation by~\cite{skeletons} (is the latter even really polynomial?) }
 \todo[inline]{Include faster Flow Calculation here and talk about pseudopolynomial, polynomial running time here?}
+\todo[inline]{Mention that it is surprising that the running time is somehow independent on $m$ since it only appears in the capacities of the flow calculation.}
 
 \paragraph{Further related work}
 \todo[inline]{Talk about online/offline stuff?}
