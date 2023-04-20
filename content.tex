@@ -28,6 +28,11 @@
 
 \mathtoolsset{showonlyrefs}
 
+% customize label "Algorithm" for package "algorithm"
+%\makeatletter
+%\renewcommand{\ALG@name}{Foobaroo}
+%\makeatother
+
 \DeclareMathOperator{\argmax}{argmax}
 \DeclareMathOperator{\argmin}{argmin}
 %\DeclareMathOperator{\next}{next}
@@ -72,6 +77,13 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}[theorem]{Definition}
 
+% custom algorithm environment with custom label instead of "Algorithm"
+%\newenvironment{myalg}[1][htb]{%
+%    \floatname{algorithm}{blabla}% Update algorithm name
+%   \begin{algorithm}[#1]%
+%  }{\end{algorithm}}
+
+
 %\theoremheaderfont{\itshape}
 %\theorembodyfont{\upshape}
 % wtf is this?
@@ -114,7 +126,7 @@ On the level of datacenters, electricity is often the largest cost factor and co
 Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, first the option to power-down idle devices and second the option to trade performance for energy-efficiency by speed-scaling.
 In this paper, we study the classic deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
 
-\paragraph{Informal problem description}
+%\paragraph{Informal problem description}
 In this setting, a computing device or processor has two possible states, an active state and a sleep state.
 The active state allows the device to perform computations while consuming energy at a fixed rate.
 In the sleep state, the energy consumed is negligible but no computations can be performed.
@@ -133,7 +145,7 @@ At this point, the processor becomes busy again and $\ltr$ proceeds recursively 
 \todo[inline]{Formulate this better or leave it even out?}
 The processor is defined to be in the sleep state for idle intervals which are sufficiently long such that it is worthwhile to transition to the sleep state.
 
-\paragraph{Single Processor Setting}
+%\paragraph{Single Processor Setting}
 \todo[inline]{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
 Also mention like Demaine that the problem without objective functions is one of the fundamental scheduling settings}
 The first optimal result for the case of a single processor and jobs with unit processing volume was developed by~\cite{baptiste_unit_jobs}.
@@ -142,7 +154,7 @@ Building on this result,~\cite{baptiste_general_jobs} solved the case of general
 Their sophisticated algorithm involves the computation of multiple dynamic programming tables, the introduction of a special method for speeding up the computation of these tables, and a final postprocessing phase.
 \todo[inline]{Mention that in their conclusion, they pose the multi-processor setting with general jobs as a natural generalization of the problem, as this was also an ESA paper? Beware: they already mention~\cite{demaine} here.}
 
-\paragraph{Multi-Processor Setting}
+%\paragraph{Multi-Processor Setting}
 The first result for an arbitrary number of processors $m$ was given by~\cite{demaine} for the special case of unit processing volumes.
 They solved this special case in time $~\mathcal{O}(n^7m^5)$ by building on the original dynamic programming approach of~\cite{baptiste_unit_jobs} while non-trivially obtaining additional structure.
 Obtaining good solutions for general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
@@ -171,22 +183,22 @@ The running time of the EXT-ALG used by all three approximation algorithms is re
 
 \paragraph{Contribution}
 The previously mentioned greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for the case of a single processor that goes beyond mere feasibility.
-$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
+%$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
 In this paper we naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
 Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
 It also does not require the EXT-ALG, which all previous algorithms rely on to make an infeasible schedule feasible.
 
-Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: keep processors in their current state (busy or idle) for as long as feasibly possible.
+Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: just keep processors in their current state (busy or idle) for as long as feasibly possible.
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
 
-While the algorithm we develop in Section~\ref{section:algorithm} is very simple and the structure exhibited by the resulting schedules is surprisingly rich, the analysis is highly non-trivial.
+While the algorithm we develop in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
 This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
 In Section~\ref{section:structure} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
 This in turn gives a lower bound for the number of busy processors required by any solution.
 
-Devising an approximation guarantee from this structure is however much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
+Devising an approximation guarantee from this structure is however highly non-trivial and much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
 Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, see Section~\ref{section:approximation} for details.
 
 Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the time required by the maximum flow calculation for checking feasibility.
@@ -199,7 +211,7 @@ Finally, in Section~\ref{section:running_time} we show that the simplicity of ou
 \todo[inline]{Do I have space for this?}
 
 
-\subsection{Formal problem statement and preliminaries}
+\subsection{Formal Problem Statement and Preliminaries}
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
@@ -216,7 +228,7 @@ Each processor consumes $1$ unit of energy for every timeslot it is in the on-st
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
 In Graham's notation \citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
 
-\subsection{Busy and Idle Intervals}
+\paragraph{Busy and Idle Intervals}
 We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled on this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
 Clearly a processor cannot be busy and off at the same time.
@@ -228,13 +240,13 @@ Observe that if a processor is idle for more than $q$ units of time, it is worth
 Our algorithm will specify for each processor when it is busy and when it is idle.
 Each processor is then defined to be in the off-state during idle intervals of length greater than $q$ and otherwise in the on-state.
 
-\subsection{Lower and Upper Bounds for the Amount of Busy Processors}
+\paragraph{Lower and Upper Bounds for the Number of Busy Processors}
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors were allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$.
 For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
 This generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
 
-\subsection{Properties of an Optimal Schedule}
+\paragraph{Properties of an Optimal Schedule}
 \begin{definition}\label{def:stair_property}
   Given some arbitrary but fixed order on the number of processors, a schedule $S$ fulfills the \emph{stair-property} if it uses the lower numbered processors first, i.e.\ for every $t \in T$, if processor $k \in [m]$ is busy at $t$, then every processor $k' \leq k$ is busy at $t$.
   This symmetrically implies that if processor $k \in [m]$ is idle at $t$, then every processor $k' \geq k$ is idle at $t$.
@@ -421,7 +433,7 @@ The following Lemma~\ref{lemma:critical} provides the crucial structure required
 Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$.
 This in turn implies that an activation of processor $k$ is necessary in every feasible schedule during $Q$.
 The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of sets $Q \subseteq T$.
-\todo[inline]{Also mention here that this is a generalization of the feasibility characterization of~\cite{antoniadis}?}
+These auxiliary Lemmas are again a generalization of the corresponding feasibility characterization in~\cite{antoniadis} for their problem deadline-scheduling-on-intervals, which only defines upper bounds.
 \begin{lemma}\label{lemma:cut}
   For every $\alpha$-$\omega$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
   $c(S) \geq P - \opdef(Q(S))$ or $c(S) \geq P - \exc(Q(\bar S))$, where $Q(S) \coloneqq \{ t \mid v_t \in S \}$.
@@ -634,7 +646,8 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 \end{proof}
 
 \section{Modification of the PLTR-Schedule for Analysis}\label{section:approximation}
-We modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
+In this section we modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
+We stress that this is for the analysis only and not part of $\PLTR$.
 The first step augments specific processors with auxiliary busy slots such that in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
@@ -658,7 +671,7 @@ It merely forces processor $k$ to be in the on-state at time $k$ while allowing 
 \end{proof}
 
 \subsection{Realignment}\label{section:realignment}
-The intuition of the realignment of $S_{\aug}$ is the following.
+The intuition of the realignment of $S_{\aug}$ defined in Algorithm~\ref{alg:real} is the following.
 Lemma~\ref{lemma:augmented} guarantees us that every busy interval $A$ on processor $k$ spans the critical set $C$ with $C \sim A$.
 It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $A$ do not end within an idle interval on processor $k$, provided that they are defined.
 Lemma~\ref{lemma:valley} in turn implies that if the density of $A$ is too small to guarantee that $S_{\opt}$ has to use processor $k$ during $A$, i.e.\ if $\hat \phi(A) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
