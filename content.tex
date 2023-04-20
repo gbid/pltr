@@ -150,7 +150,7 @@ Note that this is not an additional restriction for the former special case of u
 It is a major open problem whether the general multi-processor setting is NP-hard.
 
 It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of mutliple processors and general processing volumes of jobs.
-In their breakthrough paper,~\cite{antoniadis} developed the first constant-factor approximation for the problem.
+In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
 Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
 Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations. EXT-ALG iteratively searches for a time slot at which an additional active processor allows for an additional unit of processing volume to be scheduled.
@@ -161,7 +161,7 @@ Very roughly, a skeleton is a stripped-down schedule which still guarantees a nu
 Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
 \todo[inline]{Describe this combinatorial algorithm based on my Latex-notes.}
 
-Both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
+Both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2 + nd)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
 All three algorithms also critically rely on the EXT-ALG to obtain a feasible solution, which requires time $\mathcal{O}(FP)$, where $P$ is the total processing volume and $F$ denotes the running time for finding a maximum flow in a network of size $\mathcal{O}(nd)$.
 
 By using techniques presented in~\cite{antoniadis}, the time slots which have to be considered can be reduced to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time instead of just pseudo-polynomial time.
@@ -181,19 +181,13 @@ For a single processor, $\LTR$ ensures feasibility by scheduling jobs according 
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
 
-While our devised algorithm is very simple and the structure exhibited by the resulting schedules is surprisingly rich, the analysis is highly non-trivial.
+While the algorithm we develop in Section~\ref{section:algorithm} is very simple and the structure exhibited by the resulting schedules is surprisingly rich, the analysis is highly non-trivial.
 This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
-In Lemma~\ref{lemma:critical} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
+In Section~\ref{section:structure} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
 This in turn gives a lower bound for the number of busy processors required by any solution.
-Note that critical sets of timeslots are the kind of structure which~\cite{antoniadis} describe when they state that approximation algorithms are hard to develop because ``$\ldots$ structural properties of an optimal schedule can be locally extracted in a single machine environment in contrast to
-the multi-machine case. As an example, we know that a single machine will be active for at least
-one time-point within the interval between the release time and the deadline of every job, but
-the number of active machines at such a time-point in the multiprocessor setting could range
-from just one to all available machines''.
-\todo[inline]{Delete this quote?}
 
 Devising an approximation guarantee from this structure is however much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
-Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, see Section~\ref{section:realignment} for details.
+Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, see Section~\ref{section:approximation} for details.
 
 Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the time required by the maximum flow calculation for checking feasibility.
 \todo[inline]{Faster Flow Calculation: mention size of network, that we don't rely on techniques of~\cite{antoniadis} for reducing number of time slots and hence do not incur additional $\epsilon$.}
@@ -202,6 +196,7 @@ Finally, in Section~\ref{section:running_time} we show that the simplicity of ou
 \paragraph{Further related work}
 \todo[inline]{Talk about online/offline stuff?}
 \todo[inline]{Talk about speed scaling and combinations.}
+\todo[inline]{Do I have space for this?}
 
 
 \subsection{Formal problem statement and preliminaries}
@@ -222,7 +217,7 @@ Turning a processor on consumes a constant amount of energy $q \geq 0$, which is
 In Graham's notation \citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
 
 \subsection{Busy and Idle Intervals}
-We say a processor is \emph{busy} at time $t$ if some job is scheduled on this processor at time $t$.
+We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled on this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
 Clearly a processor cannot be busy and off at the same time.
 An interval $I \subseteq T$ is a (full) \emph{busy interval} on processor $k \in [m]$ if $I$ is inclusion maximal on condition that processor $k$ is busy in every $t \in I$.
@@ -259,9 +254,9 @@ This generalizes the problem of \emph{deadline-scheduling-on-intervals} introduc
   Jobs are only moved between processor at the same time slot and only to slots of processor $k'$ which are idle, hence the resulting schedule is still feasible.
   This modification can be repeated until the schedule has the desired property.
 \end{proof}
-From now on whenever we consider an optimal schedule, we will silently assume based on Lemma~\ref{lemma:stair_property_opt} that this optimal schedule fulfills the stair property.
+From now on whenever we consider an optimal schedule, we will tacitly assume based on Lemma~\ref{lemma:stair_property_opt} that this optimal schedule fulfills the stair property.
 
-\section{Algorithm}
+\section{Algorithm}\label{section:algorithm}
 
 The following \emph{Parallel Left-to-Right} ($\PLTR$) algorithm iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
 Once the current processor cannot be kept idle for any longer, it becomes busy and $\PLTR$ keeps it and all lower-numbered processors busy for as long as possible while again maintaining feasibility.
@@ -380,7 +375,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   The correctness of the algorithm then follows from the correctness of the flow-calculation for checking feasibility, which is implied by Lemma~\ref{lemma:flow_feasibility}.
 \end{proof}
 
-\section{Structure of the PLTR-Schedule}
+\section{Structure of the PLTR-Schedule}\label{section:structure}
 \subsection{Types of Volume}
 \begin{definition}
   For a schedule $S$, a job $j \in J$, a set $Q \subseteq T$ of time slots, we define
@@ -638,7 +633,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J(V_l)$ or $J(V_r)$.
 \end{proof}
 
-\section{Modification of the PLTR-Schedule for Analysis}
+\section{Modification of the PLTR-Schedule for Analysis}\label{section:approximation}
 We modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
 The first step augments specific processors with auxiliary busy slots such that in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
