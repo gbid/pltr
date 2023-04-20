@@ -182,9 +182,10 @@ However, this improved running time comes at the price of an addivite $\epsilon$
 The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$.
 
 \paragraph{Contribution}
-The previously mentioned greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for the case of a single processor that goes beyond mere feasibility.
+In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time.
+The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for the case of a single processor which goes beyond mere feasibility.
 %$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
-In this paper we naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
+We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
 Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
 It also does not require the EXT-ALG, which all previous algorithms rely on to make an infeasible schedule feasible.
 
@@ -193,7 +194,7 @@ For a single processor, $\LTR$ ensures feasibility by scheduling jobs according 
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
 
-While the algorithm we develop in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
+While the algorithm we describe in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
 This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
 In Section~\ref{section:structure} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
 This in turn gives a lower bound for the number of busy processors required by any solution.
@@ -301,13 +302,13 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
 \caption{Subroutines for $\PLTR$}\label{alg:keep}
 \begin{algorithmic}
   \Function{$\keepidle$}{$k, t$}
-    \State{search for maximal $t' > t$ s.t.\
+    \State{search maximal $t' > t$ s.t.\
     exists feasible schedule with $m_{t''}$ set to $k-1$ for all $t'' \in [t, t')$}
     \State{$m_{t''} \gets k - 1$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
   \Function{$\keepbusy$}{$k, t$}
-    \State{search for maximal $t' > t$ s.t.\
+    \State{search maximal $t' > t$ s.t.\
     exists feasible schedule with $l_{t''}$ set to $\max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{$l_{t''} \gets \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
