@@ -107,18 +107,17 @@
 %\clearpage
 
 \section{Introduction}
-\todo[inline]{Energy consumption blabla: global energy consumption, battery powered devices}
-Energy-efficiency has become a major concern in most areas of computing even beyond the apparent ecological reasons.
+Energy-efficiency has become a major concern in most areas of computing for reasons that go beyond the apparent ecological ones.
 At the hardware level, excessive heat generation from power consumption has become one of the bottlenecks.
 For the billions of mobile devices, power consumption determines the length of operation and hence their usefulness.
 On the level of datacenters, electricity is often the largest cost factor and cooling is one of the major design constraints.
-Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, namely the option to power-down idle devices and speed-scaling of processors.
-In this paper, we study a fundamental scheduling setting with a power-down mechanism in a multi-device environment.
+Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, first the option to power-down idle devices and second the option to trade performance for energy-efficiency by speed-scaling.
+In this paper, we study the classic deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
 
 \paragraph{Informal problem description}
 In this setting, a computing device or processor has two possible states, an active state and a sleep state.
 The active state allows the device to perform computations while consuming energy at a fixed rate.
-In the sleep state, the energy is consumed is negligible but no computations can be performed.
+In the sleep state, the energy consumed is negligible but no computations can be performed.
 However, transitioning from the sleep state back to the active state consumes additonal energy.
 The devices have to complete a number of tasks or jobs, each with its own processing volume and interval during which it has to be executed.
 The goal is to complete all jobs during their respective execution intervals while minimizing the consumed energy.
@@ -138,7 +137,7 @@ The processor is defined to be in the sleep state for idle intervals which are s
 \todo[inline]{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
 Also mention like Demaine that the problem without objective functions is one of the fundamental scheduling settings}
 The first optimal result for the case of a single processor and jobs with unit processing volume was developed by~\cite{baptiste_unit_jobs}.
-They devised a dynamic program that runs in time $\mathcal{O}(n^7)$, where $n$ denotes the number of jobs to be scheduled.
+He devised a dynamic program that runs in time $\mathcal{O}(n^7)$, where $n$ denotes the number of jobs to be scheduled.
 Building on this result,~\cite{baptiste_general_jobs} solved the case of general processing volumes on a single processor in time $\mathcal{O}(n^5)$.
 Their sophisticated algorithm involves the computation of multiple dynamic programming tables, the introduction of a special method for speeding up the computation of these tables, and a final postprocessing phase.
 \todo[inline]{Mention that in their conclusion, they pose the multi-processor setting with general jobs as a natural generalization of the problem, as this was also an ESA paper? Beware: they already mention~\cite{demaine} here.}
@@ -148,64 +147,41 @@ The first result for an arbitrary number of processors $m$ was given by~\cite{de
 They solved this special case in time $~\mathcal{O}(n^7m^5)$ by building on the original dynamic programming approach of~\cite{baptiste_unit_jobs} while non-trivially obtaining additional structure.
 Obtaining good solutions for general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
 Note that this is not an additional restriction for the former special case of unit processing volumes since time is discrete in our problem setting.
-It took further thirteen years for the first non-trivial result on the general case of multiple processors and general processing volumes to be developed.
+It is a major open problem whether the general multi-processor setting is NP-hard.
+
+It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of mutliple processors and general processing volumes of jobs.
 In their breakthrough paper,~\cite{antoniadis} developed the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
-Their algorithm obtains an integer solution by building the convex hull of the corresponding fractional solution.
-Since this integer solution might not schedule all jobs, they develop an additional algorithm \textit{EXT-ALG} based on maximum flow calculations which iteratively searches for a time slot at which an additional active processor is able to schedule one processing unit of some unfinished job.
-By incorporating additional constraints for the number of processors required during all possible time intervals into this Linear Program and by modifying the rounding procedure,~\cite{skeletons} improve this approximation factor to $2$.
-This modified rounding procedure builds on their concept of a \textit{skeleton}.
-Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of active processors during specific intervals and which provides a lower bound for the cost of an optimal schedule.
+Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
+Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations. EXT-ALG iteratively searches for a time slot at which an additional active processor allows for an additional unit of processing volume to be scheduled.
+
+\cite{skeletons} improve this approximation factor to $2$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
+They also modify the rouding procedure based on their concept of a \textit{multi-processor skeleton}.
+Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of active processors during specific intervals and which provides a lower bound for the costs of an optimal feasible schedule.
 Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
-Both Linear Programs have $\mathcal{O}(d^2)$ constraints and $\mathcal{O}(d^2)$, where $d$ denotes the maximum deadline and hence the number of time slots.
-All three algorithms also critically rely on the $EXT-ALG$ to obtain a feasible solution, which requires time...
+\todo[inline]{Describe this combinatorial algorithm based on my Latex-notes.}
 
-\cite{skeleton} also gives a combinatorial $6$-approximation for the problem 
-\todo[inline]{Describe their techniques and emphasise that they are complex.}
-\todo[inline]{Mention combinatorial $6$-approximation in~\cite{skeletons}.}
-\todo[inline]{Cite~\cite{antoniadis} why this problem seems to be hard: \textit{The
-difficulty in obtaining a good approximation algorithm seems to arise from two aspects: First,
-it is not clear how to design a dynamic programming table of polynomial size when the jobs have
-arbitrary sizes, and a job is not allowed to run parallel to itself. Secondly, structural properties
-of an optimal schedule can be locally extracted in a single machine environment in contrast to
-the multi-machine case. As an example, we know that a single machine will be active for at least
-one time-point within the interval between the release time and the deadline of every job, but
-the number of active machines at such a time-point in the multiprocessor setting could range
-from just one to all available machines.}}
-It is a major open problem whether the problem in the general case is NP hard.
-\todo[inline]{Get handle on running time of previous multi-processor algorithms:}
-\begin{enumerate}
-  \item Combinatorial 6-approximation by~\cite{skeletons}:
-    \begin{enumerate}
-      \item Computing lower bounds on required processors for every possible interval of $r_i, d_i$:
-        $O(F n^2 \log(m))$
-      \item Computing multi-processor skeleton based on these lower bounds, i.e. $m$ single processor skeletons for $n' = O(n^2)$ virtual unit-size jobs in $O(n' \log n')$:
-        $O(n^2 \log^2(n))$
-      \item Extension phase via Flow calculation: normally $O(P F)$, with standard technique big time slots $|W| \in O(n \log(d^*))$: active intervals are extended maximally, such that the deficiency is reduced by the same amount: $O(m |W|^3)$ iterations, so in total:
-        $O(F m |W|^3) = O(F m n^3 \log^3(d^*))$ with $F$ refering to flow caluclation with $O(|W|) = O(n \log(d^*))$ vertices $v_t$ (according to~\cite{antoniadis}, the ``size of the network after doing the above modification is $O(n|W|)$'').
-      \item Tripling phase: setting $m'_{t} \coloneqq \min\{m, 3 m_t\}$: $O(1)$?
-      \item In total dominated by extension phase requiring time $O(F m n^3 \log^3(d^*))$ with $F$ refering to flow calculation in network of size $O(n |W|) = O(n^2 \log(d^*))$.
-    \end{enumerate}
-  \item Original 3-approximation using LPs by~\cite{antoniadis}:
-    \begin{enumerate}
-      \item
-    \end{enumerate}
-\end{enumerate}
+Both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
+All three algorithms also critically rely on the EXT-ALG to obtain a feasible solution, which requires time $\mathcal{O}(FP)$, where $P$ is the total processing volume and $F$ denotes the running time for finding a maximum flow in a network of size $\mathcal{O}(nd)$.
 
+By using techniques presented in~\cite{antoniadis}, the time slots which have to be considered can be reduced to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time instead of just pseudo-polynomial time.
+More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log d)$.
+However, this improved running time comes at the price of an addivite $\epsilon$ in the approximation factor of the two LP-based algorithms.
+The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$.
 
 \paragraph{Contribution}
-The previously mentioned greedy algorithm Left-to-Right is arguably the simplest algorithm one can think of for the case of a single processor.
+The previously mentioned greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for the case of a single processor that goes beyond mere feasibility.
 $\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
-We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
-Our simple greedy algorithm Parallel Left-to-Right ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
-It also does not rely on the concept of multi-processor skeletons at the heart of the combinatorial $6$-approximation algorithm of~\cite{skeletons}.
+In this paper we naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
+Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
+It also does not require the EXT-ALG, which all previous algorithms rely on to make an infeasible schedule feasible.
+
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: keep processors in their current state (busy or idle) for as long as feasibly possible.
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
 
-While our devised algorithm is very simple, the analysis is highly non-trivial.
-The structure exhibited by the Parallel $\LTR$ schedule is surprisingly rich.
+While our devised algorithm is very simple and the structure exhibited by the resulting schedules is surprisingly rich, the analysis is highly non-trivial.
 This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
 In Lemma~\ref{lemma:critical} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
 This in turn gives a lower bound for the number of busy processors required by any solution.
@@ -217,11 +193,10 @@ from just one to all available machines''.
 \todo[inline]{Delete this quote?}
 
 Devising an approximation guarantee from this structure is however much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
-Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, as described in Section~\ref{section:realignment}.
+Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, see Section~\ref{section:realignment} for details.
 
 Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the time required by the maximum flow calculation for checking feasibility.
-\todo[inline]{Compare the running time to some of the following: number of LP constraints in~\cite{antoniadis} and~\cite{skeletons}, combinatorial 6-approximation by~\cite{skeletons} (is the latter even really polynomial?) }
-\todo[inline]{Include faster Flow Calculation here and talk about pseudopolynomial, polynomial running time here?}
+\todo[inline]{Faster Flow Calculation: mention size of network, that we don't rely on techniques of~\cite{antoniadis} for reducing number of time slots and hence do not incur additional $\epsilon$.}
 \todo[inline]{Mention that it is surprising that the running time is somehow independent on $m$ since it only appears in the capacities of the flow calculation.}
 
 \paragraph{Further related work}
