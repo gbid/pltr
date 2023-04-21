@@ -485,7 +485,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
 \end{proof}
 
 \begin{definition}
-  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if $t = \min A$ for some busy interval $A$ on processor $k$.
+  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if $t = \min B$ for some busy interval $B$ on processor $k$.
   A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
 \end{definition}
 \todo[inline]{How to replace the term \emph{activation} (\cite{antoniadis} uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work, start of busy interval, becoming busy}.}
@@ -650,8 +650,8 @@ We stress that this is for the analysis only and not part of $\PLTR$.
 The first step augments specific processors with auxiliary busy slots such that in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
-More specifically, it will establish the stronger property that $\hat \phi(A) > k - 1$ for every $\busy$ interval $A$ on processor $k$ with $\crit(A) \geq 2$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $A$.
-Idle intervals surrounded by only busy intervals $A$ with $\crit(A) \leq 1$ are then handled in Lemma~\ref{lemma:constellation} with essentially the same argument as for the original Left-to-Right algorithm.
+More specifically, it will establish the stronger property that $\hat \phi(B) > k - 1$ for every $\busy$ interval $B$ on processor $k$ with $\crit(B) \geq 2$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $B$.
+Idle intervals surrounded by only busy intervals $B$ with $\crit(B) \leq 1$ are then handled in Lemma~\ref{lemma:constellation} with essentially the same argument as for the original Left-to-Right algorithm.
 
 These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
 By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
@@ -671,12 +671,12 @@ It merely forces processor $k$ to be in the on-state at time $k$ while allowing 
 
 \subsection{Realignment}\label{section:realignment}
 The intuition of the realignment of $S_{\aug}$ defined in Algorithm~\ref{alg:real} is the following.
-Lemma~\ref{lemma:augmented} guarantees us that every busy interval $A$ on processor $k$ is a section of the critical set $C$ with $C \sim A$.
-It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $A$ do not end within an idle interval on processor $k$, provided that they are defined.
-Lemma~\ref{lemma:valley} in turn implies that if the density of $A$ is too small to guarantee that $S_{\opt}$ has to use processor $k$ during $A$, i.e.\ if $\hat \phi(A) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
+Lemma~\ref{lemma:augmented} guarantees us that every busy interval $B$ on processor $k$ is a section of the critical set $C$ with $C \sim B$.
+It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $B$ do not end within an idle interval on processor $k$, provided that they are defined.
+Lemma~\ref{lemma:valley} in turn implies that if the density of $B$ is too small to guarantee that $S_{\opt}$ has to use processor $k$ during $B$, i.e.\ if $\hat \phi(B) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
 Let $V$ be the corresponding left or right valley of $C$ and $D$ for which such a job $j$ exists.
 Instead of scheduling $j$ on the processors below $k$, we can schedule $j$ on processor $k$ in idle time slots during $V$.
-This merges the busy interval $A$ with at least one neighbouring busy interval on processor $k$.
+This merges the busy interval $B$ with at least one neighbouring busy interval on processor $k$.
 In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ \emph{closing of valley $V$ on processor $k$}.
 The corresponding subroutine is called $\close(k, V)$.
 
@@ -709,9 +709,9 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       \State{\Return{}}
     \EndIf{}
     \State{let $C$ be the critical set s.t.\ $C \sim V$}
-    \While{exists busy interval $A \subseteq V$ on processor $k$
-    with $A \sim V$ and $\hat \phi(A) \leq k - 1$}
-      \State{let $V_l, V_r$ be the left and right valley for $C$ and interval $A$ (if $A$ is a section of $C$)}
+    \While{exists busy interval $B \subseteq V$ on processor $k$
+    with $B \sim V$ and $\hat \phi(B) \leq k - 1$}
+      \State{let $V_l, V_r$ be the left and right valley for $C$ and interval $B$ (if $B$ is a section of $C$)}
       \If{$V_l$ exists and $\res(V_l) > 0$}
         \State{\Call{$\close$}{$k, V_l$}}
       \ElsIf{$V_r$ exists and $\res(V_r) > 0$}
@@ -745,7 +745,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
     \item
       no $V' \supseteq V$ has been closed on $k_V$ so far, and
     \item
-      there is a (full) busy interval $A \subseteq V$ on processor $k_V$.
+      there is a (full) busy interval $B \subseteq V$ on processor $k_V$.
   \end{itemize}
   We take $k_V \coloneqq 0$ if no such processor exists.
   At every step in the realignment of $S_{\aug}$ the following invariants hold for every valley $V$, where $C$ denotes the critical set with $C \sim V$.
@@ -755,7 +755,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
     \item
       For every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy at $t$.
     \item
-      Every busy interval $A \subseteq V$ on processor $k_V$ with $A \sim V$ is a section of $C$.
+      Every busy interval $B \subseteq V$ on processor $k_V$ with $B \sim V$ is a section of $C$.
   \end{enumerate}
 \end{lemma}
 \begin{proof}
@@ -794,8 +794,8 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       If $k_V = k$, then $V' \supseteq V$ is closed on processor $k_V$ and hence by definition we have $k'_V \leq k_V - 1$.
       If $k_V < k$, suppose for contradiction that $k_V \leq k'_V \leq k$, where $k'_V \leq k$ again holds by definition of $k'$ since $V' \subseteq V$ is closed on processor $k$.
 
-      Let $A \subseteq V$ be a full busy interval on $k_V$ before the close of $V'$.
-      We show that $A \subset V$, i.e.\ that there must be some $t \in V$ idle on $k_V$ before the close.
+      Let $B \subseteq V$ be a full busy interval on $k_V$ before the close of $V'$.
+      We show that $B \subset V$, i.e.\ that there must be some $t \in V$ idle on $k_V$ before the close.
       The stair-property then implies that processors $k_V, \ldots, k$ are idle at $t$ before the close.
       Since some $V' \supseteq V$ is closed, clearly $V \subset T$ by the choice of $V'$ as valley of some critical set in the realignment definition.
       Therefore we have $\min V - 1 \in T$ or $\max V + 1 \in T$, without loss of generality we assume the former.
@@ -806,7 +806,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       By our case assumption and the definition of the realignment, no $W' \supseteq W$ can have been closed on processor $k$ so far.
       With $W \supseteq V$ and the definition of $k_W$ we get $k_W \geq k_V$, where $k_W$ is the critical processor of $W$ before the close.
       Our induction hypothesis now implies that processors $1, \ldots, k_V, \ldots, k_W$ are busy at $t$ before the close.
-      For $A \subseteq V$ to be a (full) busy interval on $k_V$ before the close, we hence must have $\min V \notin A$.
+      For $B \subseteq V$ to be a (full) busy interval on $k_V$ before the close, we hence must have $\min V \notin B$.
       We know by definition of the realignment and the subroutine $\close$ that for every $k'$ with $k_V \leq k' < k$ and every $t \in V$:
       \begin{itemize}
         \item
@@ -814,13 +814,13 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
         \item
           If $t$ was idle on $k_V$ before the close, then $t$ was idle on $k'$ before (stair-property with $k_V \leq k'$) and hence $t$ is still idle on $k'$ after the close.
         \item
-          If $t$ was part of a full busy interval $A \subseteq V$ on $k_V$ before the close, then $t$ was idle on $k_V + 1$ before the close.
-          Otherwise, by the stair property there would have been a full busy interval $A' \subseteq A \subseteq V$ on processor $k_V + 1 \leq k$ before the close, contradicting the definition of $k_V$.
+          If $t$ was part of a full busy interval $B \subseteq V$ on $k_V$ before the close, then $t$ was idle on $k_V + 1$ before the close.
+          Otherwise, by the stair property there would have been a full busy interval $B' \subseteq B \subseteq V$ on processor $k_V + 1 \leq k$ before the close, contradicting the definition of $k_V$.
           Hence $t$ was idle on $k$ before (by stair-property) and therefore $t$ is idle on $k_V$ after the close (definition of close).
       \end{itemize}
-      Taken together, for $t \in V$ to be busy on $k'$ after the close, $t$ must have been busy on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full busy interval $A \subseteq V$.
-      Hence $t \in A$ for some \emph{partial} busy interval $A \subseteq V$ on $k'$ before the close.
-      For $A' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $A' \subseteq A$, as shown in the following figure.
+      Taken together, for $t \in V$ to be busy on $k'$ after the close, $t$ must have been busy on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full busy interval $B \subseteq V$.
+      Hence $t \in B$ for some \emph{partial} busy interval $B \subseteq V$ on $k'$ before the close.
+      For $B' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $B' \subseteq B$, as shown in the following figure.
       \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}
@@ -838,7 +838,8 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
         %\end{tikzpicture}
         %\caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}\label{fig:invariant_case1}
       \end{figure}
-      Hence there must have been a busy interval $B \subseteq [\min A', \max A]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
+      \todo[inline]{Rename busy intervals in figure: $A: B, A': B', B: B''$.}
+      Hence there must have been a busy interval $B'' \subseteq [\min B', \max B]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
       If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some section $D$ of $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
       Our induction hypothesis also implies that for every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy before the close.
@@ -850,7 +851,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       We show that $k_V = k \geq k'_V$, i.e.\ that the critical processor of $V$ before the close of $V'$ is the processor currently being filled.
       Let $W$ be the valley for which $V'$ is closed, i.e.\ $V'$ is closed during $\fillop(k, W)$.
       We must have $W \supset V'$ and therefore no $W' \supseteq W$ has been closed on $k$ so far.
-      Also, for $V'$ to be closed in $\fillop(k, W)$, there must be some busy interval $A \subseteq W$ on $k$ before the close, hence $k_W = k$.
+      Also, for $V'$ to be closed in $\fillop(k, W)$, there must be some busy interval $B \subseteq W$ on $k$ before the close, hence $k_W = k$.
       Since $V' \subset V$ and $V' \subset W$, $V$ and $W$ intersect ($V' \neq \emptyset$ by definition of $V'$ as valley).
       Let $C_W$ be the critical set with $C_W \sim W$.
       If $V \prec W$, then by choice of $V'$ as valley of $C_W$ we must have $V \subseteq V'$, which contradicts our case assumption.
@@ -896,49 +897,49 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       Since $\res$ is decreased for every valley by at most $1$, we have after the close that $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
 
   We conclude by showing that Invariant 2 implies Invariant 3.
-  Let $V$ be an arbitrary valley during the realignment of $S_{\aug}$ and $A \subseteq V$ a busy interval on processor $k_V$ with $A \sim V$.
+  Let $V$ be an arbitrary valley during the realignment of $S_{\aug}$ and $B \subseteq V$ a busy interval on processor $k_V$ with $B \sim V$.
   Let $C$ be the critical set with $C \sim V$.
-  Note that $A \sim V$ implies that $A$ intersects $C$.
-  Assume for contradiction that $A$ is not a section of $C$.
-  Then $\min A$ lies strictly within a subinterval of $C$ or symmetrically $\max A$ lies strictly within a subinterval of $C$.
-  We assume the first case, i.e.\ $t\coloneqq \min A - 1 \in C$ and $\min A \in C$.
+  Note that $B \sim V$ implies that $B$ intersects $C$.
+  Assume for contradiction that $B$ is not a section of $C$.
+  Then $\min B$ lies strictly within a subinterval of $C$ or symmetrically $\max B$ lies strictly within a subinterval of $C$.
+  We assume the first case, i.e.\ $t\coloneqq \min B - 1 \in C$ and $\min B \in C$.
   The second case follows by symmetry.
   If $t \in V$, then time slot $t$ is busy on processor $k_V$ by Invariant 2.
-  Therefore, $A$ cannot be a (full) busy interval on processor $k_V$, contradicting the choice of $A$.
+  Therefore, $B$ cannot be a (full) busy interval on processor $k_V$, contradicting the choice of $B$.
   If $t = \min V-1$, then consider the valley $W$ with $t \in W$ and $t \sim W$ and let $C_W$ be the critical set with $C_W \sim W$.
   We must have $W \supset V$, $W \succ V$ and $t \in C_W$.
-  Therefore $k_W \geq k_V$ and Invariant 2 implies that $t = \min A - 1$ is busy on processor $k_V$, again contradicting the choice of $A$ as full busy interval on processor $k_V$.
+  Therefore $k_W \geq k_V$ and Invariant 2 implies that $t = \min B - 1$ is busy on processor $k_V$, again contradicting the choice of $B$ as full busy interval on processor $k_V$.
 \end{proof}
 
 \begin{lemma}\label{lemma:s_real}
   The resulting schedule $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
 \end{lemma}
 \begin{proof}
-  %The invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of the subroutine $\fillop$, the corresponding busy interval $A$ is indeed a section of the corresponding critical set $C$ with $C \sim A$ and that the left valley $V_r$ or the left valley $V_l$ is and there is sufficient $\res$ that one of them is closed.
+  %The invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of the subroutine $\fillop$, the corresponding busy interval $B$ is indeed a section of the corresponding critical set $C$ with $C \sim B$ and that the left valley $V_r$ or the left valley $V_l$ is and there is sufficient $\res$ that one of them is closed.
 
-  Since in the while-loop of $\fillop(k, V)$ the busy interval $A \subseteq V$ on $k_V$ always is a section of $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $A$ are properly defined.
-  Also since $\hat \phi(A) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
+  Since in the while-loop of $\fillop(k, V)$ the busy interval $B \subseteq V$ on $k_V$ always is a section of $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $B$ are properly defined.
+  Also since $\hat \phi(B) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
   This reduces the number of idle intervals on processor $k$ by at least $1$, since Invariant 2 implies that $V_l$ or $V_r$ cannot end strictly within an idle interval on $k$.
   Hence all terms in the realignment are well defined and the realignment terminates.
 \end{proof}
 
 \begin{lemma}\label{lemma:phi_prop}
-  For every processor $k \in [m]$ and every busy interval $A$ on processor $k$ in $S_{\real}$ with $\crit(A) \geq 2$, we have $\hat \phi(A) > k - 1$.
+  For every processor $k \in [m]$ and every busy interval $B$ on processor $k$ in $S_{\real}$ with $\crit(B) \geq 2$, we have $\hat \phi(B) > k - 1$.
 \end{lemma}
 \begin{proof}
   We show that $\fillop(k, T)$ establishes the property on processor $k$.
   The claim then follows since $\fillop(k, T)$ does not change the schedules of processors above $k$.
-  We know that on processor $k$ busy intervals are only extended, since in $\fillop(k, T)$ we only close valleys for busy intervals $A$ on $k$ which are a section of the corresponding critical set $C$.
-  Let $A \subseteq V$ be a busy interval on processor $k$ in $S_{\real}$ with $A \sim V$ and $\crit(A) \geq 2$.
-  No valley $W \supseteq V$ can have been closed on $k$ since otherwise there would be no $A \subseteq V$ in $S_{\real}$.
+  We know that on processor $k$ busy intervals are only extended, since in $\fillop(k, T)$ we only close valleys for busy intervals $B$ on $k$ which are a section of the corresponding critical set $C$.
+  Let $B \subseteq V$ be a busy interval on processor $k$ in $S_{\real}$ with $B \sim V$ and $\crit(B) \geq 2$.
+  No valley $W \supseteq V$ can have been closed on $k$ since otherwise there would be no $B \subseteq V$ in $S_{\real}$.
   Therefore, at some point $\fillop(k, V)$ must be called.
   Consider the point in $\fillop(k, V)$ when the while-loop terminates.
-  Clearly at this point all busy intervals $A' \subseteq V$ with $A' \sim V$ on processor $k$ have $\hat \phi(A') > k - 1$.
-  At this point there must also be at least one such $A'$ for $A$ to be a busy interval on $k$ in $S_{\real}$ with $A \sim V$ and $A \subseteq V$.
-  In particular, one such $A'$ must have $A' \subseteq A$, which directly implies $\hat \phi(A) \geq \hat \phi(A') > k - 1$.
+  Clearly at this point all busy intervals $B' \subseteq V$ with $B' \sim V$ on processor $k$ have $\hat \phi(B') > k - 1$.
+  At this point there must also be at least one such $B'$ for $B$ to be a busy interval on $k$ in $S_{\real}$ with $B \sim V$ and $B \subseteq V$.
+  In particular, one such $B'$ must have $B' \subseteq B$, which directly implies $\hat \phi(B) \geq \hat \phi(B') > k - 1$.
 \end{proof}
-While with Lemma~\ref{lemma:phi_prop} we have our desired property for busy intervals $A$ of $\crit(A) \geq 2$, we still have to handle busy intervals of $\crit(A) \leq 1$.
-To be precise, we have to handle idle intervals which are surrounded only by busy intervals $A$ of $\crit(A) \leq 1$.
+While with Lemma~\ref{lemma:phi_prop} we have our desired property for busy intervals $B$ of $\crit(B) \geq 2$, we still have to handle busy intervals of $\crit(B) \leq 1$.
+To be precise, we have to handle idle intervals which are surrounded only by busy intervals $B$ of $\crit(B) \leq 1$.
 We will show that this constellation can only occur in $S_{\real}$ on processor $1$ and that the realignment has not done any modifications in these intervals, i.e.\ $S_{\pltr}$ and $S_{\real}$ do not differ for these intervals.
 With the same argument as for the original single-processor Left-to-Right algorithm, we then get that at least one processor has to be busy in any schedule during these intervals.
 
@@ -970,19 +971,19 @@ With the same argument as for the original single-processor Left-to-Right algori
   Hence, $t$ was activation before the close already, again contradicting our initial choice of $t$.
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
-  Let $I$ be an idle interval in $S_{\real}$ on some processor $k$ and let $A_l, A_r$ be the busy intervals directly to the left and right of $I$ with $\crit(A_l) \leq 1$ and $\crit(A_r) \leq 1$.
-  Allow $A_l$ to be empty, i.e.\ we might have $\min I = 0$, but $A_r$ must be nonempty, i.e.\ $\max I < d^*$.
-  Then we must have $k = 1$ and $\hat \phi(A_l \cup I \cup A_r) > 0$.
+  Let $I$ be an idle interval in $S_{\real}$ on some processor $k$ and let $B_l, B_r$ be the busy intervals directly to the left and right of $I$ with $\crit(B_l) \leq 1$ and $\crit(B_r) \leq 1$.
+  Allow $B_l$ to be empty, i.e.\ we might have $\min I = 0$, but $B_r$ must be nonempty, i.e.\ $\max I < d^*$.
+  Then we must have $k = 1$ and $\hat \phi(B_l \cup I \cup B_r) > 0$.
 \end{lemma}
 \begin{proof}
-  By Lemma~\ref{lemma:activations} and $\crit(A_r) \leq 1$, we know that $\min A_r$ is an activation of processor $1$ in $S_{\aug}$.
+  By Lemma~\ref{lemma:activations} and $\crit(B_r) \leq 1$, we know that $\min B_r$ is an activation of processor $1$ in $S_{\aug}$.
   Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence on all processors (stair-property in $S_{\aug}$).
   Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
-  Therefore, no $V$ intersecting $[\max I, \max A_r]$ was closed during the realignment on any processor, since this $V$ would contain $\max I$.
-  Since $A_r$ is a busy interval with $\crit(A_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
+  Therefore, no $V$ intersecting $[\max I, \max B_r]$ was closed during the realignment on any processor, since this $V$ would contain $\max I$.
+  Since $B_r$ is a busy interval with $\crit(B_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
   For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
-  Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min A_l - 1, \max A_r + 1] \neq \emptyset$ can have been closed during the realignment.
-  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $A_l$, $A_r$ are busy intervals and $I$ is an idle interval, see the following figure.
+  Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min B_l - 1, \max B_r + 1] \neq \emptyset$ can have been closed during the realignment.
+  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $B_l$, $B_r$ are busy intervals and $I$ is an idle interval, see the following figure.
 
   \begin{figure}[H]
     \centering
@@ -990,11 +991,11 @@ With the same argument as for the original single-processor Left-to-Right algori
     %\caption{}
     \label{fig:constellation}
   \end{figure}
-  Let $j$ be the single job scheduled at time slot $\min A_r$.
-  We conclude by showing that $E_j \subseteq I \cup A_r$ and therefore $\hat \phi(I \cup A_r) > 0$.
-  Otherwise, $j$ could be scheduled at $\min I$ or $\max A_r + 1$.
-  In the first case, $\PLTR$ would have extended $A_l$ by scheduling $j$ at time $\min I$ instead of at $\min A_r$.
-  In the second case, $\PLTR$ would have extended the idle interval $I$ by scheduling $j$ at $\max A_r + 1$ instead of at $\min A_r$.
+  Let $j$ be the single job scheduled at time slot $\min B_r$.
+  We conclude by showing that $E_j \subseteq I \cup B_r$ and therefore $\hat \phi(I \cup B_r) > 0$.
+  Otherwise, $j$ could be scheduled at $\min I$ or $\max B_r + 1$.
+  In the first case, $\PLTR$ would have extended $B_l$ by scheduling $j$ at time $\min I$ instead of at $\min B_r$.
+  In the second case, $\PLTR$ would have extended the idle interval $I$ by scheduling $j$ at $\max B_r + 1$ instead of at $\min B_r$.
 \end{proof}
 
 \begin{lemma}\label{lemma:intersection}
@@ -1063,25 +1064,26 @@ With the same argument as for the original single-processor Left-to-Right algori
   If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
   We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $f$ from the set of busy intervals to the jobs $J$.
   For this construction of $f$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
-  We construct $f$ such that $f(A) = j$ only if $d_j \in A$.
+  We construct $f$ such that $f(B) = j$ only if $d_j \in B$.
 
-  Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $A$ on $k$.
-  We call a busy interval $B$ in $S_{\pltr}$ on processor $l \in [m]$ a \emph{plateau on processor $l$}, if all slots of $B$ are idle for all processors above $l$.
+  Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $B$ on $k$.
+  We call a busy interval $B'$ in $S_{\pltr}$ on processor $l \in [m]$ a \emph{plateau on processor $l$}, if all slots of $B'$ are idle for all processors above $l$.
   Observe that plateaus (even across different processors) cannot intersect, which implies an ordering of the plateaus from left to right.
-  Let $B$ be the last plateau with $B \subseteq A$ and let $l \geq k$ be the processor for which this busy interval $B$ is a plateau.
-  By construction of $f$ and the choice of $B$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B, \max A]$ already mapped to by $f$.
-  This is since at most $l - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min B, \max A]$.
+  Let $B'$ be the last plateau with $B' \subseteq B$ and let $l \geq k$ be the processor for which this busy interval $B'$ is a plateau.
+  By construction of $f$ and the choice of $B'$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B', \max B]$ already mapped to by $f$.
+  This is since at most $l - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min B', \max B]$.
   Refer to the following figure for a visual sketch.
   \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{graphics/running_time.jpg}
     %\caption{}\label{fig:running_time}
   \end{figure}
+  \todo[inline]{Rename $A: B, B: B'$.}
   Let $Q_t \subseteq T$ be a tight set over activation $t \coloneqq \min B$ of processor $l$.
   Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
-  We know that $\max A + 1 \notin C_t$ since $\vol(\max A + 1) < k \leq l$ and $\max A + 1 > t$.
-  With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max A$ is scheduled at slot $\max A + 1$.
-  Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B, \max A]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $A$.
+  We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
+  With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max B$ is scheduled at slot $\max B + 1$.
+  Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $B$.
 \end{proof}
 
 \todo[inline]{Use tikz for all figures?}
