@@ -431,8 +431,8 @@ If $\opdef(Q) > 0$ or $\exc(Q) > 0$ for some $Q \subseteq T$, then the problem i
 
 \subsection{Critical Sets of Time Slots}
 The following Lemma~\ref{lemma:critical} provides the crucial structure required for the proof of the approximation guarantee.
-Intuitively, it states that for every activation $t$ of processor $k$ in the schedule $S_{\pltr}$ returned by $\PLTR$, there must be some set $Q$ of timeslots during which only the minimum amount of volume is scheduled by $\PLTR$.
-This in turn implies that an activation of processor $k$ is necessary in every feasible schedule during $Q$.
+Intuitively, it states that whenever $\PLTR$ requires processor $k$ to become busy at some timeslot $t$, there must be some critical set $Q \subseteq T$ of timeslots during which the volume scheduled by $\PLTR$ is minimal.
+This in turn implies that processor $k$ needs to be busy at some point during $Q$ in every feasible schedule.
 The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of sets $Q \subseteq T$.
 These auxiliary Lemmas are again a generalization of the corresponding feasibility characterization in~\cite{antoniadis} for their problem deadline-scheduling-on-intervals, which only defines upper bounds.
 \begin{lemma}\label{lemma:cut}
@@ -485,23 +485,22 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
 \end{proof}
 
 \begin{definition}
-  A time slot $t \in T$ is called \emph{activation of processor $k \in [m]$} if $t = \min B$ for some busy interval $B$ on processor $k$.
-  A time slot $t \in T$ is just called \emph{activation} if it is an activation of processor $k$ for some $k \in [m]$.
+  A time slot $t \in T$ is called \emph{engagement of processor $k \in [m]$} if $t = \min B$ for some busy interval $B$ on processor $k$.
+  A time slot $t \in T$ is just called \emph{engagement} if it is an engagement of processor $k$ for some $k \in [m]$.
 \end{definition}
-\todo[inline]{How to replace the term \emph{activation} (\cite{antoniadis} uses \emph{active} synonymous with \emph{on})? Candidates: \emph{start-of-work, start of busy interval, becoming busy}.}
 \begin{lemma}\label{lemma:critical}
-  Let $Q \subseteq T$ be a set of time slots and $t \in T$ an activation of processor $k \in [m]$.
-  We call $Q$ a \emph{tight set for activation $t$ of processor $k$} if $t \in Q$ and
+  Let $Q \subseteq T$ be a set of time slots and $t \in T$ an engagement of processor $k \in [m]$.
+  We call $Q$ a \emph{tight set for engagement $t$ of processor $k$} if $t \in Q$ and
   %For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
     \fv(Q) &= \vol(Q) \text{,}\\
     \vol(t') &\geq k-1 &~\text{for all}~t' \in Q~\text{, and}\\
     \vol(t') &\geq k &~\text{for all}~t' \in Q~\text{with}~t' \geq t \text{.}
   \end{align}
-  For every activation $t$ of some processor $k \in [m]$ in $S_{\pltr}$, there exists a tight set $Q_t \subseteq T$ for activation $t$ of processor $k$.
+  For every engagement $t$ of some processor $k \in [m]$ in $S_{\pltr}$, there exists a tight set $Q_t \subseteq T$ for engagement $t$ of processor $k$.
 \end{lemma}
 \begin{proof}
-  Suppose for contradiction that there is some activation $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
+  Suppose for contradiction that there is some engagement $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
   We show that $\PLTR$ would have extended the idle interval on processor $k$ which ends at $t$.
   Consider the step in $\PLTR$ when $t$ was the result of $\keepidle$ on processor $k$ and the corresponding lower and upper bounds $m_{t'}, l_{t'}$ for $t' \in T$ right after the calculation of $t$ with the corresponding update of the bounds by $\keepidle$.
   We modify the bounds by decreasing $m_t$ by $1$.
@@ -518,7 +517,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
 
   Finally, consider $Q \subseteq T$ such that $t \in Q$ and $\vol(t') < k$ for some $t' > t$.
   At the step in $\PLTR$ considered by us, we again have $m_{t'} \geq k > \vol(t')$, which implies $m_Q \geq \fv(Q)$ after our decrement of $m_t$.
-  In summary, if for $t$ no $Q$ exists as characterized in the proposition, the activation of processor $k$ at $t$ could not have been the result of $\keepidle$ on processor $k$.
+  In summary, if for $t$ no $Q$ exists as characterized in the proposition, the engagement of processor $k$ at $t$ could not have been the result of $\keepidle$ on processor $k$.
 \end{proof}
 
 \begin{lemma}
@@ -527,7 +526,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
     \item
       $C_k \supseteq C_{k'}$ for every critical set for processor $k' > k$,
     \item
-      $t \in C_k$ for every activation $t$ of processor $k$,
+      $t \in C_k$ for every engagement $t$ of processor $k$,
     \item
       $\fv(C_k) = \vol(C_k)$,
     \item
@@ -538,7 +537,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
   For every processor $k \in [m]$ of $S_{\pltr}$ which is not completely idle, there exists a critical set $C_k$ for processor $k$.
   %The set of critical processors is closed under union and for the sake of simplicity we^
 
-  %A set $Q_k \subseteq T$ is a \emph{tight set for processor $k$}, if $Q_k$ is a tight set for all activations $t$ of processor $k$.
+  %A set $Q_k \subseteq T$ is a \emph{tight set for processor $k$}, if $Q_k$ is a tight set for all engagements $t$ of processor $k$.
   %Lemma~\ref{lemma:critical} implies that such a $Q_k$ exists for every processor which is busy at some point in $S_{\pltr}$.
   %Observe that for a fixed processor $k$, the set $\mathcal{Q}_k$ of tight sets $Q_k$ for processor $k$ with maximum density $\phi(Q_k)$ is closed under union.
   %For the sake of uniqueness, we define \emph{the critical set $C_k \subseteq T$ for processor $k$} as the inclusion maximal element in this set $\mathcal{Q}_k$.
@@ -546,21 +545,21 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
 \end{lemma}
 \begin{proof}
   We show the existence by induction over the processors $m, \ldots, 1$.
-  For processor $m$, consider the union of all tight sets over activations of processor $m$.
+  For processor $m$, consider the union of all tight sets over engagements of processor $m$.
   This set fulfills all conditions necessary except for the maximality in regard to $\phi$.
   Suppose that the critical sets $C_m, \ldots, C_{k+1}$ exist.
-  Take $Q_k \subseteq T$ as the union of $C_{k+1}$ and all tight sets over activations of processor $k$.
+  Take $Q_k \subseteq T$ as the union of $C_{k+1}$ and all tight sets over engagements of processor $k$.
   By definition of $C_{k+1}$, we have $Q_k \supseteq C_{k'}$ for all $k' > k$.
-  By construction of $Q_k$, every activation $t$ of processor $k$ is contained in $Q_k$.
+  By construction of $Q_k$, every engagement $t$ of processor $k$ is contained in $Q_k$.
   Finally, we have $\fv(Q_k) = \vol(Q_k)$ and $\vol(t) \geq t-1$ for every $t \in Q_k$ since all sets in the union fulfill these properties.
 \end{proof}
 
 %\begin{definition}
-%  A \emph{critical set $C_t \subseteq T$ over an activation $t$} is the maximum of the set of tight sets $Q_t$ over activation $t$ in regard to the density $\phi$, i.e.
+%  A \emph{critical set $C_t \subseteq T$ over an engagement $t$} is the maximum of the set of tight sets $Q_t$ over engagement $t$ in regard to the density $\phi$, i.e.
 %  \begin{align}
 %    C_t \coloneqq \argmax \{ \phi(Q) \mid Q \subseteq T~\text{is tight set over}~t \} \text{.}
 %  \end{align}
-%  As the set of these critical sets $C_t$ for fixed $t$ is closed under union, we take $C_t$ to be the inclusion-maximal critical set over activation $t$ for the sake of uniqueness.
+%  As the set of these critical sets $C_t$ for fixed $t$ is closed under union, we take $C_t$ to be the inclusion-maximal critical set over engagement $t$ for the sake of uniqueness.
 %\end{definition}
 
 \subsection{Definitions based on critical sets}
@@ -626,7 +625,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   Such jobs can be scheduled in the part of $C$ not contained in $D$, i.e.\ we must have $E_j \cap (C \setminus D) \neq \emptyset$ and hence the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ must be defined.
   Since these jobs $j$ are scheduled in $C$ only for the minimum amount possible, i.e.\ $\vol(j, C) = \fv(j, C) > 0$, they must be scheduled in every $t \in E_j \setminus C$ and are therefore contained in $J(V_l)$ or $J(V_r)$.
 
-  If on the other hand we have equality, i.e.\ $\vol(C \cap D) = (c-1) \cdot |C \cap D|$, then let $t$ be an activation of processor $c$.
+  If on the other hand we have equality, i.e.\ $\vol(C \cap D) = (c-1) \cdot |C \cap D|$, then let $t$ be an engagement of processor $c$.
   Since $\vol(t) > c-1$, we must have $t \notin C \cap D$.
   By the same argument as before, we have that if $\fv(C \cap D) / |C \cap D| \leq c - \delta$, then $\uv(C \cap D) / |C \cap D| \geq \delta - 1$.
   Let $J' \coloneqq \{ j \in J \mid \uv(j, C \cap D) > 0 \}$.
@@ -763,7 +762,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
   Then we show that Invariant 2 implies Invariant 3.
   For the induction base, consider $S_{\aug}$, let $V$ be an arbitrary valley in $S_{\aug}$ with $c \coloneqq \crit(V) \geq 2$ and let $C$ be the critical set with $C \sim V$.
 
-  We must have $k_V \leq c$, otherwise $V$ would contain a full busy interval on processor $k_V > c$ and hence also an activation $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$.
+  We must have $k_V \leq c$, otherwise $V$ would contain a full busy interval on processor $k_V > c$ and hence also an engagement $t \in V$ of processor $k_V$, which by construction of $S_{\aug}$ would have $\crit(t) = k_V > c$.
   This is a direct contradiction to $\crit(V) = \max_{t \in V} \crit(t) = c$.
 
   Invariant 2 now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are busy at $t$.
@@ -943,11 +942,11 @@ To be precise, we have to handle idle intervals which are surrounded only by bus
 We will show that this constellation can only occur in $S_{\real}$ on processor $1$ and that the realignment has not done any modifications in these intervals, i.e.\ $S_{\pltr}$ and $S_{\real}$ do not differ for these intervals.
 With the same argument as for the original single-processor Left-to-Right algorithm, we then get that at least one processor has to be busy in any schedule during these intervals.
 
-\begin{lemma}\label{lemma:activations}
-  The realignment of $S_{\aug}$ does not create new activation times but may only change the corresponding processor being activated, i.e.\ if $t \in T$ is an activation of some processor $k$ in $S_{\real}$, then $t$ is also an activation of some processor $k'$ in $S_{\aug}$.
+\begin{lemma}\label{lemma:engagements}
+  The realignment of $S_{\aug}$ does not create new engagement times but may only change the corresponding processor being engaged, i.e.\ if $t \in T$ is an engagement of some processor $k$ in $S_{\real}$, then $t$ is also an engagement of some processor $k'$ in $S_{\aug}$.
 \end{lemma}
 \begin{proof}
-  Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an activation of some processor $k'$ where $t$ was no activation of any processor before this step.
+  Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an engagement of some processor $k'$ where $t$ was no engagement of any processor before this step.
   This step must be the closing of some valley $V$ on some processor $k > k'$:
   \todo{Explicitly make this into a separate lemma?}
   On processor $k$, we have seen that closing of some valley can only merge busy intervals.
@@ -955,20 +954,20 @@ With the same argument as for the original single-processor Left-to-Right algori
   Busy slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close, as seen in the following figure.
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.25\textwidth]{graphics/activations.jpg}
-    %\caption{}\label{fig:activations}
+    \includegraphics[width=0.25\textwidth]{graphics/egagements.jpg}
+    %\caption{}\label{fig:engagements}
   \end{figure}
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
-  Hence $t$ was already an activation before the close, contradicting our initial choice of $t$.
+  Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
   If $t \notin V$, then $t \succ V$.
   Let $W$ be the valley such that $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
   If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
   By Invariant 2, processors $1, \ldots, k_W = k$ are busy at $t$ before the close.
-  Again, this implies that $t$ was an activation before the close already, contradicting our choice of $t$.
+  Again, this implies that $t$ was an engagement before the close already, contradicting our choice of $t$.
   If $t \notin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
   We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
   Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are busy at $t$ before the close.
-  Hence, $t$ was activation before the close already, again contradicting our initial choice of $t$.
+  Hence, $t$ was an engagement before the close already, again contradicting our initial choice of $t$.
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
   Let $I$ be an idle interval in $S_{\real}$ on some processor $k$ and let $B_l, B_r$ be the busy intervals directly to the left and right of $I$ with $\crit(B_l) \leq 1$ and $\crit(B_r) \leq 1$.
@@ -976,11 +975,11 @@ With the same argument as for the original single-processor Left-to-Right algori
   Then we must have $k = 1$ and $\hat \phi(B_l \cup I \cup B_r) > 0$.
 \end{lemma}
 \begin{proof}
-  By Lemma~\ref{lemma:activations} and $\crit(B_r) \leq 1$, we know that $\min B_r$ is an activation of processor $1$ in $S_{\aug}$.
+  By Lemma~\ref{lemma:engagements} and $\crit(B_r) \leq 1$, we know that $\min B_r$ is an engagement of processor $1$ in $S_{\aug}$.
   Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence on all processors (stair-property in $S_{\aug}$).
   Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
   Therefore, no $V$ intersecting $[\max I, \max B_r]$ was closed during the realignment on any processor, since this $V$ would contain $\max I$.
-  Since $B_r$ is a busy interval with $\crit(B_r) \leq 1$ (i.e.\ not containing activations of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
+  Since $B_r$ is a busy interval with $\crit(B_r) \leq 1$ (i.e.\ not containing engagements of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
   For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
   Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min B_l - 1, \max B_r + 1] \neq \emptyset$ can have been closed during the realignment.
   Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $B_l$, $B_r$ are busy intervals and $I$ is an idle interval, see the following figure.
@@ -1079,7 +1078,7 @@ With the same argument as for the original single-processor Left-to-Right algori
     %\caption{}\label{fig:running_time}
   \end{figure}
   \todo[inline]{Rename $A: B, B: B'$.}
-  Let $Q_t \subseteq T$ be a tight set over activation $t \coloneqq \min B$ of processor $l$.
+  Let $Q_t \subseteq T$ be a tight set over engagement $t \coloneqq \min B$ of processor $l$.
   Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
   We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
   With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max B$ is scheduled at slot $\max B + 1$.
