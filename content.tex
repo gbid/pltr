@@ -276,7 +276,7 @@ Once the current processor cannot be kept idle for any longer, it becomes busy a
 The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ of the corresponding instance of \emph{power-down scheduling with lower and upper bounds} more restrictive.
 Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
 
-Once the algorithm returns, an actual schedule can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation performed during $\PLTR$.
+Once $\PLTR$ returns with the corresponding tight upper and lower bounds $m_t, l_t$ , an actual schedule $S_{\pltr}$ can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation performed during $\PLTR$.
 The mapping from this flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it always uses the lower-numbered processors first.
 
 \begin{algorithm}[H]
@@ -497,7 +497,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
     \vol(t') &\geq k-1 &~\text{for all}~t' \in Q~\text{, and}\\
     \vol(t') &\geq k &~\text{for all}~t' \in Q~\text{with}~t' \geq t \text{.}
   \end{align}
-  For every engagement $t$ of some processor $k \in [m]$ in $S_{\pltr}$, there exists a tight set $Q_t \subseteq T$ for engagement $t$ of processor $k$.
+  For every engagement $t$ of some processor $k \in [m]$ in the schedule $S_{\pltr}$ constructed by $\PLTR$, there exists a tight set $Q_t \subseteq T$ for engagement $t$ of processor $k$.
 \end{lemma}
 \begin{proof}
   Suppose for contradiction that there is some engagement $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
@@ -701,7 +701,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
 %\todo{Explicitly define \emph{valley $V$ having been closed on processor $k$} as $\close(k, V)$ having been called.}
 
 \begin{algorithm}[H]
-  \caption{Subroutines for the Realignment of $S_{\aug}$}\label{alg:real_suppl}
+  \caption{Subroutines for the Realignment of $S_{\aug}$ into $S_{\real}$}\label{alg:real_suppl}
 \begin{algorithmic}
   \Function{$\fillop$}{$k, V$}
     \If{$\crit(V) \leq 1$}
@@ -954,8 +954,32 @@ With the same argument as for the original single-processor Left-to-Right algori
   Busy slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close, as seen in the following figure.
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.25\textwidth]{graphics/egagements.jpg}
+    \includegraphics[width=0.25\textwidth]{graphics/engagements.jpg}
     %\caption{}\label{fig:engagements}
+  \end{figure}
+  \todo[inline]{Decide if I want to draw this in tikZ}
+  \begin{figure}[H]
+    \centering
+    \begin{tikzpicture}
+      % Schedule after the close label
+      \node[anchor=east, align=center] (schedule_after) at (0, 5) {Schedule\\ after the close};
+
+      % k' processor
+      \node[anchor=west] (k_prime) at (1, 5) {$k'$};
+
+      % Idle time slot (single horizontal line)
+      \draw[line width=0.6pt] (2.5, 5) -- (3.5, 5);
+
+      % Busy time slot with t label (without right border)
+      \draw[line width=0.6pt, fill=gray!30] (3.5, 4.5) rectangle (4.5, 5.5);
+      \node at (4, 5) {$t$};
+      \draw[line width=0.6pt] (3.5, 4.5) -- (3.5, 5.5);
+      \draw[line width=0.6pt] (3.5, 5.5) -- (4.5, 5.5);
+      \draw[line width=0.6pt] (3.5, 4.5) -- (4.5, 4.5);
+
+      % Remove the right border of the square
+      \fill[gray!30] (4.485, 4.51) rectangle (4.511, 5.49);
+    \end{tikzpicture}
   \end{figure}
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
   Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
