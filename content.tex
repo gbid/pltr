@@ -25,7 +25,7 @@
 \pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
 \usepackage[textsize=small]{todonotes}
-
+\usetikzlibrary{decorations.pathreplacing}
 \mathtoolsset{showonlyrefs}
 
 % customize label "Algorithm" for package "algorithm"
@@ -187,7 +187,7 @@ The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_ri
 %$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
 We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
 Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
-It also does not require the EXT-ALG, which all previous algorithms rely on to make an infeasible schedule feasible.
+It also does not require the EXT-ALG, which all previous algorithms rely on to make their infeasible solutions feasible in an additional phase.
 
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: just keep processors in their current state (busy or idle) for as long as feasibly possible.
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
@@ -232,7 +232,7 @@ In Graham's notation \citep{graham}, this setting can be denoted with $m \mid r_
 \paragraph{Busy and Idle Intervals}
 We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled on this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
-Clearly a processor cannot be busy and off at the same time.
+Clearly a processor cannot be busy and asleep at the same time.
 An interval $I \subseteq T$ is a (full) \emph{busy interval} on processor $k \in [m]$ if $I$ is inclusion maximal on condition that processor $k$ is busy in every $t \in I$.
 Correspondingly, an interval $I \subseteq T$ is a \emph{partial busy interval} on processor $k$ if $I$ is not inclusion maximal on condition that processor $k$ is busy in very $t \in I$.
 We define (partial and full) \emph{idle intervals}, \emph{on intervals}, and \emph{off intervals} of a processor analogously via inclusion maximality.
@@ -961,25 +961,46 @@ With the same argument as for the original single-processor Left-to-Right algori
   \begin{figure}[H]
     \centering
     \begin{tikzpicture}
-      % Schedule after the close label
-      \node[anchor=east, align=center] (schedule_after) at (0, 5) {Schedule\\ after the close};
+  % Schedule after the close label
+  \node[anchor=east, align=center] (schedule_after) at (0, 2) {Schedule\\ after the close};
 
-      % k' processor
-      \node[anchor=west] (k_prime) at (1, 5) {$k'$};
+  % k' processor
+  \node[anchor=west] (k_prime) at (1, 2) {$k'$};
 
-      % Idle time slot (single horizontal line)
-      \draw[line width=0.6pt] (2.5, 5) -- (3.5, 5);
+  % Idle time slot (single horizontal line)
+  \draw[line width=0.6pt] (2.5, 2) -- (3.5, 2);
 
-      % Busy time slot with t label (without right border)
-      \draw[line width=0.6pt, fill=gray!30] (3.5, 4.5) rectangle (4.5, 5.5);
-      \node at (4, 5) {$t$};
-      \draw[line width=0.6pt] (3.5, 4.5) -- (3.5, 5.5);
-      \draw[line width=0.6pt] (3.5, 5.5) -- (4.5, 5.5);
-      \draw[line width=0.6pt] (3.5, 4.5) -- (4.5, 4.5);
+  % Busy time slot with t label (without right border)
+  \draw[line width=0.6pt, fill=gray!30] (3.5, 1.5) rectangle (4.5, 2.5);
+  \node at (4, 2) {$t$};
+  \draw[line width=0.6pt] (3.5, 1.5) -- (3.5, 2.5);
+  \draw[line width=0.6pt] (3.5, 2.5) -- (4.5, 2.5);
+  \draw[line width=0.6pt] (3.5, 1.5) -- (4.5, 1.5);
 
-      % Remove the right border of the square
-      \fill[gray!30] (4.485, 4.51) rectangle (4.511, 5.49);
-    \end{tikzpicture}
+  % Remove the right border of the square
+  \fill[gray!30] (4.485, 1.51) rectangle (4.515, 2.49);
+
+  % Schedule before the close label
+  \node[anchor=east, align=center] (schedule_before) at (0, 0.5) {Schedule\\ before the close};
+  % Large curly brace grouping k and k'
+  \draw[line width=0.6pt, decorate, decoration={brace, amplitude=5pt}] (0.5, -0.125) -- (0.5, +1.125);
+
+  % k processor
+  \node[anchor=west] (k) at (1, 1) {$k$};
+  % Idle time slot (single horizontal line)
+  \draw[line width=0.6pt] (2.5, 1) -- (3.5, 1);
+
+  % k' processor
+  \node[anchor=west] (k_prime) at (1, 0) {$k'$};
+  \draw[line width=0.6pt] (2.5, 0) -- (3.5, 0);
+
+  % Busy time slot with t label (without right border)
+  \draw[line width=0.6pt, fill=gray!30] (2.5, -0.5) rectangle (4.5, 0.5);
+  \fill[gray!30] (2.485, -0.49) rectangle (2.515, 0.49);
+  \fill[gray!30] (4.485, -0.49) rectangle (4.515, 0.49);
+
+
+\end{tikzpicture}
   \end{figure}
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
   Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
