@@ -28,6 +28,8 @@
 \usetikzlibrary{decorations.pathreplacing}
 \mathtoolsset{showonlyrefs}
 
+\newcommand{\algrule}[1][.2pt]{\par\vspace\baselineskip\hrule height #1\par\vspace\baselineskip}
+
 % customize label "Algorithm" for package "algorithm"
 %\makeatletter
 %\renewcommand{\ALG@name}{Foobaroo}
@@ -177,7 +179,7 @@ Both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, ha
 All three algorithms also critically rely on the EXT-ALG to obtain a feasible solution, which requires time $\mathcal{O}(FP)$, where $P$ is the total processing volume and $F$ denotes the running time for finding a maximum flow in a network of size $\mathcal{O}(nd)$.
 
 By using techniques presented in~\cite{antoniadis}, the time slots which have to be considered can be reduced to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time instead of just pseudo-polynomial time.
-More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log d)$.
+More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
 However, this improved running time comes at the price of an addivite $\epsilon$ in the approximation factor of the two LP-based algorithms.
 The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$.
 
@@ -190,6 +192,7 @@ Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not r
 It also does not require the EXT-ALG, which all previous algorithms rely on to make their infeasible solutions feasible in an additional phase.
 
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: just keep processors in their current state (busy or idle) for as long as feasibly possible.
+\todo[inline]{Move this feasibility blabla to Section~\ref{section:algorithm}?}
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
@@ -295,12 +298,12 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   %  \State{$f^* \gets$ Max-Flow for current values of $m_t, l_t$}
   %  \State{\Return{$f^* == P$}}
   %\EndFunction{}
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}[H]
-\caption{Subroutines for $\PLTR$}\label{alg:keep}
-\begin{algorithmic}
+%\end{algorithmic}
+%\end{algorithm}
+\algrule
+%\begin{algorithm}[H]
+%\caption{Subroutines for $\PLTR$}\label{alg:keep}
+%\begin{algorithmic}
   \Function{$\keepidle$}{$k, t$}
     \State{search maximal $t' > t$ s.t.\
     exists feasible schedule with $m_{t''}$ set to $k-1$ for all $t'' \in [t, t')$}
@@ -687,7 +690,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
 
 
 \begin{algorithm}[H]
-  \caption{Realignment of $S_{\aug}$}\label{alg:real}
+  \caption{Realignment of $S_{\aug}$ for analysis only}\label{alg:real}
 \begin{algorithmic}
   \State{$\res(V) \gets 2 |J(V)|$ for every valley $V$}
   \For{$k \gets m$ \textrm{to} $1$}
@@ -695,14 +698,14 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
     \State{$\res(V) \gets \res(V) - 1$ for every valley $V$
     s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on processor $k$}
   \EndFor{}
-\end{algorithmic}
-\end{algorithm}
-
+%\end{algorithmic}
+%\end{algorithm}
+\algrule
 %\todo{Explicitly define \emph{valley $V$ having been closed on processor $k$} as $\close(k, V)$ having been called.}
 
-\begin{algorithm}[H]
-  \caption{Subroutines for the Realignment of $S_{\aug}$ into $S_{\real}$}\label{alg:real_suppl}
-\begin{algorithmic}
+%\begin{algorithm}[H]
+%  \caption{Subroutines for the Realignment of $S_{\aug}$ into $S_{\real}$}\label{alg:real_suppl}
+%\begin{algorithmic}
   \Function{$\fillop$}{$k, V$}
     \If{$\crit(V) \leq 1$}
       \State{\Return{}}
