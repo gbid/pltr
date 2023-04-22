@@ -129,13 +129,13 @@ Algorithmic techniques for saving power in computing environments employ two fun
 In this paper, we study the classic deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
 
 %\paragraph{Informal problem description}
-In this setting, a computing device or processor has two possible states, an active state and a sleep state.
-The active state allows the device to perform computations while consuming energy at a fixed rate.
-In the sleep state, the energy consumed is negligible but no computations can be performed.
-However, transitioning from the sleep state back to the active state consumes additonal energy.
-The devices have to complete a number of tasks or jobs, each with its own processing volume and interval during which it has to be executed.
-The goal is to complete all jobs during their respective execution intervals while minimizing the consumed energy.
-Intuitively, one aims for long but few idle intervals, such that the energy required for transitioning between the states is low, while avoiding processors being in the active state but not performing work.
+In this setting, a computing device or processor has two possible states, it can be either \emph{on} or \emph{off}.
+If a processor is on, it can perform computations while consuming energy at a fixed rate.
+If a processor is off, the energy consumed is negligible but it cannot perform computation.
+Turning on a processor i.e.\ transitioning it from the off-state to on-state consumes additional energy.
+The problem we have to solve is to schedule a number of jobs or tasks, each with its own processing volume and interval during which it has to be exectued.
+The goal is to complete every job within its execution interval using a limited number of processors while carefully planning idle times for powering off processors such that the consumed energy is minimized.
+Intuitively, one aims for long but few idle intervals, such that the energy required for transitioning between the states is low, while avoiding turned on processors being idle for too long.
 
 \paragraph{Previous work}
 This fundamental problem in power management was first considered by~\cite{irani_left_to_right_soda_2003} for a single processor.
@@ -145,7 +145,7 @@ If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily
 Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
 At this point, the processor becomes busy again and $\ltr$ proceeds recursively until all jobs are completed.
 \todo[inline]{Formulate this better or leave it even out?}
-The processor is defined to be in the sleep state for idle intervals which are sufficiently long such that it is worthwhile to transition to the sleep state.
+The processor is defined to be off for idle intervals which are sufficiently long such that the costs for keeping it on outweight the costs for turning it on again after the idle interval.
 
 %\paragraph{Single Processor Setting}
 \todo[inline]{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
@@ -167,11 +167,12 @@ It took further thirteen years for the first non-trivial result on the general s
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
 Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
-Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations. EXT-ALG iteratively searches for a time slot at which an additional active processor allows for an additional unit of processing volume to be scheduled.
+Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations.
+EXT-ALG iteratively searches for a time slot at which an additional turned on processor allows for an additional unit of processing volume to be scheduled.
 
 \cite{skeletons} improve this approximation factor to $2$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
 They also modify the rouding procedure based on their concept of a \textit{multi-processor skeleton}.
-Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of active processors during specific intervals and which provides a lower bound for the costs of an optimal feasible schedule.
+Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of processors in the on-state during specific intervals and which provides a lower bound for the costs of an optimal feasible schedule.
 Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
 \todo[inline]{Describe this combinatorial algorithm based on my Latex-notes.}
 
@@ -232,25 +233,35 @@ Each processor consumes $1$ unit of energy for every timeslot it is in the on-st
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
 In Graham's notation \citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
 
-\paragraph{Busy and Idle Intervals}
-We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled on this processor at time $t$.
+\paragraph{Busy and idle intervals}
+We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled for this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
-Clearly a processor cannot be busy and asleep at the same time.
-An interval $I \subseteq T$ is a (full) \emph{busy interval} on processor $k \in [m]$ if $I$ is inclusion maximal on condition that processor $k$ is busy in every $t \in I$.
-Correspondingly, an interval $I \subseteq T$ is a \emph{partial busy interval} on processor $k$ if $I$ is not inclusion maximal on condition that processor $k$ is busy in very $t \in I$.
+Clearly a processor cannot be busy and off at the same time.
+An interval $I \subseteq T$ is a (full) \emph{busy interval} for processor $k \in [m]$ if $I$ is inclusion maximal on condition that processor $k$ is busy in every $t \in I$.
+Correspondingly, an interval $I \subseteq T$ is a \emph{partial busy interval} for processor $k$ if $I$ is not inclusion maximal on condition that processor $k$ is busy in very $t \in I$.
 We define (partial and full) \emph{idle intervals}, \emph{on intervals}, and \emph{off intervals} of a processor analogously via inclusion maximality.
 
 Observe that if a processor is idle for more than $q$ units of time, it is worth turning the processor off during the corresponding idle interval.
 Our algorithm will specify for each processor when it is busy and when it is idle.
 Each processor is then defined to be in the off-state during idle intervals of length greater than $q$ and otherwise in the on-state.
+With this, we can express the costs of a schedule $S$ in terms of busy and idle intervals.
 
-\paragraph{Lower and Upper Bounds for the Number of Busy Processors}
+\paragraph{Costs of a schedule}
+For a schedule $S$ let $S^k$ be the schedule of processor $k$.
+Furthermore, for $S^k$ let $\mathcal{N}, \mathcal{F}, \mathcal{B}, \mathcal{I}$ be the set of on, off, busy, and idle intervals, respectively.
+We partition the costs of processor $k$ into the costs $\on(S^k)$ for residing in the on-state and the costs $\off(S^k)$ for transitioning between the off-state and the on-state, hence $\costs(S^k) = \on(S^k) + \off(S^k) = \sum_{N \in \mathcal{N}} |N| + q$.
+Equivalently, we partition the costs of processor $k$ into the costs $\idle(S^k) \coloneqq \sum_{I \in \mathcal{I}} \min \{ |I|, q \}$ for being idle and the costs $\busy(S^k) \coloneqq \sum_{B \in \mathcal{B}} |B|$ for being busy.
+The total costs of a schedule $S$ are the total costs across all processors, i.e.\ $\costs(S) = \sum_{k = 1}^{m} \costs(k)$.
+Clearly we have $\sum_{k \in [m]} \busy(k) = P$, this means for an approximation guarantee the critical part is bounding the idle costs.
+
+\paragraph{Lower and upper bounds for the number of busy processors}
 We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors were allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$.
 For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
-This generalizes the problem of \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
+This generalizes the problem \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
+\todo[inline]{Rename problem \emph{deadline scheduling with lower and upper processor bounds} since we are only using it for feasibility?}
 
-\paragraph{Properties of an Optimal Schedule}
+\paragraph{Properties of an optimal schedule}
 \begin{definition}\label{def:stair_property}
   Given some arbitrary but fixed order on the number of processors, a schedule $S$ fulfills the \emph{stair-property} if it uses the lower numbered processors first, i.e.\ for every $t \in T$, if processor $k \in [m]$ is busy at $t$, then every processor $k' \leq k$ is busy at $t$.
   This symmetrically implies that if processor $k \in [m]$ is idle at $t$, then every processor $k' \geq k$ is idle at $t$.
@@ -1062,7 +1073,9 @@ With the same argument as for the original single-processor Left-to-Right algori
 \end{proof}
 
 \subsection{Approximation Guarantee}
-\todo[inline]{Define $\busy$-, $\idle$-, $\off$-, and $\on$-costs as in my thesis.}
+\todo[inline]{Write some text that this resembles the proof for $\LTR$ together with an argument that realignment cannot decrease costs. Alternatively: just remove the subsection?}
+\todo[inline]{Think about what to do with this ``ending before $d^*$ restriction.}
+\todo[inline]{Merge Lemma~\ref{lemma:costs_s_real} and Theorem~\ref{theorem:approximation}}
 \begin{lemma}\label{lemma:costs_s_real}
   $\costs(S_{\real}) \leq 2 \OPT + P$
 \end{lemma}
@@ -1084,7 +1097,7 @@ With the same argument as for the original single-processor Left-to-Right algori
 \end{proof}
 
 
-\begin{theorem}
+\begin{theorem}\label{theorem:approximation}
   $\costs(S_{\pltr}) \leq 2 \OPT + P$
 \end{theorem}
 \begin{proof}
@@ -1097,6 +1110,7 @@ With the same argument as for the original single-processor Left-to-Right algori
 \end{proof}
 
 \section{Running Time}\label{section:running_time}
+\todo[inline]{Show how flow calculation for feasibility can be done faster.}
 \begin{theorem}
   Algorithm $\PLTR$ has a running time of $\mathcal{O}(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
 \end{theorem}
