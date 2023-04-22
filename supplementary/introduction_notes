@@ -1,25 +1,3 @@
-Gliederung Introduction analog zu Antoniadis:
-  Energy blabala: battery powered devices, global energy consumption of ICT
-  Power-down mechanism
-  (More) Formal Problem description
-  Previous work
-    Fundamental problem posed by Irani, Left-to-Right
-    Single processor case: solved by Baptiste, Baptiste
-    Multiprocessor case:
-      First result for unit-case jobs: DP by Deamine
-        (building on involved DP by Baptiste)
-      x years later: first approximation guarantee by Antoniadis:
-        3-approx, improved to 2-approx
-        involved IP/LP relaxiation with rounding
-        TODO: describe what they are doing more thoroughly!
-      Informal hardness reasons
-    NP-hardness?
-  Our contribution
-
-    
-
-
-
 Nach Wiese:
 
 Abstract:

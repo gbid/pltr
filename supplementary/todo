@@ -1,41 +1,9 @@
-Introduction nach Wiese Paper
-  supplementary/introduction_notes
-  Previous work
-  Notation
-  Costs of schedule here or later?
-  LTR stuff here (or in appendix)?
-
-Sonstige TODOs:
-  Algorithm description: mention correspondence of feasibility for LTR (EDF) to PLTR (Flow)
-  Define Flow network in text?
-  Extra Lemma: closing can only merge busy intervals?
-  Replace term "span" with "is a section of"
-  Replace term "activation" with something
-  Replace $A$ for busy intervals with $B$?
-  Lemma 3 schöner ausformulieren?
-  Definition 12 zu \crit aufhübschen
-  Include min V - 1, max V + 1 in Invariant 2?
-  Realignment: don't list them as Algorithms?
-    Stress that realignment ist not part of algorithm
-  Conclusion?
-
-Structure of an optimal schedule (s. Masterarbeit)
-
 Notation:
-  S^k rausschmeißen in Text und Graphiken
-
-Include Formal Definition of Costs as in Master's thesis (4.4?)
-  On/Off
-  Idle/Busy
-  Handle idle-intervals ending at d^* separately?
-
-Formattierungen:
-  Algorithmen: Nummerierungen ändern oder doch in selbe Umgebung packen
-  Graphiken:
-    Skizzen weniger hoch machen
-    Fette Linien für idle Intervalle dünn machen
-    Figure 2,3: Intervalle D anders darstellen?
-    Als svg einbinden wie in Masterarbeit
+  S^k rausschmeißen in Text und Graphiken?
+  d_max | d | d^*
+Graphiken:
+  A, B ersetzen wo markiert
+  S^k?
 
 Polynomial time: 
   Nach meinem Ansatz:
@@ -50,8 +18,17 @@ Polynomial time:
   Nach Antoniadis:
     Beweise durchgehen
     Überlegen, wie viel und ob ich sie aufschreiben soll
+  In jedem Fall: größe der Flow-networks überall erwähnen, wo O(F) vorkommt
 
-Acknoledgement Albers
+Introduction:
+  Further related work?
+
+Formattierungen:
+  Graphiken:
+    Skizzen weniger hoch machen
+    Fette Linien für idle Intervalle dünn machen
+    Figure 2,3: Intervalle D anders darstellen?
+    Als svg einbinden wie in Masterarbeit
 
 Kürzen auf 12 Seiten
   Beweise in Appendix:
@@ -68,3 +45,16 @@ Kürzen auf 12 Seiten
     Figure 2,3 viel Duplikation
   New lines
   Kurze Paragraphen zusammenfassen oder rausschmeißen
+
+Bessere Beweise:
+  Extra Lemma: closing can only merge busy intervals?
+  Include min V - 1, max V + 1 in Invariant 2?
+
+Optional/Zweitrangig:
+  Notation explizit in Intro einführen?
+  Conclusion?
+  Definition 12 zu \crit aufhübschen
+  Lemma 3 schöner ausformulieren?
+  Define Flow network in text?
+  Handle idle-intervals ending at d^* separately?
+  Acknoledgement Albers
