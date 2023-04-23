@@ -183,6 +183,7 @@ By using techniques presented in~\cite{antoniadis}, the time slots which have to
 More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
 However, this improved running time comes at the price of an addivite $\epsilon$ in the approximation factor of the two LP-based algorithms.
 The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$.
+\todo{Kürzen?}
 
 \paragraph{Contribution}
 In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time.
@@ -392,8 +393,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(\gamma) = P - \sum_{t \in T} l_t = f_{out}(\gamma)$.
 
 \end{proof}
-\todo[inline]
-{Move this Theorem~\ref{theorem:feasibility} to the back together with Lemma~\ref{lemma:flow_feasibility}.
+\todo{Move this Theorem~\ref{theorem:feasibility} to the back together with Lemma~\ref{lemma:flow_feasibility}.
   Or even better yet, include this in the main theorem.}
 \begin{theorem}\label{theorem:feasibility}
   Given a feasible problem instance, algorithm $\PLTR$ constructs a feasible schedule.
@@ -611,6 +611,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   \includesvg[width=1\textwidth]{graphics/valleys_of.drawio.svg}
   \caption{A sketch of the valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
 \end{figure}
+\todo{Kürzen: Remove this figure?}
 %\todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
 %  Possible fixes: require $V \prec C$ or define $\succeq$ based on $\crit$ only (Lemma valley should still work).}
 \end{definition}
@@ -1065,14 +1066,19 @@ With the same argument as for the original single-processor Left-to-Right algori
 \end{proof}
 
 \subsection{Approximation Guarantee}
-\todo[inline]{Write some text that this resembles the proof for $\LTR$ together with an argument that realignment cannot decrease costs. Alternatively: just remove the subsection?}
+Lemma~\ref{lemma:intersection} finally allows us to bound the costs of the schedule $S_{\real}$ with the same arguments as in the proof for the single processor LTR algorithm of~\cite{irani_left_to_right_soda_2003}.
+We complement this with an argument that the realignment could not have increased the costs of $S_{\pltr}$ and that we have hence bounded the costs of the schedule returned by our algorithm $\PLTR$.
+
 \todo[inline]{Think about what to do with this ``ending before $d^*$ restriction.}
-\todo[inline]{Merge Lemma~\ref{lemma:costs_s_real} and Theorem~\ref{theorem:approximation}}
-\begin{lemma}\label{lemma:costs_s_real}
-  $\costs(S_{\real}) \leq 2 \OPT + P$
-\end{lemma}
+%\begin{lemma}\label{lemma:costs_s_real}
+%  $\costs(S_{\real}) \leq 2 \OPT + P$
+%\end{lemma}
+\begin{theorem}\label{theorem:approximation}
+  $\costs(S_{\pltr}) \leq 2 \OPT + P$
+\end{theorem}
 \begin{proof}
-  We first show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
+  We begin by bounding $\costs(S_{\real})$ as in the proposition.
+  First, we show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
   Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) which intersect some $\off$-interval of $S^k_{\opt}$.
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
   Since the costs of each idle interval are at most $q$, and the costs of each off interval are exactly $q$, the costs of all idle intervals in $\mathcal{I}_1$ is bounded by $2 \off(S^k_{\opt})$.
@@ -1085,17 +1091,9 @@ With the same argument as for the original single-processor Left-to-Right algori
   Furthermore, initially $\res(V) = 2 |J(V)|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
   During $\fillop(k, T)$ at most a single $V'$ containing $t$ is closed for every $t \in T$.
   Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in the subroutine $\close$.
-  In conclusion, we have $\costs(S_{\real}) = \idle(S_{\real}) + \busy(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$.
-\end{proof}
+  This establishes the lower bound $\costs(S_{\real}) = \idle(S_{\real}) + \busy(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$ for our realigned schedule.
 
-
-\begin{theorem}\label{theorem:approximation}
-  $\costs(S_{\pltr}) \leq 2 \OPT + P$
-\end{theorem}
-\begin{proof}
-  We argue that $\costs(S_{\pltr}) \leq \costs(S_{\real})$.
-  The theorem then follows from Lemma~\ref{lemma:costs_s_real}.
-  We do this by transforming $S_{\real}$ back into $S_{\pltr}$ without increasing the costs of the schedule.
+  We complete the proof by arguing that $\costs(S_{\pltr}) \leq \costs(S_{\real})$, as transforming $S_{\real}$ back into $S_{\pltr}$ does not increase the costs of the schedule.
   Removing the auxiliary busy slots clearly cannot increase the costs.
   Since the realignment of $S_{\aug}$ only moves busy slots between processors, but not between different time slots, we can easily restore $S_{\pltr}$ (up to permutations of the jobs scheduled on the busy processors at the same time slot) by moving all busy slots back down to the lower numbered processors.
   By the same argument as in Lemma~\ref{lemma:stair_property_opt}, this does not increase the total costs of the schedule.
