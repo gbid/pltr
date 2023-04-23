@@ -217,6 +217,7 @@ Finally, in Section~\ref{section:running_time} we show that the simplicity of ou
 
 
 \subsection{Formal Problem Statement and Preliminaries}
+\todo[inline]{Include domains of $r_j, d_j, m$?}
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
@@ -247,7 +248,7 @@ Each processor is then defined to be in the off-state during idle intervals of l
 With this, we can express the costs of a schedule $S$ in terms of busy and idle intervals.
 
 \paragraph{Costs of a schedule}
-For a schedule $S$ let $S^k$ be the schedule of processor $k$.
+For a schedule $S$ let $S^k$ denote the schedule of processor $k$.
 Furthermore, for $S^k$ let $\mathcal{N}, \mathcal{F}, \mathcal{B}, \mathcal{I}$ be the set of on, off, busy, and idle intervals, respectively.
 We partition the costs of processor $k$ into the costs $\on(S^k)$ for residing in the on-state and the costs $\off(S^k)$ for transitioning between the off-state and the on-state, hence $\costs(S^k) = \on(S^k) + \off(S^k) = \sum_{N \in \mathcal{N}} |N| + q$.
 Equivalently, we partition the costs of processor $k$ into the costs $\idle(S^k) \coloneqq \sum_{I \in \mathcal{I}} \min \{ |I|, q \}$ for being idle and the costs $\busy(S^k) \coloneqq \sum_{B \in \mathcal{B}} |B|$ for being busy.
@@ -606,8 +607,9 @@ By choice of $C$ as critical set (property 1), a valley of $C$ is indeed a valle
 We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{graphics/valleys_of.jpg}
-  \caption{The valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
+  %\includegraphics[width=1\textwidth]{graphics/valleys_of.jpg}
+  \includesvg[width=1\textwidth]{graphics/valleys_of.drawio.svg}
+  \caption{A sketch of the valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
 \end{figure}
 %\todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
 %  Possible fixes: require $V \prec C$ or define $\succeq$ based on $\crit$ only (Lemma valley should still work).}
@@ -625,7 +627,8 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 \end{lemma}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1\textwidth]{graphics/left_right_valleys.jpg}
+  %\includegraphics[width=1\textwidth]{graphics/left_right_valleys.jpg}
+  \includesvg[width=1\textwidth]{graphics/left_right_valleys.drawio.svg}
   \caption{The left and right valley $V_l$ and $V_r$ of the critical set $C_k$ for processor $k$ and a section $D$ of $C_k$.
   Lemma~\ref{lemma:valley} guarantees that $\delta$ jobs are scheduled at every slot of $V_l$ or $V_r$.}\label{fig:left_right_valleys}
 \end{figure}
@@ -836,22 +839,9 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       For $B' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $B' \subseteq B$, as shown in the following figure.
       \begin{figure}[H]
         \centering
-        \includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}
-        %\begin{tikzpicture}
-        %  \draw (2,0) -- (6,0) ;
-        %  \draw node[anchor=south west] {$k'_V$} (2,0.5) -- (6,0.5);
-
-        %  %\node[rectangle,
-        %  %draw = lightgray,
-        %  %text = olive,
-        %  %fill = green!30!black,
-        %  %minimum width = 4cm,
-        %  %minimum height = 0.5cm] (r) at (0,0) {};
-
-        %\end{tikzpicture}
-        %\caption{The situation for Case 1 in Lemma~\ref{lemma:invariant}.}\label{fig:invariant_case1}
+        %\includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}
+        \includesvg[scale=0.4]{graphics/invariant_case1.drawio.svg}
       \end{figure}
-      \todo[inline]{Rename busy intervals in figure: $A: B, A': B', B: B''$.}
       Hence there must have been a busy interval $B'' \subseteq [\min B', \max B]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
       If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some section $D$ of $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
@@ -966,55 +956,53 @@ With the same argument as for the original single-processor Left-to-Right algori
   On processor $k$, we have seen that closing of some valley can only merge busy intervals.
   On processors above $k$, the schedule does not change.
   Busy slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close, as seen in the following figure.
+  %\begin{figure}[H]
+  %  \centering
+  %  \begin{tikzpicture}
+  %    % Schedule after the close label
+  %    \node[anchor=east, align=center] (schedule_after) at (0, 2) {Schedule\\ after the close};
+
+  %    % k' processor
+  %    \node[anchor=west] (k_prime) at (1, 2) {$k'$};
+
+  %    % Idle time slot (single horizontal line)
+  %    \draw[line width=0.6pt] (2.5, 2) -- (3.5, 2);
+
+  %    % Busy time slot with t label (without right border)
+  %    \draw[line width=0.6pt, fill=gray!30] (3.5, 1.5) rectangle (4.5, 2.5);
+  %    \node at (4, 2) {$t$};
+  %    \draw[line width=0.6pt] (3.5, 1.5) -- (3.5, 2.5);
+  %    \draw[line width=0.6pt] (3.5, 2.5) -- (4.5, 2.5);
+  %    \draw[line width=0.6pt] (3.5, 1.5) -- (4.5, 1.5);
+
+  %    % Remove the right border of the square
+  %    \fill[gray!30] (4.485, 1.51) rectangle (4.515, 2.49);
+
+  %    % Schedule before the close label
+  %    \node[anchor=east, align=center] (schedule_before) at (0, 0.5) {Schedule\\ before the close};
+  %    % Large curly brace grouping k and k'
+  %    \draw[line width=0.6pt, decorate, decoration={brace, amplitude=5pt}] (0.5, -0.125) -- (0.5, +1.125);
+
+  %    % k processor
+  %    \node[anchor=west] (k) at (1, 1) {$k$};
+  %    % Idle time slot (single horizontal line)
+  %    \draw[line width=0.6pt] (2.5, 1) -- (3.5, 1);
+
+  %    % k' processor
+  %    \node[anchor=west] (k_prime) at (1, 0) {$k'$};
+  %    \draw[line width=0.6pt] (2.5, 0) -- (3.5, 0);
+
+  %    % Busy time slot with t label (without right border)
+  %    \draw[line width=0.6pt, fill=gray!30] (2.5, -0.5) rectangle (4.5, 0.5);
+  %    \fill[gray!30] (2.485, -0.49) rectangle (2.515, 0.49);
+  %    \fill[gray!30] (4.485, -0.49) rectangle (4.515, 0.49);
+
+
+  %  \end{tikzpicture}
+  %\end{figure}
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.25\textwidth]{graphics/engagements.jpg}
-    %\caption{}\label{fig:engagements}
-  \end{figure}
-  \todo[inline]{Decide if I want to draw this in tikZ}
-  \begin{figure}[H]
-    \centering
-    \begin{tikzpicture}
-  % Schedule after the close label
-  \node[anchor=east, align=center] (schedule_after) at (0, 2) {Schedule\\ after the close};
-
-  % k' processor
-  \node[anchor=west] (k_prime) at (1, 2) {$k'$};
-
-  % Idle time slot (single horizontal line)
-  \draw[line width=0.6pt] (2.5, 2) -- (3.5, 2);
-
-  % Busy time slot with t label (without right border)
-  \draw[line width=0.6pt, fill=gray!30] (3.5, 1.5) rectangle (4.5, 2.5);
-  \node at (4, 2) {$t$};
-  \draw[line width=0.6pt] (3.5, 1.5) -- (3.5, 2.5);
-  \draw[line width=0.6pt] (3.5, 2.5) -- (4.5, 2.5);
-  \draw[line width=0.6pt] (3.5, 1.5) -- (4.5, 1.5);
-
-  % Remove the right border of the square
-  \fill[gray!30] (4.485, 1.51) rectangle (4.515, 2.49);
-
-  % Schedule before the close label
-  \node[anchor=east, align=center] (schedule_before) at (0, 0.5) {Schedule\\ before the close};
-  % Large curly brace grouping k and k'
-  \draw[line width=0.6pt, decorate, decoration={brace, amplitude=5pt}] (0.5, -0.125) -- (0.5, +1.125);
-
-  % k processor
-  \node[anchor=west] (k) at (1, 1) {$k$};
-  % Idle time slot (single horizontal line)
-  \draw[line width=0.6pt] (2.5, 1) -- (3.5, 1);
-
-  % k' processor
-  \node[anchor=west] (k_prime) at (1, 0) {$k'$};
-  \draw[line width=0.6pt] (2.5, 0) -- (3.5, 0);
-
-  % Busy time slot with t label (without right border)
-  \draw[line width=0.6pt, fill=gray!30] (2.5, -0.5) rectangle (4.5, 0.5);
-  \fill[gray!30] (2.485, -0.49) rectangle (2.515, 0.49);
-  \fill[gray!30] (4.485, -0.49) rectangle (4.515, 0.49);
-
-
-\end{tikzpicture}
+    \includesvg[scale=0.4]{graphics/engagements.drawio.svg}
   \end{figure}
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
   Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
@@ -1041,11 +1029,13 @@ With the same argument as for the original single-processor Left-to-Right algori
   Since $B_r$ is a busy interval with $\crit(B_r) \leq 1$ (i.e.\ not containing engagements of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
   For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
   Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min B_l - 1, \max B_r + 1] \neq \emptyset$ can have been closed during the realignment.
-  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $B_l$, $B_r$ are busy intervals and $I$ is an idle interval, see the following figure.
+  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $B_l$, $B_r$ are busy intervals and $I$ is an idle interval, see the following sketch.
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
+    %\includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
+    %\includesvg[width=0.6\textwidth]{graphics/constellation.drawio.svg}
+    \includesvg[scale=0.4]{graphics/constellation.drawio.svg}
     %\caption{}
     \label{fig:constellation}
   \end{figure}
@@ -1063,10 +1053,12 @@ With the same argument as for the original single-processor Left-to-Right algori
   Let $I_{\opt}$ be an idle interval in $S_{\opt}$ on processor $k$ intersecting three distinct idle intervals of processor $k$ in $S_{\real}$.
   Let $I$ be the middle of these idle intervals.
   Lemma~\ref{lemma:constellation} and Lemma~\ref{lemma:phi_prop} imply that $k$ busy processors are required during $I$ and its neighboring busy intervals.
-  This makes it impossible for $S_{\opt}$ to be idle on processor $k$ during the whole interval $I_{\opt}$, see the following figure.
+  This makes it impossible for $S_{\opt}$ to be idle on processor $k$ during the whole interval $I_{\opt}$, see the following sketch.
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{graphics/lemma_intersection.jpg}
+    %\includegraphics[width=0.8\textwidth]{graphics/lemma_intersection.jpg}
+    %\includesvg[width=0.8\textwidth]{graphics/lemma_intersection.drawio.svg}
+    \includesvg[scale=0.4]{graphics/lemma_intersection.drawio.svg}
     %\caption{}
     \label{fig:lemma_intersection}
   \end{figure}
@@ -1136,10 +1128,10 @@ With the same argument as for the original single-processor Left-to-Right algori
   Refer to the following figure for a visual sketch.
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{graphics/running_time.jpg}
+    %\includegraphics[width=0.7\textwidth]{graphics/running_time.jpg}
+    \includesvg[scale=0.4]{graphics/running_time.drawio.svg}
     %\caption{}\label{fig:running_time}
   \end{figure}
-  \todo[inline]{Rename $A: B, B: B'$.}
   Let $Q_t \subseteq T$ be a tight set over engagement $t \coloneqq \min B$ of processor $l$.
   Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
   We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
@@ -1147,7 +1139,6 @@ With the same argument as for the original single-processor Left-to-Right algori
   Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $B$.
 \end{proof}
 
-\todo[inline]{Use tikz for all figures?}
 \listoftodos{}
 %\bibliographystyle{plain}
 \bibliographystyle{abbrvnat}
