@@ -1,9 +1,5 @@
 Notation:
-  S^k rausschmeißen in Text und Graphiken?
   d_max | d | d^*
-Graphiken:
-  A, B ersetzen wo markiert
-  S^k?
 
 Polynomial time: 
   Nach meinem Ansatz:
@@ -20,15 +16,9 @@ Polynomial time:
     Überlegen, wie viel und ob ich sie aufschreiben soll
   In jedem Fall: größe der Flow-networks überall erwähnen, wo O(F) vorkommt
 
+
 Introduction:
   Further related work?
-
-Formattierungen:
-  Graphiken:
-    Skizzen weniger hoch machen
-    Fette Linien für idle Intervalle dünn machen
-    Figure 2,3: Intervalle D anders darstellen?
-    Als svg einbinden wie in Masterarbeit
 
 Kürzen auf 12 Seiten
   Beweise in Appendix:
@@ -45,6 +35,10 @@ Kürzen auf 12 Seiten
     Figure 2,3 viel Duplikation
   New lines
   Kurze Paragraphen zusammenfassen oder rausschmeißen
+
+Abstract überarbeiten
+
+Alles Probe lesen
 
 Bessere Beweise:
   Extra Lemma: closing can only merge busy intervals?

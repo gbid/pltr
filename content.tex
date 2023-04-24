@@ -24,7 +24,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
-\usepackage[textsize=small]{todonotes}
+\usepackage[textsize=small, textwidth=1.5cm]{todonotes}
 \usetikzlibrary{decorations.pathreplacing}
 \mathtoolsset{showonlyrefs}
 
@@ -162,7 +162,7 @@ They solved this special case in time $~\mathcal{O}(n^7m^5)$ by building on the 
 Obtaining good solutions for general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
 Note that this is not an additional restriction for the former special case of unit processing volumes since time is discrete in our problem setting.
 It is a major open problem whether the general multi-processor setting is NP-hard.
-
+\todo{Include $\epsilon$ in approximation factor here?}
 It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of mutliple processors and general processing volumes of jobs.
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
@@ -179,7 +179,7 @@ Building on this concept of skeletons, they also develop a combinatorial $6$-app
 Both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2 + nd)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
 All three algorithms also critically rely on the EXT-ALG to obtain a feasible solution, which requires time $\mathcal{O}(FP)$, where $P$ is the total processing volume and $F$ denotes the running time for finding a maximum flow in a network of size $\mathcal{O}(nd)$.
 
-By using techniques presented in~\cite{antoniadis}, the time slots which have to be considered can be reduced to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time instead of just pseudo-polynomial time.
+By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time instead of just pseudo-polynomial time.
 More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
 However, this improved running time comes at the price of an addivite $\epsilon$ in the approximation factor of the two LP-based algorithms.
 The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$.
@@ -194,7 +194,7 @@ Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not r
 It also does not require the EXT-ALG, which all previous algorithms rely on to make their infeasible solutions feasible in an additional phase.
 
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: just keep processors in their current state (busy or idle) for as long as feasibly possible.
-\todo[inline]{Move this feasibility blabla to Section~\ref{section:algorithm}?}
+\todo{Move this feasibility blabla to Section~\ref{section:algorithm}?}
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
@@ -218,7 +218,7 @@ Finally, in Section~\ref{section:running_time} we show that the simplicity of ou
 
 
 \subsection{Formal Problem Statement and Preliminaries}
-\todo[inline]{Include domains of $r_j, d_j, m$?}
+\todo{Include domains of $r_j, d_j, m$?}
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
@@ -1069,7 +1069,6 @@ With the same argument as for the original single-processor Left-to-Right algori
 Lemma~\ref{lemma:intersection} finally allows us to bound the costs of the schedule $S_{\real}$ with the same arguments as in the proof for the single processor LTR algorithm of~\cite{irani_left_to_right_soda_2003}.
 We complement this with an argument that the realignment could not have increased the costs of $S_{\pltr}$ and that we have hence bounded the costs of the schedule returned by our algorithm $\PLTR$.
 
-\todo[inline]{Think about what to do with this ``ending before $d^*$ restriction.}
 %\begin{lemma}\label{lemma:costs_s_real}
 %  $\costs(S_{\real}) \leq 2 \OPT + P$
 %\end{lemma}
@@ -1080,6 +1079,7 @@ We complement this with an argument that the realignment could not have increase
   We begin by bounding $\costs(S_{\real})$ as in the proposition.
   First, we show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
   Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) which intersect some $\off$-interval of $S^k_{\opt}$.
+  \todo{Think about what to do with this ``ending before $d^*$ restriction.}
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
   Since the costs of each idle interval are at most $q$, and the costs of each off interval are exactly $q$, the costs of all idle intervals in $\mathcal{I}_1$ is bounded by $2 \off(S^k_{\opt})$.
   Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) which do not intersect any $\off$-interval in $S^k_{\opt}$.
