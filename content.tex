@@ -164,7 +164,6 @@ Note that this is not an additional restriction for the former special case of u
 It is a major open problem whether the general multi-processor setting is NP-hard.
 It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of mutliple processors and general processing volumes of jobs.
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
-\todo{Include $\epsilon$ in approximation factor here already?}
 Their algorithm guarantees an approximation factor of $3 + \epsilon$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
 Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
 Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations.
@@ -337,7 +336,7 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
-\todo[inline]{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
+\todo{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
 As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow}.
 
 \begin{figure}[H]
@@ -1112,16 +1111,15 @@ We complement this with an argument that the realignment could not have increase
   Note that if $\keepidle$ returns $d$, then we do not have to calculate $\keepbusy$ from $d$ on.
   Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is then bounded by $n + m$.
   If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
-  We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $f$ from the set of busy intervals to the jobs $J$.
-  \todo{Rename mapping $f$ since $f$ is used for flow already.}
-  For this construction of $f$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
-  We construct $f$ such that $f(B) = j$ only if $d_j \in B$.
+  We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $g$ from the set of busy intervals to the jobs $J$.
+  For this construction of $g$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
+  We construct $g$ such that $g(B) = j$ only if $d_j \in B$.
 
   Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $B$ on $k$.
   We call a busy interval $B'$ in $S_{\pltr}$ on processor $l \in [m]$ a \emph{plateau on processor $l$}, if all slots of $B'$ are idle for all processors above $l$.
   Observe that plateaus (even across different processors) cannot intersect, which implies an ordering of the plateaus from left to right.
   Let $B'$ be the last plateau with $B' \subseteq B$ and let $l \geq k$ be the processor for which this busy interval $B'$ is a plateau.
-  By construction of $f$ and the choice of $B'$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B', \max B]$ already mapped to by $f$.
+  By construction of $g$ and the choice of $B'$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B', \max B]$ already mapped to by $g$.
   This is since at most $l - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min B', \max B]$.
   Refer to the following figure for a visual sketch.
   \begin{figure}[H]
@@ -1134,7 +1132,7 @@ We complement this with an argument that the realignment could not have increase
   Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
   We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
   With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max B$ is scheduled at slot $\max B + 1$.
-  Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $B$.
+  Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $g$ so far and which we therefore can assign to $B$.
 
   Having bounded the number of calls to $\keepidle$ and $\keepbusy$ by $\mathcal{O}(n)$, the final step is to bound the running time of these two subroutines by $\mathcal{O}(f \log d)$.
   We can modify the flow-network of Figure~\ref{fig:flow} to have only $\mathcal{O}(n)$ by partitioning the time horizon $T$ into \textit{time intervals} instead of individual time slots.
