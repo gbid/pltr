@@ -65,8 +65,8 @@
 \DeclareMathOperator{\vol}{vol}
 \DeclareMathOperator{\opdef}{def}
 \DeclareMathOperator{\exc}{exc}
-\DeclareMathOperator{\keepidle}{keepIdle}
-\DeclareMathOperator{\keepbusy}{keepBusy}
+\DeclareMathOperator{\keepidle}{keepidle}
+\DeclareMathOperator{\keepbusy}{keepbusy}
 %\DeclareMathOperator{\keepactive}{keepActive}
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\crit}{crit}
@@ -113,7 +113,7 @@
   Idle processors can be turned off at no cost to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy Left-to-Right algorithm guarantees an approximation factor of $2$.
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $P$ is the total processing volume.
-  Our algorithm has a running time of $\mathcal{O}(F n \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $F$ is the running time required by a maximum-flow calculation for checking feasibility of an instance.
+  Our algorithm has a running time of $\mathcal{O}(F n \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $F$ the running time of a maximum flow calculation for checking feasibility in a network of $\mathcal{O}(n)$ nodes.
 \end{abstract}
 %\clearpage
 
@@ -187,7 +187,7 @@ The running time of the EXT-ALG used by all three approximation algorithms is re
 
 \paragraph{Contribution}
 In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time.
-The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for the case of a single processor which goes beyond mere feasibility.
+The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of which goes beyond mere feasibility for the case of a single processor.
 %$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
 We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
 Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
@@ -200,16 +200,15 @@ For checking feasibility if multiple processors are available, a simple maximum 
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
 
 While the $\PLTR$ algorithm we describe in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
-This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
+This structure consists of \textit{critical sets of timeslots} during which $\PLTR$ only schedules the minimum amount of volume which is feasibly possible.
 In Section~\ref{section:structure} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
 This in turn gives a lower bound for the number of busy processors required by any solution.
 
 Devising an approximation guarantee from this structure is however highly non-trivial and much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
 Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, see Section~\ref{section:approximation} for details.
 
-Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the time required by the maximum flow calculation for checking feasibility.
-\todo[inline]{Faster Flow Calculation: mention size of network, that we don't rely on techniques of~\cite{antoniadis} for reducing number of time slots and hence do not incur additional $\epsilon$.}
-\todo[inline]{Mention that it is surprising that the running time is somehow independent on $m$ since it only appears in the capacities of the flow calculation.}
+Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
+\todo{Use small $f$ instead of $F$ for our flow time?}
 
 \paragraph{Further related work}
 \todo[inline]{Talk about online/offline stuff?}
@@ -1101,15 +1100,13 @@ We complement this with an argument that the realignment could not have increase
 
 \section{Running Time}\label{section:running_time}
 \todo[inline]{Show how flow calculation for feasibility can be done faster.}
-\begin{theorem}
-  Algorithm $\PLTR$ has a running time of $\mathcal{O}(F n \log d)$, where $F$ is the time needed for the flow calculation in Figure~\ref{fig:flow}.
+\begin{theorem}\label{theorem:running_time}
+  Algorithm $\PLTR$ has a running time of $\mathcal{O}(n F_n \log d)$ where $F_n$ denotes the time needed for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
+  %In particular, the running time of $\PLTR$ is in $\mathcal{O}(n^4 \log d)$.
 \end{theorem}
 \begin{proof}
   First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$, respectively.
-  Every call to $\keepidle$ searches for the maximal slot $t \in T$ after the current time slot such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
-  Using binary search this can be done in $\mathcal{O}(F \log(d))$.
-
-  We bound the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
+  We begin by bounding the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
   Note that if $\keepidle$ returns $d$, then we do not have to calculate $\keepbusy$ from $d$ on.
   Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is then bounded by $n + m$.
   If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
@@ -1135,6 +1132,16 @@ We complement this with an argument that the realignment could not have increase
   We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
   With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max B$ is scheduled at slot $\max B + 1$.
   Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $B$.
+
+  Having bounded the number of calls to $\keepidle$ and $\keepbusy$ by $\mathcal{O}(n)$, the final step is to bound the running time of these two subroutines by $\mathcal{O}(F_n \log d)$.
+  We can modify the flow-network of Figure~\ref{fig:flow} to have only $\mathcal{O}(n)$ by partitioning $T$ into \textit{time intervals} instead of individual time slots.
+  Since this is a standard problem as laid out in e.g.\ Section 5 of~\cite{brucker_scheduling_algorithms}, we only sketch the main points.
+  This partition into time intervals is done by using the release times and deadlines as splitting points of the time horizon and scaling the capacity of the corresponding edges by the length of the time interval.
+  For our problem we additionally have to split whenever an upper or lower bound $l_t, m_t$ changes.
+  Since we have already bounded the number of such times by $n$ in the first part of the proof, there are only $\mathcal{O}(n)$ time intervals and hence also $\mathcal{O}(n)$ nodes in the flow network.
+  Also note that constructing the exact schedules within the time intervals is a much simpler scheduling problem since by construction for every time interval and every job $j$, the execution interval $E_j$ either completely contains the time interval or does not intersect it.
+  This can be done in $O(n^2)$ for each time interval, see Section 5 of~\cite{brucker_scheduling_algorithms}.
+  With the feasibility check running in time $\mathcal{O}(F_n)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(F_n \log d)$ using binary search on the remaining time horizon.
 \end{proof}
 
 \listoftodos{}
