@@ -1,25 +1,3 @@
-Notation:
-  d_max | d | d^*
-
-Polynomial time: 
-  Nach meinem Ansatz:
-    Anfangs T = { 0 } \cup { r_i, d_i | i \in J } = {0, T_1, ..., T_{2n} und entsprechende Kapazitäten
-    Suche in keepidle/keepactive nach t_2 immernoch in 1, ..., d_max
-    Füge t2 zu T hinzu
-    => |T| <= 3n zu allen Zeiten, damit |V| <= 4n + 2 Knoten
-    ? trotzdem \Omega(n^2) Kanten?
-    Aufpassen: Antoniadis vereinfacht Assignment zu "Anzahl der aktiven (on?) Prozessoren"
-      => Liefert das dieser Ansatz auch? (sollte passen, da PLTR ja gerade m_t, l_t tight spezifiziert)
-      => Für Flussberechnungen in keepidle/keepactive sollte es in jedem Fall ausreichen
-  Nach Antoniadis:
-    Beweise durchgehen
-    Überlegen, wie viel und ob ich sie aufschreiben soll
-  In jedem Fall: größe der Flow-networks überall erwähnen, wo O(F) vorkommt
-
-
-Introduction:
-  Further related work?
-
 Kürzen auf 12 Seiten
   Beweise in Appendix:
     Lemma 3
@@ -36,15 +14,17 @@ Kürzen auf 12 Seiten
   New lines
   Kurze Paragraphen zusammenfassen oder rausschmeißen
 
-Abstract überarbeiten
 
 Alles Probe lesen
 
-Bessere Beweise:
-  Extra Lemma: closing can only merge busy intervals?
-  Include min V - 1, max V + 1 in Invariant 2?
+Optional priorisiert:
+  Introduction:
+    Further related work?
+  Bessere Beweise:
+    Extra Lemma: closing can only merge busy intervals?
+    Include min V - 1, max V + 1 in Invariant 2?
 
-Optional/Zweitrangig:
+Optional zweitrangig:
   Notation explizit in Intro einführen?
   Conclusion?
   Definition 12 zu \crit aufhübschen
