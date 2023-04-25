@@ -162,9 +162,9 @@ They solved this special case in time $~\mathcal{O}(n^7m^5)$ by building on the 
 Obtaining good solutions for general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
 Note that this is not an additional restriction for the former special case of unit processing volumes since time is discrete in our problem setting.
 It is a major open problem whether the general multi-processor setting is NP-hard.
-\todo{Include $\epsilon$ in approximation factor here?}
 It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of mutliple processors and general processing volumes of jobs.
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
+\todo{Include $\epsilon$ in approximation factor here already?}
 Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
 Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
 Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations.
@@ -199,7 +199,7 @@ For a single processor, $\LTR$ ensures feasibility by scheduling jobs according 
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
 
-While the algorithm we describe in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
+While the $\PLTR$ algorithm we describe in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
 This structure consists of \textit{critical sets of timeslots} during which only the minimum amount of volume possible is scheduled.
 In Section~\ref{section:structure} we show that whenever $\PLTR$ requires an additional processor to become busy at some timeslot $t$, there must exist a critical set of timeslots containing $t$.
 This in turn gives a lower bound for the number of busy processors required by any solution.
@@ -257,11 +257,11 @@ The total costs of a schedule $S$ are the total costs across all processors, i.e
 Clearly we have $\sum_{k \in [m]} \busy(k) = P$, this means for an approximation guarantee the critical part is bounding the idle costs.
 
 \paragraph{Lower and upper bounds for the number of busy processors}
-We specify a generalization of our problem which we call \emph{power-down scheduling with lower and upper bounds}.
+We specify a generalization of our problem which we call \emph{deadline-scheduling-with-lower-and-upper-processors-bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors were allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$.
-For a feasible solution to \emph{power-down scheduling with lower and upper bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
-This generalizes the problem \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
-\todo[inline]{Rename problem \emph{deadline scheduling with lower and upper processor bounds} since we are only using it for feasibility?}
+For a feasible solution to \emph{deadline-scheduling-with-lower-and-upper-processors-bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
+This will allow us to express the $\PLTR$ greedy policy of keeping processors idle or busy, respectively.
+Note that this generalizes the problem \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
 
 \paragraph{Properties of an optimal schedule}
 \begin{definition}\label{def:stair_property}
@@ -289,7 +289,7 @@ From now on whenever we consider an optimal schedule, we will tacitly assume bas
 
 The following \emph{Parallel Left-to-Right} ($\PLTR$) algorithm iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
 Once the current processor cannot be kept idle for any longer, it becomes busy and $\PLTR$ keeps it and all lower-numbered processors busy for as long as possible while again maintaining feasibility.
-The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ of the corresponding instance of \emph{power-down scheduling with lower and upper bounds} more restrictive.
+The algorithm enforces these restrictions on the busy processors by iteratively making the upper and lower bounds $m_t, l_t$ of the corresponding instance of \emph{deadline-scheduling-with-lower-and-upper-processors-bounds} more restrictive.
 Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
 
 Once $\PLTR$ returns with the corresponding tight upper and lower bounds $m_t, l_t$ , an actual schedule $S_{\pltr}$ can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation performed during $\PLTR$.
@@ -353,7 +353,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
     \draw[->] (4) -- node[midway, right] {$P - \sum_{t \in T} l_t$} (5);
     %\draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
   \end{tikzpicture}
-  \caption{The Flow-Network for checking feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
+  \caption{The Flow-Network for checking feasibility of an instance of \emph{deadline-scheduling-with-lower-and-upper-processors-bounds} $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
   There is a node $u_j$, $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
   }\label{fig:flow}
 \end{figure}
@@ -399,7 +399,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   Given a feasible problem instance, algorithm $\PLTR$ constructs a feasible schedule.
 \end{theorem}
 \begin{proof}
-  By definition of subroutines $\keepidle$ and $\keepbusy$, $\PLTR$ only modifies the upper and lower bounds $m_t, l_t$ for the number of busy processors such that the resulting instance of \emph{power-down scheduling with lower and upper bounds} remains feasible.
+  By definition of subroutines $\keepidle$ and $\keepbusy$, $\PLTR$ only modifies the upper and lower bounds $m_t, l_t$ for the number of busy processors such that the resulting instance of \emph{deadline-scheduling-with-lower-and-upper-processors-bounds} remains feasible.
   The correctness of the algorithm then follows from the correctness of the flow-calculation for checking feasibility, which is implied by Lemma~\ref{lemma:flow_feasibility}.
 \end{proof}
 
@@ -448,7 +448,7 @@ If $\opdef(Q) > 0$ or $\exc(Q) > 0$ for some $Q \subseteq T$, then the problem i
 The following Lemma~\ref{lemma:critical} provides the crucial structure required for the proof of the approximation guarantee.
 Intuitively, it states that whenever $\PLTR$ requires processor $k$ to become busy at some timeslot $t$, there must be some critical set $Q \subseteq T$ of timeslots during which the volume scheduled by $\PLTR$ is minimal.
 This in turn implies that processor $k$ needs to be busy at some point during $Q$ in every feasible schedule.
-The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{power-down scheduling with lower and upper bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of sets $Q \subseteq T$.
+The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{deadline-scheduling-with-lower-and-upper-processors-bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of sets $Q \subseteq T$.
 These auxiliary Lemmas are again a generalization of the corresponding feasibility characterization in~\cite{antoniadis} for their problem deadline-scheduling-on-intervals, which only defines upper bounds.
 \begin{lemma}\label{lemma:cut}
   For every $\alpha$-$\omega$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
@@ -488,7 +488,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
 \end{proof}
 
 \begin{lemma}\label{lemma:feasibility}
-  An instance of power-down scheduling with lower and upper bounds is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq T$.
+  An instance of deadline-scheduling-with-lower-and-upper-processors-bounds is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq T$.
 \end{lemma}
 \begin{proof}
   If $\opdef(Q) > 0$ for some $Q$, then some upper bound $m_t$ cannot be met.
