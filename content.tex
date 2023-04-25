@@ -25,7 +25,7 @@
 \pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
 \usepackage[textsize=small, textwidth=1.5cm]{todonotes}
-\usetikzlibrary{decorations.pathreplacing}
+%\usetikzlibrary{decorations.pathreplacing}
 \mathtoolsset{showonlyrefs}
 
 \newcommand{\algrule}[1][.2pt]{\par\vspace\baselineskip\hrule height #1\par\vspace\baselineskip}
@@ -148,13 +148,13 @@ At this point, the processor becomes busy again and $\ltr$ proceeds recursively 
 %The processor is defined to be off for idle intervals which are sufficiently long such that the costs for keeping it on outweight the costs for turning it on again after the idle interval.
 
 %\paragraph{Single Processor Setting}
-\todo[inline]{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
+\todo{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
 Also mention like Demaine that the problem without objective functions is one of the fundamental scheduling settings}
 The first optimal result for the case of a single processor and jobs with unit processing volume was developed by~\cite{baptiste_unit_jobs}.
 He devised a dynamic program that runs in time $\mathcal{O}(n^7)$, where $n$ denotes the number of jobs to be scheduled.
 Building on this result,~\cite{baptiste_general_jobs} solved the case of general processing volumes on a single processor in time $\mathcal{O}(n^5)$.
 Their sophisticated algorithm involves the computation of multiple dynamic programming tables, the introduction of a special method for speeding up the computation of these tables, and a final postprocessing phase.
-\todo[inline]{Mention that in their conclusion, they pose the multi-processor setting with general jobs as a natural generalization of the problem, as this was also an ESA paper? Beware: they already mention~\cite{demaine} here.}
+\todo{Mention that in their conclusion, they pose the multi-processor setting with general jobs as a natural generalization of the problem, as this was also an ESA paper? Beware: they already mention~\cite{demaine} here.}
 
 %\paragraph{Multi-Processor Setting}
 The first result for an arbitrary number of processors $m$ was given by~\cite{demaine} for the special case of unit processing volumes.
@@ -212,10 +212,10 @@ Our main contribution in terms of techniques is a complex procedure which (for t
 
 Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
 
-\paragraph{Further related work}
-\todo[inline]{Talk about online/offline stuff?}
-\todo[inline]{Talk about speed scaling and combinations.}
-\todo[inline]{Do I have space for this?}
+%\paragraph{Further related work}
+%\todo[inline]{Talk about online/offline stuff?}
+%\todo[inline]{Talk about speed scaling and combinations.}
+%\todo[inline]{Do I have space for this?}
 
 
 \subsection{Formal Problem Statement and Preliminaries}
@@ -234,7 +234,7 @@ All processors start in the off-state.
 The objective now is to find a feasible schedule which minimizes the expended energy $E$, which is defined as follows.
 Each processor consumes $1$ unit of energy for every timeslot it is in the on-state and $0$ units of energy if it is in the off-state.
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
-In Graham's notation \citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
+In Graham's notation~\citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
 
 \paragraph{Busy and idle intervals}
 We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled for this processor at time $t$.
@@ -1135,18 +1135,20 @@ We complement this with an argument that the realignment could not have increase
   Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $g$ so far and which we therefore can assign to $B$.
 
   Having bounded the number of calls to $\keepidle$ and $\keepbusy$ by $\mathcal{O}(n)$, the final step is to bound the running time of these two subroutines by $\mathcal{O}(f \log d)$.
-  We can modify the flow-network of Figure~\ref{fig:flow} to have only $\mathcal{O}(n)$ by partitioning the time horizon $T$ into \textit{time intervals} instead of individual time slots.
-  Since this is a standard problem as laid out in e.g.\ Chapter 5 of~\cite{brucker_scheduling_algorithms}, we only sketch the main points.
-  This partition into time intervals is done by using the release times and deadlines as splitting points of the time horizon and scaling the capacity of the incoming and outgoing edges by the length of the time interval.
+  A slight modification to the flow-network of Figure~\ref{fig:flow} suffices to have only $\mathcal{O}(n)$ nodes.
+  The idea here is to partition the time horizon $T$ into $\mathcal{O}(n)$ \textit{time intervals} instead of $\mathcal{O}(d)$ individual time slots.
+  Since this is a standard problem as laid out in e.g.\ Chapter 5 of~\cite{brucker_scheduling_algorithms}, we only sketch the main points relevant to our setting in the following.
+
+  The partition of the time horizon into time intervals is done by using the release times and deadlines as splitting points of the time horizon and scaling the capacities of the incoming and outgoing edges by the length of the time interval.
   For our problem we additionally have to split whenever an upper or lower bound $l_t, m_t$ changes.
-  Since we have already bounded the number of such times by $n$ in the first part of the proof, there are only $\mathcal{O}(n)$ time intervals and hence also $\mathcal{O}(n)$ nodes in the flow network.
-  Also note that constructing the exact schedules within the time intervals is a much simpler scheduling problem since by construction for every time interval and every job $j$, the execution interval $E_j$ either completely contains the time interval or does not intersect it.
-  This can be done in $O(n^2)$ for each time interval, as laid out in Chapter 5 of~\cite{brucker_scheduling_algorithms}.
+  Since we have already bounded the number of such times by $2n$ in the first part of this proof, there are only $\mathcal{O}(n)$ time intervals and hence also $\mathcal{O}(n)$ nodes in the flow network.
+  Also note that constructing the exact schedules within the time intervals is a much simpler scheduling problem, since by construction for every time interval and every job $j$, the execution interval $E_j$ either completely contains the time interval or does not intersect it.
+  Such a subschedule can be computed in $O(n^2)$ for each time interval, as laid out in Chapter 5 of~\cite{brucker_scheduling_algorithms}.
   With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
 \end{proof}
 
-\listoftodos{}
-%\bibliographystyle{plain}
+%\listoftodos{}
+%\bibliographystyle{plainurl}
 \bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
 \bibliography{references}
