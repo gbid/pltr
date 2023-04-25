@@ -222,8 +222,8 @@ Finally, in Section~\ref{section:running_time} we show that the simplicity of ou
 Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
-Without loss of generality, we assume the earliest release time $r_{\min}$ to be $0$ and denote the last deadline by $d^*$.
-The set of discrete time slots is denoted by $T \coloneqq \{0, \ldots, d^*\}$.
+Without loss of generality, we assume the earliest release time $r_{\min}$ to be $0$ and denote the last deadline by $d$.
+The set of discrete time slots is denoted by $T \coloneqq \{0, \ldots, d\}$.
 The total amount of processing volume is $P \coloneqq \sum_{j \in J} p_j$.
 
 Every processor is either completely off or completely on in every discrete time slot $t \in T$.
@@ -302,7 +302,7 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   \State{$l_t \gets 0$ for all $t \in T$}
   \For{$k \gets m$ \textrm{to} $1$}
     \State{$t\gets 0$}
-    \While{$t \leq d^*$}
+    \While{$t \leq d$}
       \State{$t \gets $\Call{$\keepidle$}{$k, t$}}
       \State{$t \gets $\Call{$\keepbusy$}{$k, t$}}
     \EndWhile{}
@@ -1019,7 +1019,7 @@ With the same argument as for the original single-processor Left-to-Right algori
 \end{proof}
 \begin{lemma}\label{lemma:constellation}
   Let $I$ be an idle interval in $S_{\real}$ on some processor $k$ and let $B_l, B_r$ be the busy intervals directly to the left and right of $I$ with $\crit(B_l) \leq 1$ and $\crit(B_r) \leq 1$.
-  Allow $B_l$ to be empty, i.e.\ we might have $\min I = 0$, but $B_r$ must be nonempty, i.e.\ $\max I < d^*$.
+  Allow $B_l$ to be empty, i.e.\ we might have $\min I = 0$, but $B_r$ must be nonempty, i.e.\ $\max I < d$.
   Then we must have $k = 1$ and $\hat \phi(B_l \cup I \cup B_r) > 0$.
 \end{lemma}
 \begin{proof}
@@ -1078,11 +1078,11 @@ We complement this with an argument that the realignment could not have increase
 \begin{proof}
   We begin by bounding $\costs(S_{\real})$ as in the proposition.
   First, we show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
-  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) which intersect some $\off$-interval of $S^k_{\opt}$.
-  \todo{Think about what to do with this ``ending before $d^*$ restriction.}
+  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d$) which intersect some $\off$-interval of $S^k_{\opt}$.
+  \todo{Think about what to do with this ``ending before $d$ restriction.}
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
   Since the costs of each idle interval are at most $q$, and the costs of each off interval are exactly $q$, the costs of all idle intervals in $\mathcal{I}_1$ is bounded by $2 \off(S^k_{\opt})$.
-  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ (ending before $d^*$) which do not intersect any $\off$-interval in $S^k_{\opt}$.
+  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ (ending before $d$) which do not intersect any $\off$-interval in $S^k_{\opt}$.
   The total length of these intervals is bounded by $\on(S^k_{\opt})$.
 
   We continue by showing that $\busy(S_{\real}) \leq 2 P$.
@@ -1107,10 +1107,10 @@ We complement this with an argument that the realignment could not have increase
 \begin{proof}
   First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$, respectively.
   Every call to $\keepidle$ searches for the maximal slot $t \in T$ after the current time slot such that the maximum-flow calculation in Figure~\ref{fig:flow} returns a flow of value $P$.
-  Using binary search this can be done in $\mathcal{O}(F \log(d^*))$.
+  Using binary search this can be done in $\mathcal{O}(F \log(d))$.
 
   We bound the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
-  Note that if $\keepidle$ returns $d^*$, then we do not have to calculate $\keepbusy$ from $d^*$ on.
+  Note that if $\keepidle$ returns $d$, then we do not have to calculate $\keepbusy$ from $d$ on.
   Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is then bounded by $n + m$.
   If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
   We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $f$ from the set of busy intervals to the jobs $J$.
