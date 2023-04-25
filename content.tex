@@ -96,8 +96,8 @@
 %\newtheorem*{remark}{Remark}
 
 
-\title{Greedy Energy-Efficient Scheduling Algorithms for Processor Systems}
-%\author{Gunther Bidlingmaier}
+\title{A Simple Greedy Algorithm for Minimum-Energy Scheduling}
+\author{Gunther Bidlingmaier}
 %\date{15.11.2020}
 
 \begin{document}
@@ -106,14 +106,14 @@
 %\frontmatter{}
 %\input{pages/acknowledgements}
 
-%\maketitle
+\maketitle
 \begin{abstract}
   We consider energy-efficient scheduling across multiple homogeneous processors with a power-down mechanism.
   In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes has to be scheduled across $m$ homogeneous processors while minimizing the consumed energy.
   Idle processors can be turned off at no cost to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy Left-to-Right algorithm guarantees an approximation factor of $2$.
-  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $P$ is the total processing volume.
-  Our algorithm has a running time of $\mathcal{O}(F n \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $F$ the running time of a maximum flow calculation for checking feasibility in a network of $\mathcal{O}(n)$ nodes.
+  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P$ the total processing volume.
+  Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $f$ the running time of a maximum flow calculation for checking feasibility in a network of $\mathcal{O}(n)$ nodes.
 \end{abstract}
 %\clearpage
 
@@ -139,13 +139,13 @@ Intuitively, one aims for long but few idle intervals, such that the energy requ
 
 \paragraph{Previous work}
 This fundamental problem in power management was first considered by~\cite{irani_left_to_right_soda_2003} for a single processor.
-In their paper, they devise arguably the simplest algorithm one can think.
+In their paper, they devise arguably the simplest algorithm one can think of which goes beyond mere feasibility.
 Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a $2$-approximation and proceeds as follows.
 If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily keeps the processor busy for as long as possible, always working on the released job with the earliest deadline.
 Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
 At this point, the processor becomes busy again and $\ltr$ proceeds recursively until all jobs are completed.
-\todo[inline]{Formulate this better or leave it even out?}
-The processor is defined to be off for idle intervals which are sufficiently long such that the costs for keeping it on outweight the costs for turning it on again after the idle interval.
+%\todo[inline]{Formulate this better or leave it even out?}
+%The processor is defined to be off for idle intervals which are sufficiently long such that the costs for keeping it on outweight the costs for turning it on again after the idle interval.
 
 %\paragraph{Single Processor Setting}
 \todo[inline]{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
@@ -165,29 +165,33 @@ It is a major open problem whether the general multi-processor setting is NP-har
 It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of mutliple processors and general processing volumes of jobs.
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
 \todo{Include $\epsilon$ in approximation factor here already?}
-Their algorithm guarantees an approximation factor of $3$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
+Their algorithm guarantees an approximation factor of $3 + \epsilon$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
 Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
 Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations.
 EXT-ALG iteratively searches for a time slot at which an additional turned on processor allows for an additional unit of processing volume to be scheduled.
 
-\cite{skeletons} improve this approximation factor to $2$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
+\cite{skeletons} improve this approximation factor to $2 + \epsilon$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
 They also modify the rouding procedure based on their concept of a \textit{multi-processor skeleton}.
 Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of processors in the on-state during specific intervals and which provides a lower bound for the costs of an optimal feasible schedule.
-Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
-\todo[inline]{Describe this combinatorial algorithm based on my Latex-notes.}
 
-Both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2 + nd)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
+Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
+This algorithm first computes the lower bounds for the number of processors required in every possible time interval starting and ending at a release time or deadline using flow calculations and binary search on the number of processors.
+Based on these bounds, they define a single processor scheduling problem for every processor with $\mathcal{O}(n^2)$ virtual jobs.
+For each of these single-processor problems they construct a single-processor skeleton using dynamic programming.
+These in turn are then combined into a multi-processor skeleton, which is extended into a feasible schedule by first executing EXT-ALG and then carefully powering on additional processors.
+
+As presented in the papers, both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2 + nd)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
 All three algorithms also critically rely on the EXT-ALG to obtain a feasible solution, which requires time $\mathcal{O}(FP)$, where $P$ is the total processing volume and $F$ denotes the running time for finding a maximum flow in a network of size $\mathcal{O}(nd)$.
 
 By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time instead of just pseudo-polynomial time.
 More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
-However, this improved running time comes at the price of an addivite $\epsilon$ in the approximation factor of the two LP-based algorithms.
-The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$.
+However, this improved running time comes at the price of the addivite $\epsilon$ in the approximation factors of the two LP-based algorithms.
+The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$ with $\mathcal{O}(n \log d)$ nodes.
 \todo{Kürzen?}
 
 \paragraph{Contribution}
-In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time.
-The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of which goes beyond mere feasibility for the case of a single processor.
+In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time of $\mathcal{O}(n f \log d)$, where $f$ refers to a maximum flow calculation in a network with $\mathcal{O}(n)$ nodes.
+The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for a single processor.
 %$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
 We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
 Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
@@ -207,8 +211,7 @@ This in turn gives a lower bound for the number of busy processors required by a
 Devising an approximation guarantee from this structure is however highly non-trivial and much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
 Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, see Section~\ref{section:approximation} for details.
 
-Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(F n \log d)$, where $d$ is the maximal deadline and $F$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
-\todo{Use small $f$ instead of $F$ for our flow time?}
+Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
 
 \paragraph{Further related work}
 \todo[inline]{Talk about online/offline stuff?}
@@ -1099,9 +1102,8 @@ We complement this with an argument that the realignment could not have increase
 \end{proof}
 
 \section{Running Time}\label{section:running_time}
-\todo[inline]{Show how flow calculation for feasibility can be done faster.}
 \begin{theorem}\label{theorem:running_time}
-  Algorithm $\PLTR$ has a running time of $\mathcal{O}(n F_n \log d)$ where $F_n$ denotes the time needed for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
+  Algorithm $\PLTR$ has a running time of $\mathcal{O}(n f \log d)$ where $f$ denotes the time needed for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
   %In particular, the running time of $\PLTR$ is in $\mathcal{O}(n^4 \log d)$.
 \end{theorem}
 \begin{proof}
@@ -1111,6 +1113,7 @@ We complement this with an argument that the realignment could not have increase
   Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is then bounded by $n + m$.
   If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
   We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $f$ from the set of busy intervals to the jobs $J$.
+  \todo{Rename mapping $f$ since $f$ is used for flow already.}
   For this construction of $f$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
   We construct $f$ such that $f(B) = j$ only if $d_j \in B$.
 
@@ -1133,15 +1136,15 @@ We complement this with an argument that the realignment could not have increase
   With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max B$ is scheduled at slot $\max B + 1$.
   Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $f$ so far and which we therefore can assign to $B$.
 
-  Having bounded the number of calls to $\keepidle$ and $\keepbusy$ by $\mathcal{O}(n)$, the final step is to bound the running time of these two subroutines by $\mathcal{O}(F_n \log d)$.
-  We can modify the flow-network of Figure~\ref{fig:flow} to have only $\mathcal{O}(n)$ by partitioning $T$ into \textit{time intervals} instead of individual time slots.
-  Since this is a standard problem as laid out in e.g.\ Section 5 of~\cite{brucker_scheduling_algorithms}, we only sketch the main points.
-  This partition into time intervals is done by using the release times and deadlines as splitting points of the time horizon and scaling the capacity of the corresponding edges by the length of the time interval.
+  Having bounded the number of calls to $\keepidle$ and $\keepbusy$ by $\mathcal{O}(n)$, the final step is to bound the running time of these two subroutines by $\mathcal{O}(f \log d)$.
+  We can modify the flow-network of Figure~\ref{fig:flow} to have only $\mathcal{O}(n)$ by partitioning the time horizon $T$ into \textit{time intervals} instead of individual time slots.
+  Since this is a standard problem as laid out in e.g.\ Chapter 5 of~\cite{brucker_scheduling_algorithms}, we only sketch the main points.
+  This partition into time intervals is done by using the release times and deadlines as splitting points of the time horizon and scaling the capacity of the incoming and outgoing edges by the length of the time interval.
   For our problem we additionally have to split whenever an upper or lower bound $l_t, m_t$ changes.
   Since we have already bounded the number of such times by $n$ in the first part of the proof, there are only $\mathcal{O}(n)$ time intervals and hence also $\mathcal{O}(n)$ nodes in the flow network.
   Also note that constructing the exact schedules within the time intervals is a much simpler scheduling problem since by construction for every time interval and every job $j$, the execution interval $E_j$ either completely contains the time interval or does not intersect it.
-  This can be done in $O(n^2)$ for each time interval, see Section 5 of~\cite{brucker_scheduling_algorithms}.
-  With the feasibility check running in time $\mathcal{O}(F_n)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(F_n \log d)$ using binary search on the remaining time horizon.
+  This can be done in $O(n^2)$ for each time interval, as laid out in Chapter 5 of~\cite{brucker_scheduling_algorithms}.
+  With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
 \end{proof}
 
 \listoftodos{}
