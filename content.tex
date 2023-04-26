@@ -124,9 +124,9 @@
 Energy-efficiency has become a major concern in most areas of computing for reasons that go beyond the apparent ecological ones.
 At the hardware level, excessive heat generation from power consumption has become one of the bottlenecks.
 For the billions of mobile devices, power consumption determines the length of operation and hence their usefulness.
-On the level of datacenters, electricity is often the largest cost factor and cooling is one of the major design constraints.
+On the level of datacenters, electricity is often the largest cost factor and cooling one of the major design constraints.
 Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, first the option to power-down idle devices and second the option to trade performance for energy-efficiency by speed-scaling.
-In this paper, we study classic deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
+In this paper, we study classical deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
 
 %\paragraph{Informal problem description}
 In this setting, a computing device or processor has two possible states, it can be either \emph{on} or \emph{off}.
@@ -173,26 +173,23 @@ Based on these bounds, they define a single processor scheduling problem for eve
 For each of these single-processor problems they construct a single-processor skeleton using dynamic programming.
 These in turn are then combined into a multi-processor skeleton, which is extended into a feasible schedule by first executing EXT-ALG, and then carefully powering on additional processors since EXT-ALG is not sufficient for ensuring feasibility here.
 
-As presented in the papers, both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2 + nd)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
-All three algorithms also critically rely on the EXT-ALG to obtain a feasible solution, which requires time $\mathcal{O}(FP)$, where $P$ is the total processing volume and $F$ denotes the running time for finding a maximum flow in a network of size $\mathcal{O}(nd)$.
-
-By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time instead of just pseudo-polynomial time.
+As presented in the papers, both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, run in pseudopolynomial time.
+By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced from $d$ to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time.
 More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
 However, this improved running time comes at the price of the addivite $\epsilon$ in the approximation factors of the two LP-based algorithms.
-The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ now refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$ with $\mathcal{O}(n \log d)$ nodes.
-\todo{Kürzen?}
+The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$ with $\mathcal{O}(n \log d)$ nodes.
 
 \paragraph{Contribution}
-In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time.
+In this paper we develop a greedy algorithm which is simpler and faster than the previous algorithms.
 The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for a single processor.
 %$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
 We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
 This implies that it is the combinatorial algorithm with the best approximation guarantee for our problem.
-Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
+Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) is the combinatorial algorithm with the best approximation guarantee and does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
 It also does not require the EXT-ALG, which all previous algorithms rely on to make their infeasible solutions feasible in an additional phase.
 
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: just keep processors in their current state (busy or idle) for as long as feasibly possible.
-\todo{Move this feasibility blabla to Section~\ref{section:algorithm}?}
+%\todo{Move this feasibility blabla to Section~\ref{section:algorithm}?}
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy Earliest-Deadline-First (EDF).
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
 Correspondingly, our generalization $\PLTR$ uses such a flow calculation for ensuring feasibility.
@@ -205,7 +202,7 @@ This in turn gives a lower bound for the number of busy processors required by a
 Devising an approximation guarantee from this structure is however highly non-trivial and much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
 Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals as in the single processor case, see Section~\ref{section:approximation} for details.
 
-Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes for checking feasibility.
+Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes in order to check feasibility.
 
 %\paragraph{Further related work}
 %\todo[inline]{Talk about online/offline stuff?}
@@ -242,7 +239,7 @@ Our algorithm will specify for each processor when it is busy and when it is idl
 Each processor is then defined to be in the off-state during idle intervals of length greater than $q$ and otherwise in the on-state.
 With this, we can express the costs of a schedule $S$ in terms of busy and idle intervals.
 
-For a multi-processor schedule $S$ let $S^k$ denote the schedule of processor $k$.
+For a multi-processor schedule $S$, let $S^k$ denote the schedule of processor $k$.
 Furthermore, for $S^k$ let $\mathcal{N}, \mathcal{F}, \mathcal{B}, \mathcal{I}$ be the set of on, off, busy, and idle intervals, respectively.
 We partition the costs of processor $k$ into the costs $\on(S^k)$ for residing in the on-state and the costs $\off(S^k)$ for transitioning between the off-state and the on-state, hence $\costs(S^k) = \on(S^k) + \off(S^k) = \sum_{N \in \mathcal{N}} |N| + q$.
 Equivalently, we partition the costs of processor $k$ into the costs $\idle(S^k) \coloneqq \sum_{I \in \mathcal{I}} \min \{ |I|, q \}$ for being idle and the costs $\busy(S^k) \coloneqq \sum_{B \in \mathcal{B}} |B|$ for being busy.
