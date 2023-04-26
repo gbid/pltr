@@ -115,7 +115,7 @@
   We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P$ the total processing volume.
   Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $f$ the running time of a maximum flow calculation for checking feasibility in a network of $\mathcal{O}(n)$ nodes.
 \end{abstract}
-%\clearpage
+\clearpage
 
 %\tableofcontents
 %\clearpage
@@ -1043,7 +1043,7 @@ We complement this with an argument that the augmentation and realignment could 
 %  $\costs(S_{\real}) \leq 2 \OPT + P$
 %\end{lemma}
 \begin{theorem}\label{theorem:approximation}
-  $\costs(S_{\pltr}) \leq 2 \OPT + P$
+  Algorithm $\PLTR$ constructs a schedule of costs at most $2 \OPT + P$.
 \end{theorem}
 \begin{proof}
   We begin by bounding $\costs(S_{\real})$ as in the proposition.
