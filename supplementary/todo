@@ -1,23 +1,16 @@
 Kürzen auf 12 Seiten
-  Abklären, ob 12 Seiten in LIPIcs oder mit 2cm margins
   Beweise in Appendix:
     Lemma 3
     Lemma 7
-  Beweise dichter formattieren:
-    Lemma 7, 10, 11, 17
-    Lemma 20, 21, 22 (Graphiken/Skizzen)
-    Theorem 25 (Graphik)
-  Lemmata zusammenfassen:
-    18ff
-    Lemma 23, Theorem 24
-  Graphiken:
-    Figure 2,3 viel Duplikation
-  New lines
-  Kurze Paragraphen zusammenfassen oder rausschmeißen
+    Lemma 8
 
 
-Spellcheck
 Alles Probe lesen
+
+Graphiken als PDF von drawio exportieren?
+Acknoledgement Albers
+====>Auf EasyChair hochladen<====
+
 
 Optional priorisiert:
   Introduction:
@@ -33,4 +26,3 @@ Optional zweitrangig:
   Lemma 3 schöner ausformulieren?
   Define Flow network in text?
   Handle idle-intervals ending at d^* separately?
-  Acknoledgement Albers
