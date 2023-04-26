@@ -24,8 +24,12 @@ showonlyrefs
 subcases
 subinterval
 subintervals
-timeslot
-timeslots
 uv
 maximality
 tikz
+ALG
+Bidlingmaier
+combinatorial
+EDF
+keepbusy
+keepidle
