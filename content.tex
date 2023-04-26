@@ -375,7 +375,6 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   Define $f(v_t, \gamma) = f_{in}(v_t) - l_t$.
   We have $f(v_t, \gamma) \leq m_t - l_t$ since $f_{in}(v_t)$ corresponds to the number $\vol(t)$ of jobs scheduled at $t$, which is at most $m_t$.
   We also have $f_{out}(v_t) = f_{in}(v_t) - l_t + l_t = f_{in}(v_t)$.
-
   Define $f(\gamma, \omega) = P - \sum_{t \in T} l_t$.
   Then $f_{in}(\gamma) = \sum_{t \in T} f_{in}(v_t) - l_t
   = \sum_{t \in T} \vol(t) - \sum_{t \in T} l_t$.
@@ -568,21 +567,9 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
   For the critical set $C_k$ of some processor $k \in [m]$, we define $\crit(C_k) \coloneqq k$.
   Let $\succeq$ be the total order on the set of critical sets $C$ across all processors which corresponds to $\crit$, i.e.\ $C \succeq C'$ if and only if $\crit(C) \geq \crit(C')$.
   Equality in regard to $\succeq$ is denoted with $\sim$.
-  We extend the definition of $\crit$ to general time slots $t \in T$ and intervals $D \subseteq T$ as follows.
-  We also take the order $\succeq$ to be correspondingly extended based on this extension of $\crit$.
-  \todo{Kürzen: inline math verwenden?}
-  \begin{align}
-    \crit(t) \coloneqq
-    \begin{cases}
-      \max \{\crit(C) \mid C~\text{is critical set},  t \in C \}
-      & \text{if}~t \in C~\text{for some critical set}~C
-      \\0
-      & \text{otherwise}
-    \end{cases}
-  \end{align}
-  \begin{align}
-    \crit(D) &\coloneqq \max \{ \crit(t) \mid t \in D \}
-  \end{align}
+  We extend the definition of $\crit$ to general time slots $t \in T$ with $\crit(t) \coloneqq
+      \max \{\crit(C) \mid C~\text{is critical set},  t \in C \}$ if $t \in C$ for some critical set $C$ and otherwise $\crit(t) \coloneqq 0$.
+  We further extend $\crit$ to intervals $D \subseteq T$ with $ \crit(D) &\coloneqq \max \{ \crit(t) \mid t \in D \}$
 \end{definition}
 
 \begin{definition}
@@ -612,7 +599,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   For every critical set $C$, every section $D \subseteq T$ of $C$, we have: if $\phi(C \cap D) \leq \crit(C) - \delta$ for some $\delta \in \mathbb{N}$, then the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ is defined and $|J(V_l)| + |J(V_r)| \geq \delta$.
   We take $|J(V)| \coloneqq 0$ if $V$ is not defined.
 \end{lemma}
-\begin{figure}[H]
+\begin{figure}
   \centering
   %\includegraphics[width=1\textwidth]{graphics/left_right_valleys.jpg}
   \includesvg[width=1\textwidth]{graphics/left_right_valleys.drawio.svg}
@@ -659,7 +646,7 @@ Idle intervals surrounded by only busy intervals $B$ with $\crit(B) \leq 1$ are 
 These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
 By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
 
-\subsection{Augmentation}
+\subsection{Augmentation and Realignment}
 %\todo{Make this into a proper definition of $S_{\aug}$?}
 We transform $S_{\pltr}$ into the \emph{augmented schedule $S_{\aug}$} by adding for every $t$ with $k \coloneqq \crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
 No job is scheduled in this auxiliary busy slot on processor $k$ and it does also not count towards the volume of this slot.
@@ -672,8 +659,7 @@ It merely forces processor $k$ to be in the on-state at time $k$ while allowing 
   The property directly follows from our choice of the critical sets, the definition of $\crit(t)$ and the construction of $S_{\aug}$.
 \end{proof}
 
-\subsection{Realignment}\label{section:realignment}
-The intuition of the realignment of $S_{\aug}$ defined in Algorithm~\ref{alg:real} is the following.
+As a next step, we transform $S_{\aug}$ into the realiged schedule $S_{\pltr}$ using Algorithm~\ref{alg:real}. We briefly sketch the ideas behind this realignment.
 Lemma~\ref{lemma:augmented} guarantees us that every busy interval $B$ on processor $k$ is a section of the critical set $C$ with $C \sim B$.
 It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $B$ do not end within an idle interval on processor $k$.
 Lemma~\ref{lemma:valley} in turn implies that if the density of $B$ is too small to guarantee that $S_{\opt}$ has to use processor $k$ during $B$, i.e.\ if $\hat \phi(B) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
@@ -690,7 +676,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
 
 
 
-\begin{algorithm}[H]
+\begin{algorithm}
   \caption{Realignment of $S_{\aug}$ for analysis only}\label{alg:real}
 \begin{algorithmic}
   \State{$\res(V) \gets 2 |J(V)|$ for every valley $V$}
@@ -1062,11 +1048,10 @@ We complement this with an argument that the augmentation and realignment could 
 \begin{proof}
   We begin by bounding $\costs(S_{\real})$ as in the proposition.
   First, we show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
-  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ (ending before $d$) which intersect some $\off$-interval of $S^k_{\opt}$.
-  \todo{Think about what to do with this ``ending before $d$ restriction.}
+  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ which intersect some $\off$-interval of $S^k_{\opt}$.
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$-intervals in $S^k_{\opt}$.
   Since the costs of each idle interval are at most $q$, and the costs of each off interval are exactly $q$, the costs of all idle intervals in $\mathcal{I}_1$ is bounded by $2 \off(S^k_{\opt})$.
-  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ (ending before $d$) which do not intersect any $\off$-interval in $S^k_{\opt}$.
+  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ which do not intersect any $\off$-interval in $S^k_{\opt}$.
   The total length of these intervals is bounded by $\on(S^k_{\opt})$.
 
   We continue by showing that $\busy(S_{\real}) \leq 2 P$.
