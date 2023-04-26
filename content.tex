@@ -126,7 +126,7 @@ At the hardware level, excessive heat generation from power consumption has beco
 For the billions of mobile devices, power consumption determines the length of operation and hence their usefulness.
 On the level of datacenters, electricity is often the largest cost factor and cooling is one of the major design constraints.
 Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, first the option to power-down idle devices and second the option to trade performance for energy-efficiency by speed-scaling.
-In this paper, we study the classic deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
+In this paper, we study classic deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
 
 %\paragraph{Informal problem description}
 In this setting, a computing device or processor has two possible states, it can be either \emph{on} or \emph{off}.
@@ -144,17 +144,12 @@ Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a $2$-approximation and 
 If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily keeps the processor busy for as long as possible, always working on the released job with the earliest deadline.
 Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
 At this point, the processor becomes busy again and $\ltr$ proceeds recursively until all jobs are completed.
-%\todo[inline]{Formulate this better or leave it even out?}
-%The processor is defined to be off for idle intervals which are sufficiently long such that the costs for keeping it on outweight the costs for turning it on again after the idle interval.
 
 %\paragraph{Single Processor Setting}
-\todo{Cite~\cite{irani_pruhs_pose_problem} for problem relevance as Antoniadis does?
-Also mention like Demaine that the problem without objective functions is one of the fundamental scheduling settings}
 The first optimal result for the case of a single processor and jobs with unit processing volume was developed by~\cite{baptiste_unit_jobs}.
 He devised a dynamic program that runs in time $\mathcal{O}(n^7)$, where $n$ denotes the number of jobs to be scheduled.
 Building on this result,~\cite{baptiste_general_jobs} solved the case of general processing volumes on a single processor in time $\mathcal{O}(n^5)$.
 Their sophisticated algorithm involves the computation of multiple dynamic programming tables, the introduction of a special method for speeding up the computation of these tables, and a final postprocessing phase.
-\todo{Mention that in their conclusion, they pose the multi-processor setting with general jobs as a natural generalization of the problem, as this was also an ESA paper? Beware: they already mention~\cite{demaine} here.}
 
 %\paragraph{Multi-Processor Setting}
 The first result for an arbitrary number of processors $m$ was given by~\cite{demaine} for the special case of unit processing volumes.
@@ -166,8 +161,7 @@ It took further thirteen years for the first non-trivial result on the general s
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3 + \epsilon$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
 Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
-Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG} based on maximum flow calculations.
-EXT-ALG iteratively searches for a time slot at which an additional turned on processor allows for an additional unit of processing volume to be scheduled.
+Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG}, which iteratively extends the intervals returned by the rounding procedure by a time slot at which an additional turned on processor allows for an additional unit of processing volume to be scheduled.
 
 \cite{skeletons} improve this approximation factor to $2 + \epsilon$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
 They also modify the rouding procedure based on their concept of a \textit{multi-processor skeleton}.
@@ -177,7 +171,7 @@ Building on this concept of skeletons, they also develop a combinatorial $6$-app
 This algorithm first computes the lower bounds for the number of processors required in every possible time interval starting and ending at a release time or deadline using flow calculations and binary search on the number of processors.
 Based on these bounds, they define a single processor scheduling problem for every processor with $\mathcal{O}(n^2)$ virtual jobs.
 For each of these single-processor problems they construct a single-processor skeleton using dynamic programming.
-These in turn are then combined into a multi-processor skeleton, which is extended into a feasible schedule by first executing EXT-ALG and then carefully powering on additional processors.
+These in turn are then combined into a multi-processor skeleton, which is extended into a feasible schedule by first executing EXT-ALG, and then carefully powering on additional processors since EXT-ALG is not sufficient for ensuring feasibility here.
 
 As presented in the papers, both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, have $\mathcal{O}(d^2 + nd)$ constraints and $\mathcal{O}(d^2)$ variables, where $d$ denotes the maximum deadline or equivalently the number of time slots.
 All three algorithms also critically rely on the EXT-ALG to obtain a feasible solution, which requires time $\mathcal{O}(FP)$, where $P$ is the total processing volume and $F$ denotes the running time for finding a maximum flow in a network of size $\mathcal{O}(nd)$.
@@ -189,18 +183,19 @@ The running time of the EXT-ALG used by all three approximation algorithms is re
 \todo{Kürzen?}
 
 \paragraph{Contribution}
-In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time of $\mathcal{O}(n f \log d)$, where $f$ refers to a maximum flow calculation in a network with $\mathcal{O}(n)$ nodes.
+In this paper we develop a much simpler algorithm than the ones described in the previous paragraph, which also leads to a much improved running time.
 The initially described greedy algorithm Left-to-Right of~\cite{irani_left_to_right_soda_2003} is arguably the simplest algorithm one can think of for a single processor.
 %$\LTR$ just keeps the processor in its current state (busy or idle) for as long as feasibly possible.
 We naturally extend $\LTR$ to multiple processors and show that this generalization still guarantees a solution of costs at most $2 \OPT + P$, where $P$ is the total processing volume.
+This implies that it is the combinatorial algorithm with the best approximation guarantee for our problem.
 Our simple greedy algorithm \textit{Parallel Left-to-Right} ($\PLTR$) does not rely on Linear Programming and the necessary rounding procedures of~\cite{antoniadis} and~\cite{skeletons}.
 It also does not require the EXT-ALG, which all previous algorithms rely on to make their infeasible solutions feasible in an additional phase.
 
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: just keep processors in their current state (busy or idle) for as long as feasibly possible.
 \todo{Move this feasibility blabla to Section~\ref{section:algorithm}?}
-For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy earliest-deadline-first (EDF).
+For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy Earliest-Deadline-First (EDF).
 For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
-Correspondingly, our generalization $\PLTR$ uses flow calculations for ensuring feasibility.
+Correspondingly, our generalization $\PLTR$ uses such a flow calculation for ensuring feasibility.
 
 While the $\PLTR$ algorithm we describe in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
 This structure consists of \textit{critical sets of timeslots} during which $\PLTR$ only schedules the minimum amount of volume which is feasibly possible.
@@ -208,9 +203,9 @@ In Section~\ref{section:structure} we show that whenever $\PLTR$ requires an add
 This in turn gives a lower bound for the number of busy processors required by any solution.
 
 Devising an approximation guarantee from this structure is however highly non-trivial and much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of timeslots and not just intervals.
-Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals, see Section~\ref{section:approximation} for details.
+Our main contribution in terms of techniques is a complex procedure which (for the sake of the analyis only) carefully realigns the jobs scheduled in between critical sets of timeslots such that it is sufficient to consider intervals as in the single processor case, see Section~\ref{section:approximation} for details.
 
-Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
+Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes for checking feasibility.
 
 %\paragraph{Further related work}
 %\todo[inline]{Talk about online/offline stuff?}
@@ -219,11 +214,10 @@ Finally, in Section~\ref{section:running_time} we show that the simplicity of ou
 
 
 \subsection{Formal Problem Statement and Preliminaries}
-\todo{Include domains of $r_j, d_j, m$?}
-Formally, a problem instance consists of a set $J$ of jobs with a release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
+Formally, a problem instance consists of a set $J$ of jobs with an integer release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
-Without loss of generality, we assume the earliest release time $r_{\min}$ to be $0$ and denote the last deadline by $d$.
+Without loss of generality, we assume the earliest release time to be $0$ and denote the last deadline by $d$.
 The set of discrete time slots is denoted by $T \coloneqq \{0, \ldots, d\}$.
 The total amount of processing volume is $P \coloneqq \sum_{j \in J} p_j$.
 
@@ -271,7 +265,7 @@ Note that this generalizes the problem \emph{deadline-scheduling-on-intervals} i
 \end{definition}
 
 \begin{lemma}\label{lemma:stair_property_opt}
-  For every feasible problem instance, there exists an optimal schedule $S_{\opt}$ which fulfills the stair-property.
+  For every problem instance we can assume the existance of an optimal schedule $S_{\opt}$ which fulfills the stair-property.
 \end{lemma}
 \begin{proof}
   Let $S$ be an optimal schedule.
@@ -284,7 +278,6 @@ Note that this generalizes the problem \emph{deadline-scheduling-on-intervals} i
   Jobs are only moved between processor at the same time slot and only to slots of processor $k'$ which are idle, hence the resulting schedule is still feasible.
   This modification can be repeated until the schedule has the desired property.
 \end{proof}
-From now on whenever we consider an optimal schedule, we will tacitly assume based on Lemma~\ref{lemma:stair_property_opt} that this optimal schedule fulfills the stair property.
 
 \section{Algorithm}\label{section:algorithm}
 
@@ -337,7 +330,7 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
 \end{algorithmic}
 \end{algorithm}
 \todo{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
-As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow}.
+As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow} with a node $u_j$ for every job $j \in J$ and a node $v_t$ for every time slot $t \in T$ including the corresponding incoming and outgoing edges.
 
 \begin{figure}[H]
   \centering
@@ -360,7 +353,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
 \end{figure}
 
 \begin{lemma}\label{lemma:flow_feasibility}
-  There exists a feasible solution to a scheduling instance with lower and upper bounds $l_t, m_t$ if and only if the maximum $\alpha$-$\omega$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
+  There exists a feasible solution to an instance of deadline-scheduling-with-processor-bounds $l_t, m_t$ if and only if the maximum $\alpha$-$\omega$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
 \end{lemma}
 \begin{proof}
   Let $f$ be an $\alpha$-$\omega$ flow of value $|f| = P$.
@@ -403,6 +396,7 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   By definition of subroutines $\keepidle$ and $\keepbusy$, $\PLTR$ only modifies the upper and lower bounds $m_t, l_t$ for the number of busy processors such that the resulting instance of \emph{deadline-scheduling-with-processor-bounds} remains feasible.
   The correctness of the algorithm then follows from the correctness of the flow-calculation for checking feasibility, which is implied by Lemma~\ref{lemma:flow_feasibility}.
 \end{proof}
+\todo{Kürzen: zusammenfassen mit Theorem~\ref{theorem:approximation} am Ende?}
 
 \section{Structure of the PLTR-Schedule}\label{section:structure}
 \subsection{Types of Volume}
@@ -501,7 +495,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
 \end{proof}
 
 \begin{definition}
-  A time slot $t \in T$ is called \emph{engagement of processor $k \in [m]$} if $t = \min B$ for some busy interval $B$ on processor $k$.
+  A time slot $t \in T$ is called \emph{engagement of processor $k$} if $t = \min B$ for some busy interval $B$ on processor $k$.
   A time slot $t \in T$ is just called \emph{engagement} if it is an engagement of processor $k$ for some $k \in [m]$.
 \end{definition}
 \begin{lemma}\label{lemma:critical}
@@ -586,6 +580,7 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
   Equality in regard to $\succeq$ is denoted with $\sim$.
   We extend the definition of $\crit$ to general time slots $t \in T$ and intervals $D \subseteq T$ as follows.
   We also take the order $\succeq$ to be correspondingly extended based on this extension of $\crit$.
+  \todo{Kürzen: inline math verwenden?}
   \begin{align}
     \crit(t) \coloneqq
     \begin{cases}
@@ -606,13 +601,13 @@ Let $D_1, \ldots, D_l$ be the maximal intervals contained in a critical set $C$.
 A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the valley between $D_{a}$ and $D_{a+1}$ for some $a < l$, i.e. $V = [\max D_a + 1, \min D_{a+1} - 1]$.
 By choice of $C$ as critical set (property 1), a valley of $C$ is indeed a valley.
 We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
-\begin{figure}[H]
-  \centering
-  %\includegraphics[width=1\textwidth]{graphics/valleys_of.jpg}
-  \includesvg[width=1\textwidth]{graphics/valleys_of.drawio.svg}
-  \caption{A sketch of the valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
-\end{figure}
-\todo{Kürzen: Remove this figure?}
+%\begin{figure}[H]
+%  \centering
+%  %\includegraphics[width=1\textwidth]{graphics/valleys_of.jpg}
+%  \includesvg[width=1\textwidth]{graphics/valleys_of.drawio.svg}
+%  \caption{A sketch of the valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
+%\end{figure}
+%\todo{Kürzen: Remove this figure?}
 %\todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
 %  Possible fixes: require $V \prec C$ or define $\succeq$ based on $\crit$ only (Lemma valley should still work).}
 \end{definition}
@@ -636,6 +631,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 \end{figure}
 \begin{proof}
   %\todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math, by replacing division by multiplication, or by introducing $l \coloneq |C \cap D|$}
+  Refer to Figure~\ref{fig:left_right_valleys} for a visual sketch of the proposition.
   By choice of $C$ as critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
   If this inequality is fulfilled strictly, i.e.\ if
   $\vol(C \cap D) > (c-1) \cdot |C \cap D|$, then with the premise
@@ -666,10 +662,10 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 In this section we modify the schedule $S_{\pltr}$ returned by $\PLTR$ in two steps.
 We stress that this is for the analysis only and not part of $\PLTR$.
 The first step augments specific processors with auxiliary busy slots such that in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
-For the single processor Left-to-Right algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by Left-to-Right.
+For the single processor $\LTR$ algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by $\LTR$.
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
 More specifically, it will establish the stronger property that $\hat \phi(B) > k - 1$ for every $\busy$ interval $B$ on processor $k$ with $\crit(B) \geq 2$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $B$.
-Idle intervals surrounded by only busy intervals $B$ with $\crit(B) \leq 1$ are then handled in Lemma~\ref{lemma:constellation} with essentially the same argument as for the original Left-to-Right algorithm.
+Idle intervals surrounded by only busy intervals $B$ with $\crit(B) \leq 1$ are then handled in Lemma~\ref{lemma:constellation} with essentially the same argument as for the single processor $\LTR$ algorithm.
 
 These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
 By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
@@ -690,7 +686,7 @@ It merely forces processor $k$ to be in the on-state at time $k$ while allowing 
 \subsection{Realignment}\label{section:realignment}
 The intuition of the realignment of $S_{\aug}$ defined in Algorithm~\ref{alg:real} is the following.
 Lemma~\ref{lemma:augmented} guarantees us that every busy interval $B$ on processor $k$ is a section of the critical set $C$ with $C \sim B$.
-It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $B$ do not end within an idle interval on processor $k$, provided that they are defined.
+It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $B$ do not end within an idle interval on processor $k$.
 Lemma~\ref{lemma:valley} in turn implies that if the density of $B$ is too small to guarantee that $S_{\opt}$ has to use processor $k$ during $B$, i.e.\ if $\hat \phi(B) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
 Let $V$ be the corresponding left or right valley of $C$ and $D$ for which such a job $j$ exists.
 Instead of scheduling $j$ on the processors below $k$, we can schedule $j$ on processor $k$ in idle time slots during $V$.
@@ -698,10 +694,10 @@ This merges the busy interval $B$ with at least one neighbouring busy interval o
 In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ \emph{closing of valley $V$ on processor $k$}.
 The corresponding subroutine is called $\close(k, V)$.
 
-The crucial part is ensuring that this realignment continues to be possible whenever we have a busy interval with a density which is too small.
+The crucial part is ensuring that this merging of busy intervals by closing a valley continues to be possible throughout the realignemnt whenever we encounter a busy interval with a density too small.
 For this purpose, we go through the busy intervals on each processor in decreasing order of their criticality, i.e.\ in the order of $\succeq$.
-We also allow every job to be used twice for the realignment by introducing further auxiliary busy slots, since for a section $D$ of the critical set $C$, both the right and the left valley might be closed on processor $k$ in the worst case.
-This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which correspond to the properties of Lemma~\ref{lemma:valley} and~\ref{lemma:augmented}.
+We also allow every busy slot to be used twice for the realignment by introducing further auxiliary busy slots, since for a section $D$ of the critical set $C$, both the right and the left valley might be closed on processor $k$ in the worst case.
+This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which correspond to the initial properties of Lemma~\ref{lemma:valley} and~\ref{lemma:augmented} for $S_{\aug}$.
 
 
 
@@ -1033,14 +1029,15 @@ With the same argument as for the original single-processor Left-to-Right algori
   Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min B_l - 1, \max B_r + 1] \neq \emptyset$ can have been closed during the realignment.
   Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$, i.e.\ on processor $1$ in $S_{\aug}$ and $S_{\pltr}$, $B_l$, $B_r$ are busy intervals and $I$ is an idle interval, see the following sketch.
 
-  \begin{figure}[H]
-    \centering
-    %\includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
-    %\includesvg[width=0.6\textwidth]{graphics/constellation.drawio.svg}
-    \includesvg[scale=0.4]{graphics/constellation.drawio.svg}
-    %\caption{}
-    \label{fig:constellation}
-  \end{figure}
+  %\begin{figure}[H]
+  %  \centering
+  %  %\includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
+  %  %\includesvg[width=0.6\textwidth]{graphics/constellation.drawio.svg}
+  %  \includesvg[scale=0.4]{graphics/constellation.drawio.svg}
+  %  %\caption{}
+  %  \label{fig:constellation}
+  %\end{figure}
+  %\todo{Replace notation in figure: $A_l: B_l, A_r: B'_r$}
   Let $j$ be the single job scheduled at time slot $\min B_r$.
   We conclude by showing that $E_j \subseteq I \cup B_r$ and therefore $\hat \phi(I \cup B_r) > 0$.
   Otherwise, $j$ could be scheduled at $\min I$ or $\max B_r + 1$.
@@ -1055,20 +1052,20 @@ With the same argument as for the original single-processor Left-to-Right algori
   Let $I_{\opt}$ be an idle interval in $S_{\opt}$ on processor $k$ intersecting three distinct idle intervals of processor $k$ in $S_{\real}$.
   Let $I$ be the middle of these idle intervals.
   Lemma~\ref{lemma:constellation} and Lemma~\ref{lemma:phi_prop} imply that $k$ busy processors are required during $I$ and its neighboring busy intervals.
-  This makes it impossible for $S_{\opt}$ to be idle on processor $k$ during the whole interval $I_{\opt}$, see the following sketch.
-  \begin{figure}[H]
-    \centering
-    %\includegraphics[width=0.8\textwidth]{graphics/lemma_intersection.jpg}
-    %\includesvg[width=0.8\textwidth]{graphics/lemma_intersection.drawio.svg}
-    \includesvg[scale=0.4]{graphics/lemma_intersection.drawio.svg}
-    %\caption{}
-    \label{fig:lemma_intersection}
-  \end{figure}
+  This makes it impossible for $S_{\opt}$ to be idle on processor $k$ during the whole interval $I_{\opt}$.
+  %\begin{figure}[H]
+  %  \centering
+  %  %\includegraphics[width=0.8\textwidth]{graphics/lemma_intersection.jpg}
+  %  %\includesvg[width=0.8\textwidth]{graphics/lemma_intersection.drawio.svg}
+  %  \includesvg[scale=0.4]{graphics/lemma_intersection.drawio.svg}
+  %  %\caption{}
+  %  \label{fig:lemma_intersection}
+  %\end{figure}
 \end{proof}
 
 \subsection{Approximation Guarantee}
 Lemma~\ref{lemma:intersection} finally allows us to bound the costs of the schedule $S_{\real}$ with the same arguments as in the proof for the single processor LTR algorithm of~\cite{irani_left_to_right_soda_2003}.
-We complement this with an argument that the realignment could not have increased the costs of $S_{\pltr}$ and that we have hence bounded the costs of the schedule returned by our algorithm $\PLTR$.
+We complement this with an argument that the augmentation and realignment could have only increased the costs of $S_{\pltr}$ and that we have hence bounded the costs of the schedule returned by our algorithm $\PLTR$.
 
 %\begin{lemma}\label{lemma:costs_s_real}
 %  $\costs(S_{\real}) \leq 2 \OPT + P$
@@ -1121,13 +1118,13 @@ We complement this with an argument that the realignment could not have increase
   Let $B'$ be the last plateau with $B' \subseteq B$ and let $l \geq k$ be the processor for which this busy interval $B'$ is a plateau.
   By construction of $g$ and the choice of $B'$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B', \max B]$ already mapped to by $g$.
   This is since at most $l - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min B', \max B]$.
-  Refer to the following figure for a visual sketch.
-  \begin{figure}[H]
-    \centering
-    %\includegraphics[width=0.7\textwidth]{graphics/running_time.jpg}
-    \includesvg[scale=0.4]{graphics/running_time.drawio.svg}
-    %\caption{}\label{fig:running_time}
-  \end{figure}
+  %Refer to the following figure for a visual sketch.
+  %\begin{figure}[H]
+  %  \centering
+  %  %\includegraphics[width=0.7\textwidth]{graphics/running_time.jpg}
+  %  \includesvg[scale=0.4]{graphics/running_time.drawio.svg}
+  %  %\caption{}\label{fig:running_time}
+  %\end{figure}
   Let $Q_t \subseteq T$ be a tight set over engagement $t \coloneqq \min B$ of processor $l$.
   Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
   We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
