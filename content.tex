@@ -126,10 +126,10 @@ At the hardware level, excessive heat generation from power consumption has beco
 For the billions of mobile devices, power consumption determines the length of operation and hence their usefulness.
 On the level of datacenters, electricity is often the largest cost factor and cooling one of the major design constraints.
 Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, first the option to power-down idle devices and second the option to trade performance for energy-efficiency by speed-scaling.
-In this paper, we study classical deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
+In this paper we study classical deadline based scheduling of jobs in the presence of a power-down mechanism and multiple machines with the goal of minimizing the consumed energy.
 
 %\paragraph{Informal problem description}
-In this setting, a computing device or processor has two possible states, it can be either \emph{on} or \emph{off}.
+In our setting, a computing device or processor has two possible states, it can be either \emph{on} or \emph{off}.
 If a processor is on, it can perform computations while consuming energy at a fixed rate.
 If a processor is off, the energy consumed is negligible but it cannot perform computation.
 Turning on a processor i.e.\ transitioning it from the off-state to on-state consumes additional energy.
@@ -164,7 +164,7 @@ Their algorithm obtains a possibly infeasible integer solution by building the c
 Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG}, which iteratively extends the intervals returned by the rounding procedure by a time slot at which an additional turned on processor allows for an additional unit of processing volume to be scheduled.
 
 \cite{skeletons} improve this approximation factor to $2 + \epsilon$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
-They also modify the rouding procedure based on their concept of a \textit{multi-processor skeleton}.
+They also modify the rounding procedure based on their concept of a \textit{multi-processor skeleton}.
 Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of processors in the on-state during specific intervals and which provides a lower bound for the costs of an optimal feasible schedule.
 
 Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
@@ -191,8 +191,8 @@ It also does not require the EXT-ALG, which all previous algorithms rely on to m
 Indeed, $\PLTR$ only relies on the original greedy policy of Left-to-Right: just keep processors in their current state (busy or idle) for as long as feasibly possible.
 %\todo{Move this feasibility blabla to Section~\ref{section:algorithm}?}
 For a single processor, $\LTR$ ensures feasibility by scheduling jobs according to the policy Earliest-Deadline-First (EDF).
-For checking feasibility if multiple processors are available, a simple maximum flow calculation is required since EDF is not sufficient anymore.
-Correspondingly, our generalization $\PLTR$ uses such a flow calculation for ensuring feasibility.
+For checking feasibility if multiple processors are available, a maximum flow calculation is required since EDF is not sufficient anymore.
+Correspondingly, our generalization $\PLTR$ uses such a flow calculation for checking feasibility.
 
 While the $\PLTR$ algorithm we describe in Section~\ref{section:algorithm} is very simple, the structure exhibited by the resulting schedules is surprisingly rich.
 This structure consists of \textit{critical sets of timeslots} during which $\PLTR$ only schedules the minimum amount of volume which is feasibly possible.
@@ -324,7 +324,7 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
-\todo{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
+%\todo{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
 As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow} with a node $u_j$ for every job $j \in J$ and a node $v_t$ for every time slot $t \in T$ including the corresponding incoming and outgoing edges.
 
 \begin{figure}[H]
@@ -381,8 +381,8 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(\gamma) = P - \sum_{t \in T} l_t = f_{out}(\gamma)$.
 
 \end{proof}
-\todo{Move this Theorem~\ref{theorem:feasibility} to the back together with Lemma~\ref{lemma:flow_feasibility}.
-  Or even better yet, include this in the main theorem.}
+%\todo{Move this Theorem~\ref{theorem:feasibility} to the back together with Lemma~\ref{lemma:flow_feasibility}.
+%  Or even better yet, include this in the main theorem.}
 \begin{theorem}\label{theorem:feasibility}
   Given a feasible problem instance, algorithm $\PLTR$ constructs a feasible schedule.
 \end{theorem}
