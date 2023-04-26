@@ -2,22 +2,14 @@
 \usepackage[margin=2cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
-%\usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{amsmath}
-%\usepackage[thmmarks,  thref]{ntheorem}
 \usepackage{amsthm}
-%\usepackage{listings} % Darstellen von Codebeispielen
 \usepackage{titlesec}
-%\usepackage{chngcntr}
 \usepackage{mathtools}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage[normalem]{ulem}
-%\usepackage{float}
-%\usepackage{cite}
-%\counterwithin{figure}{section}
-%\newcommand{\sectionbreak}{\clearpage}
 \usepackage[round]{natbib}
 \usepackage{float}
 \usepackage{svg}
@@ -25,24 +17,15 @@
 \pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
 \usepackage[textsize=small, textwidth=1.5cm]{todonotes}
-%\usetikzlibrary{decorations.pathreplacing}
 \mathtoolsset{showonlyrefs}
 
 \newcommand{\algrule}[1][.2pt]{\par\vspace\baselineskip\hrule height #1\par\vspace\baselineskip}
 
-% customize label "Algorithm" for package "algorithm"
-%\makeatletter
-%\renewcommand{\ALG@name}{Foobaroo}
-%\makeatother
 
-\DeclareMathOperator{\argmax}{argmax}
-\DeclareMathOperator{\argmin}{argmin}
-%\DeclareMathOperator{\next}{next}
 \DeclareMathOperator{\prev}{prev}
 \DeclareMathOperator{\on}{on}
 \DeclareMathOperator{\off}{off}
 \DeclareMathOperator{\idle}{idle}
-%\DeclareMathOperator{\act}{active}
 \DeclareMathOperator{\busy}{busy}
 \DeclareMathOperator{\costs}{costs}
 \DeclareMathOperator{\adjacent}{adjacent}
@@ -67,10 +50,8 @@
 \DeclareMathOperator{\exc}{exc}
 \DeclareMathOperator{\keepidle}{keepidle}
 \DeclareMathOperator{\keepbusy}{keepbusy}
-%\DeclareMathOperator{\keepactive}{keepActive}
 \DeclareMathOperator{\rank}{rank}
 \DeclareMathOperator{\crit}{crit}
-%\DeclareMathOperator{\spac}{space}
 \DeclareMathOperator{\fillop}{fill}
 \DeclareMathOperator{\close}{close}
 \DeclareMathOperator{\res}{Sup}
@@ -79,32 +60,16 @@
 \newtheorem{lemma}[theorem]{Lemma}
 \newtheorem{definition}[theorem]{Definition}
 
-% custom algorithm environment with custom label instead of "Algorithm"
-%\newenvironment{myalg}[1][htb]{%
-%    \floatname{algorithm}{blabla}% Update algorithm name
-%   \begin{algorithm}[#1]%
-%  }{\end{algorithm}}
 
 
-%\theoremheaderfont{\itshape}
-%\theorembodyfont{\upshape}
-% wtf is this?
-%\newtheoremstyle{case}{}{}{}{}{}{:}{ }{}
-%\theoremstyle{case}
-%\newtheorem{case}{Case}
-
-%\newtheorem*{remark}{Remark}
 
 
 \title{A Simple Greedy Algorithm for Minimum-Energy Scheduling}
 \author{Gunther Bidlingmaier}
-%\date{15.11.2020}
 
 \begin{document}
 
 \selectlanguage{english}
-%\frontmatter{}
-%\input{pages/acknowledgements}
 
 \maketitle
 \begin{abstract}
@@ -204,11 +169,6 @@ Our main contribution in terms of techniques is a complex procedure which (for t
 
 Finally, in Section~\ref{section:running_time} we show that the simplicity of our algorithm also shows in its running time of $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ the running time for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes in order to check feasibility.
 
-%\paragraph{Further related work}
-%\todo[inline]{Talk about online/offline stuff?}
-%\todo[inline]{Talk about speed scaling and combinations.}
-%\todo[inline]{Do I have space for this?}
-
 
 \subsection{Formal Problem Statement and Preliminaries}
 Formally, a problem instance consists of a set $J$ of jobs with an integer release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
@@ -296,16 +256,7 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
       \State{$t \gets $\Call{$\keepbusy$}{$k, t$}}
     \EndWhile{}
   \EndFor{}
-  %\Function{IsFeasible}{\null}
-  %  \State{$f^* \gets$ Max-Flow for current values of $m_t, l_t$}
-  %  \State{\Return{$f^* == P$}}
-  %\EndFunction{}
-%\end{algorithmic}
-%\end{algorithm}
 \algrule
-%\begin{algorithm}[H]
-%\caption{Subroutines for $\PLTR$}\label{alg:keep}
-%\begin{algorithmic}
   \Function{$\keepidle$}{$k, t$}
     \State{search maximal $t' > t$ s.t.\
     exists feasible schedule with $m_{t''}$ set to $k-1$ for all $t'' \in [t, t')$}
@@ -318,10 +269,6 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
     \State{$l_{t''} \gets \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
-  %\Function{IsFeasible}{\null}
-  %  \State{$f^* \gets$ Max-Flow for current values of $m_t, l_t$}
-  %  \State{\Return{$f^* == P$}}
-  %\EndFunction{}
 \end{algorithmic}
 \end{algorithm}
 %\todo{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
@@ -340,7 +287,6 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
     \draw[->] (3) -- node[midway, left] {$m_t - l_t$} (4);
     \draw[->] (3) -- node[midway, above] {$l_t$} (5);
     \draw[->] (4) -- node[midway, right] {$P - \sum_{t \in T} l_t$} (5);
-    %\draw[->] (6) -- node[midway, above right, sloped, pos=1] {+1} (4);
   \end{tikzpicture}
   \caption{The Flow-Network for checking feasibility of an instance of \emph{deadline-scheduling-with-processor-bounds} $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
   There is a node $u_j$, $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
@@ -492,7 +438,6 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
 \begin{lemma}\label{lemma:critical}
   Let $Q \subseteq T$ be a set of time slots and $t \in T$ an engagement of processor $k \in [m]$.
   We call $Q$ a \emph{tight set for engagement $t$ of processor $k$} if $t \in Q$ and
-  %For every time slot $t \in T$ for which some processor $k \in [m]$ becomes busy in $S_{\pltr}$, there exists a set $Q \subseteq T$ of time slots with $t \in Q, $
   \begin{align}
     \fv(Q) &= \vol(Q) \text{,}\\
     \vol(t') &\geq k-1 &~\text{for all}~t' \in Q~\text{, and}\\
@@ -534,13 +479,6 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
       $\phi(Q_k)$ is maximal.
   \end{itemize}
   For every processor $k \in [m]$ of $S_{\pltr}$ which is not completely idle, there exists a critical set $C_k$ for processor $k$.
-  %The set of critical processors is closed under union and for the sake of simplicity we^
-
-  %A set $Q_k \subseteq T$ is a \emph{tight set for processor $k$}, if $Q_k$ is a tight set for all engagements $t$ of processor $k$.
-  %Lemma~\ref{lemma:critical} implies that such a $Q_k$ exists for every processor which is busy at some point in $S_{\pltr}$.
-  %Observe that for a fixed processor $k$, the set $\mathcal{Q}_k$ of tight sets $Q_k$ for processor $k$ with maximum density $\phi(Q_k)$ is closed under union.
-  %For the sake of uniqueness, we define \emph{the critical set $C_k \subseteq T$ for processor $k$} as the inclusion maximal element in this set $\mathcal{Q}_k$.
-  %A \emph{critical set $C \subseteq T$} is the critical set $C_k$ for some processor $k \in [m]$.
 \end{lemma}
 \begin{proof}
   We show the existence by induction over the processors $m, \ldots, 1$.
@@ -552,14 +490,6 @@ These auxiliary Lemmas are again a generalization of the corresponding feasibili
   By construction of $Q_k$, every engagement $t$ of processor $k$ is contained in $Q_k$.
   Finally, we have $\fv(Q_k) = \vol(Q_k)$ and $\vol(t) \geq t-1$ for every $t \in Q_k$ since all sets in the union fulfill these properties.
 \end{proof}
-
-%\begin{definition}
-%  A \emph{critical set $C_t \subseteq T$ over an engagement $t$} is the maximum of the set of tight sets $Q_t$ over engagement $t$ in regard to the density $\phi$, i.e.
-%  \begin{align}
-%    C_t \coloneqq \argmax \{ \phi(Q) \mid Q \subseteq T~\text{is tight set over}~t \} \text{.}
-%  \end{align}
-%  As the set of these critical sets $C_t$ for fixed $t$ is closed under union, we take $C_t$ to be the inclusion-maximal critical set over engagement $t$ for the sake of uniqueness.
-%\end{definition}
 
 \subsection{Definitions based on critical sets}
 
@@ -585,8 +515,6 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 %  \caption{A sketch of the valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
 %\end{figure}
 %\todo{Kürzen: Remove this figure?}
-%\todo{A \emph{valley $V$ of} some $C$ is not guaranteed to be a valley if defined like this, since some $t \succ C$ could be contained V since $C \succeq C'$ might not imply $C \supseteq C'$.
-%  Possible fixes: require $V \prec C$ or define $\succeq$ based on $\crit$ only (Lemma valley should still work).}
 \end{definition}
 \begin{definition}
   For a critical set $C$, an interval $D \subseteq T$ \emph{is a section of} $C$ if $D \cap C$ contains only full subintervals of $C$ and at least one subinterval of $C$.
@@ -607,7 +535,6 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   Lemma~\ref{lemma:valley} guarantees that $\delta$ jobs are scheduled at every slot of $V_l$ or $V_r$.}\label{fig:left_right_valleys}
 \end{figure}
 \begin{proof}
-  %\todo{Make math more readable in this whole proof, e.g.\ by using fractions and display math, by replacing division by multiplication, or by introducing $l \coloneq |C \cap D|$}
   Refer to Figure~\ref{fig:left_right_valleys} for a visual sketch of the proposition.
   By choice of $C$ as critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
   If this inequality is fulfilled strictly, i.e.\ if
@@ -624,8 +551,6 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   Since $\uv(j, C \cap D) \leq | C \cap D |$ for every $j \in J$, we have $|J'| \geq \delta - 1$.
   If this lower bound is fulfilled with equality, then every $j \in J'$ must be scheduled in every time slot of $C \cap D$ and hence $\fv(J', C \setminus D) = \vol(J', C \setminus D)$.
   Now suppose for contradiction that all jobs $j$ scheduled during $C \setminus D$ which are not contained in $J'$ have $E_j \cap C \cap D = \emptyset$.
-  %Now suppose for contradiction that there is no job $j$ scheduled in $C \setminus D$ with $
-  %Now suppose that there is no job $j$ scheduled in $C$ such that $\spac(j, C \cap D) > 0$.
   Then $\fv(C \setminus D) = \vol(C \setminus D)$ and
   we get $\phi(C \setminus D) > \phi(C)$ since by case assumption $\vol(C \cap D) / |C \cap D| = (c-1) < \phi(C)$.
   With $\vol(t) \leq c - 1$ for every $t \in C \cap D$, we know that $\crit(C \cap D) \leq k$ and therefore $C \setminus D$ is still a critical set for processor $c$ but has higher density than $C$, contradicting the choice of $C$.
@@ -647,7 +572,6 @@ These modification steps are only done for the sake of the analysis of the origi
 By making sure that the modifications cannot decrease the costs of our schedule, we get an upper bound for the costs of $S_{\pltr}$.
 
 \subsection{Augmentation and Realignment}
-%\todo{Make this into a proper definition of $S_{\aug}$?}
 We transform $S_{\pltr}$ into the \emph{augmented schedule $S_{\aug}$} by adding for every $t$ with $k \coloneqq \crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
 No job is scheduled in this auxiliary busy slot on processor $k$ and it does also not count towards the volume of this slot.
 It merely forces processor $k$ to be in the on-state at time $k$ while allowing us to keep thinking in terms of $\idle$ and $\busy$ intervals in our analysis of the costs.
@@ -685,14 +609,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
     \State{$\res(V) \gets \res(V) - 1$ for every valley $V$
     s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on processor $k$}
   \EndFor{}
-%\end{algorithmic}
-%\end{algorithm}
 \algrule
-%\todo{Explicitly define \emph{valley $V$ having been closed on processor $k$} as $\close(k, V)$ having been called.}
-
-%\begin{algorithm}[H]
-%  \caption{Subroutines for the Realignment of $S_{\aug}$ into $S_{\real}$}\label{alg:real_suppl}
-%\begin{algorithmic}
   \Function{$\fillop$}{$k, V$}
     \If{$\crit(V) \leq 1$}
       \State{\Return{}}
@@ -843,7 +760,6 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
       We first show that $\min V - 1 \notin V'$ and symmetrically $\max V + 1 \notin V'$.
       Consider $t \coloneqq \min V - 1$ and assume $t \in T$.
-      %We know $t \in T$ since $V'$ is valley of some critical set.
       By choice of $V$ and $t$ we must have $t \succ V$.
       If $t \in V'$, we would have $V' \succ V$ and hence $V' \supseteq V$, which contradicts our case assumption.
       Symmetrically, we know that $\max V + 1 \notin V'$.
@@ -888,8 +804,6 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
   The resulting schedule $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
 \end{lemma}
 \begin{proof}
-  %The invariants in Lemma~\ref{lemma:invariant} imply that whenever we are inside the while-loop of the subroutine $\fillop$, the corresponding busy interval $B$ is indeed a section of the corresponding critical set $C$ with $C \sim B$ and that the left valley $V_r$ or the left valley $V_l$ is and there is sufficient $\res$ that one of them is closed.
-
   Since in the while-loop of $\fillop(k, V)$ the busy interval $B \subseteq V$ on $k_V$ always is a section of $C$ if $V \sim C$ (Invariant 3), the left valley $V_l$ and the right valley $V_r$ of the critical set $C$ and interval $B$ are properly defined.
   Also since $\hat \phi(B) \leq k - 1$, Invariant 1 implies that $V_l$ or $V_r$ exists and that there is sufficient $\res$ such that one of the two valleys of $C$ is closed in this iteration.
   This reduces the number of idle intervals on processor $k$ by at least $1$, since Invariant 2 implies that $V_l$ or $V_r$ cannot end strictly within an idle interval on $k$.
@@ -922,54 +836,9 @@ With the same argument as for the original single-processor Left-to-Right algori
 \begin{proof}
   Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an engagement of some processor $k'$ where $t$ was no engagement of any processor before this step.
   This step must be the closing of some valley $V$ on some processor $k > k'$:
-  %\todo{Explicitly make this into a separate lemma?}
   On processor $k$, we have seen that closing of some valley can only merge busy intervals.
   On processors above $k$, the schedule does not change.
   Busy slots on processors $k'' < k$ are only removed (definition $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close, as seen in the following figure.
-  %\begin{figure}[H]
-  %  \centering
-  %  \begin{tikzpicture}
-  %    % Schedule after the close label
-  %    \node[anchor=east, align=center] (schedule_after) at (0, 2) {Schedule\\ after the close};
-
-  %    % k' processor
-  %    \node[anchor=west] (k_prime) at (1, 2) {$k'$};
-
-  %    % Idle time slot (single horizontal line)
-  %    \draw[line width=0.6pt] (2.5, 2) -- (3.5, 2);
-
-  %    % Busy time slot with t label (without right border)
-  %    \draw[line width=0.6pt, fill=gray!30] (3.5, 1.5) rectangle (4.5, 2.5);
-  %    \node at (4, 2) {$t$};
-  %    \draw[line width=0.6pt] (3.5, 1.5) -- (3.5, 2.5);
-  %    \draw[line width=0.6pt] (3.5, 2.5) -- (4.5, 2.5);
-  %    \draw[line width=0.6pt] (3.5, 1.5) -- (4.5, 1.5);
-
-  %    % Remove the right border of the square
-  %    \fill[gray!30] (4.485, 1.51) rectangle (4.515, 2.49);
-
-  %    % Schedule before the close label
-  %    \node[anchor=east, align=center] (schedule_before) at (0, 0.5) {Schedule\\ before the close};
-  %    % Large curly brace grouping k and k'
-  %    \draw[line width=0.6pt, decorate, decoration={brace, amplitude=5pt}] (0.5, -0.125) -- (0.5, +1.125);
-
-  %    % k processor
-  %    \node[anchor=west] (k) at (1, 1) {$k$};
-  %    % Idle time slot (single horizontal line)
-  %    \draw[line width=0.6pt] (2.5, 1) -- (3.5, 1);
-
-  %    % k' processor
-  %    \node[anchor=west] (k_prime) at (1, 0) {$k'$};
-  %    \draw[line width=0.6pt] (2.5, 0) -- (3.5, 0);
-
-  %    % Busy time slot with t label (without right border)
-  %    \draw[line width=0.6pt, fill=gray!30] (2.5, -0.5) rectangle (4.5, 0.5);
-  %    \fill[gray!30] (2.485, -0.49) rectangle (2.515, 0.49);
-  %    \fill[gray!30] (4.485, -0.49) rectangle (4.515, 0.49);
-
-
-  %  \end{tikzpicture}
-  %\end{figure}
   \begin{figure}[H]
     \centering
     \includesvg[scale=0.4]{graphics/engagements.drawio.svg}
@@ -1039,9 +908,6 @@ With the same argument as for the original single-processor Left-to-Right algori
 Lemma~\ref{lemma:intersection} finally allows us to bound the costs of the schedule $S_{\real}$ with the same arguments as in the proof for the single processor LTR algorithm of~\cite{irani_left_to_right_soda_2003}.
 We complement this with an argument that the augmentation and realignment could have only increased the costs of $S_{\pltr}$ and that we have hence bounded the costs of the schedule returned by our algorithm $\PLTR$.
 
-%\begin{lemma}\label{lemma:costs_s_real}
-%  $\costs(S_{\real}) \leq 2 \OPT + P$
-%\end{lemma}
 \begin{theorem}\label{theorem:approximation}
   Algorithm $\PLTR$ constructs a schedule of costs at most $2 \OPT + P$.
 \end{theorem}
@@ -1071,7 +937,6 @@ We complement this with an argument that the augmentation and realignment could 
 \section{Running Time}\label{section:running_time}
 \begin{theorem}\label{theorem:running_time}
   Algorithm $\PLTR$ has a running time of $\mathcal{O}(n f \log d)$ where $f$ denotes the time needed for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
-  %In particular, the running time of $\PLTR$ is in $\mathcal{O}(n^4 \log d)$.
 \end{theorem}
 \begin{proof}
   First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$, respectively.
@@ -1115,7 +980,6 @@ We complement this with an argument that the augmentation and realignment could 
   With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
 \end{proof}
 
-%\listoftodos{}
 %\bibliographystyle{plainurl}
 \bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
