@@ -17,6 +17,9 @@
 \pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
 \usepackage[textsize=small, textwidth=1.5cm]{todonotes}
+\usepackage{thmtools}
+\usepackage{thm-restate}
+
 \mathtoolsset{showonlyrefs}
 
 \newcommand{\algrule}[1][.2pt]{\par\vspace\baselineskip\hrule height #1\par\vspace\baselineskip}
@@ -65,7 +68,7 @@
 
 
 \title{Greedy Minimum-Energy Scheduling}
-\author{Gunther Bidlingmaier\thanks{Department of Computer Science, Technical University of Munich, Germany,\ \email{g.bidlingmaier@tum.de}}}
+\author{Gunther Bidlingmaier\thanks{Department of Computer Science, Technical University of Munich, Germany, g.bidlingmaier@tum.de}}
 \begin{document}
 
 \selectlanguage{english}
@@ -168,7 +171,7 @@ Our main contribution in terms of techniques is a complex procedure which (for t
 Finally, we show in Section~\ref{section:running_time} that the simplicity of the greedy policy also leads to a much faster algorithm than the previous ones, namely to a running time $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ is the running time for checking feasibility by finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
 
 
-\subsection{Formal Problem Statement and Preliminaries}
+\paragraph{Formal Problem Statement}
 Formally, a problem instance consists of a set $J$ of jobs with an integer release time $r_j$, deadline $d_j$, and processing volume $p_j$ for every job $j \in J$.
 Each job $j \in J$ has to be scheduled across $m \geq 1$ processors for $p_j$ units of time in the execution interval $E_j \coloneqq [r_j, d_j]$ between its release time and its deadline.
 Preemption of jobs and migration between processors is allowed at discrete times and occurs without delay, but no more than one processor may process any given job at the same time.
@@ -217,24 +220,13 @@ Note that this generalizes the problem \emph{deadline-scheduling-on-intervals} i
   This symmetrically implies that if processor $k \in [m]$ is idle at $t$, then every processor $k' \geq k$ is idle at $t$.
 \end{definition}
 
-\begin{lemma}\label{lemma:stair_property_opt}
+\begin{restatable}{lemma}{lemmastairproperty}\label{lemma:stair_property_opt}
   For every problem instance we can assume the existence of an optimal schedule $S_{\opt}$ which fulfills the stair-property.
-\end{lemma}
-\begin{proof}
-  Let $S$ be an optimal schedule.
-  We transform $S$ such that it fulfills the stair-property without increasing its costs and while maintaining feasibility.
-  Let $k, k' \in [m]$ be two processors with $k' < k$ and job $j \in J$ scheduled on processor $k$ in time slot $t \in T$ while $k'$ is idle in $t$.
-  Let $I$ be the idle interval on processor $k'$ containing $t$.
-  We now move all jobs scheduled on processor $k$ during $I$ to be scheduled on processor $k'$ instead.
-  Since $I$ is a maximal interval for which processor $k'$ is idle, this modification does not increase the combined costs of processors $k'$ and $k$.
-  The modification also moves at least job $j$ from processor $k$ down to $k'$ while not moving any job from processor $k'$ to $k$.
-  Jobs are only moved between processors at the same time slot and only to slots of processor $k'$ which are idle, hence the resulting schedule is still feasible.
-  This modification can be repeated until the schedule has the desired property.
-\end{proof}
+\end{restatable}
 
 \section{Algorithm}\label{section:algorithm}
 
-The following \emph{Parallel Left-to-Right} ($\PLTR$) algorithm iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
+The \emph{Parallel Left-to-Right} ($\PLTR$) algorithm shown in Algorithm~\ref{alg:pltr} iterates through the processors in some arbitrary but fixed order and keeps the current processor idle for as long as possible such that the scheduling instance remains feasible.
 Once the current processor cannot be kept idle for any longer, it becomes busy and $\PLTR$ keeps it and all lower-numbered processors busy for as long as possible while again maintaining feasibility.
 The algorithm enforces these restrictions on the busy processors by iteratively making the lower and upper bounds $l_t$, $m_t$ of the corresponding instance of \emph{deadline-scheduling-with-processor-bounds} more restrictive.
 Visually, when considering the time slots on an axis from left to right and when stacking the schedules of the individual processors on top of each other, this generalization of the single processor \emph{Left-to-Right} algorithm hence proceeds \emph{Top-Left-to-Bottom-Right}.
@@ -242,7 +234,7 @@ Visually, when considering the time slots on an axis from left to right and when
 Once $\PLTR$ returns with the corresponding tight upper and lower bounds $m_t$, $l_t$, an actual schedule $S_{\pltr}$ can easily be constructed by running the flow-calculation used for the feasibility check depicted in Figure~\ref{fig:flow} or just taking the result of the last flow-calculation performed during $\PLTR$.
 The mapping from this flow to an actual assignment of jobs to processors and time slots can then be defined as described in Lemma~\ref{lemma:flow_feasibility}, which also ensures that the resulting schedule fulfills the stair-property from Definition~\ref{def:stair_property}, i.e.\ that it always uses the lower-numbered processors first.
 
-\begin{algorithm}[H]
+\begin{algorithm}
   \caption{Parallel Left-to-Right}\label{alg:pltr}
 \begin{algorithmic}
   \State{$m_t \gets m$ for all $t \in T$}
@@ -270,9 +262,9 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
 \end{algorithmic}
 \end{algorithm}
 %\todo{Is it possible to formulate and format $\keepbusy$ and  $\keepidle$ even more concise?}
-As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow} with a node $u_j$ for every job $j \in J$ and a node $v_t$ for every time slot $t \in T$ including the corresponding incoming and outgoing edges.
+As stated in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in subroutines $\keepidle$ and $\keepbusy$ can be performed by calculating a maximum $\alpha$-$\omega$ flow in the flow network given in Figure~\ref{fig:flow} with a node $u_j$ for every job $j \in J$ and a node $v_t$ for every time slot $t \in T$ including the corresponding incoming and outgoing edges.
 
-\begin{figure}[H]
+\begin{figure}
   \centering
   \begin{tikzpicture}[node distance={25mm}, thick, main/.style = {draw, circle}]
     \node[main] (1) {$\alpha$};
@@ -291,40 +283,9 @@ As we will show in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility
   }\label{fig:flow}
 \end{figure}
 
-\begin{lemma}\label{lemma:flow_feasibility}
+\begin{restatable}{lemma}{lemmaflowfeasibility}\label{lemma:flow_feasibility}
   There exists a feasible solution to an instance of deadline-scheduling-with-processor-bounds $l_t$, $m_t$ if and only if the maximum $\alpha$-$\omega$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
-\end{lemma}
-\begin{proof}
-  Let $f$ be an $\alpha$-$\omega$ flow of value $|f| = P$.
-  We construct a feasible schedule from $f$ respecting the lower and upper bounds given by $l_t$ and $m_t$.
-  For every $j \in J$ and  $t \in T$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$ on the lowest-numbered processor not scheduling some other job.
-  Since $|f| = P$ and the capacity of the cut $c(\{\alpha\}, V \setminus \{\alpha\}) = P$, we have $f_{in}(u_j) = p_j$ for every $j \in J$.
-  Hence $f_{out}(u_j) = \sum_{t \in E_j} f_{in}(v_t) = p_j$.
-  Hence every job $j$ is scheduled in $p_j$ distinct time slots within its execution interval.
-
-  The schedule respects the upper bounds $m_t$, since $c(v_t, \gamma) + c(v_t, \omega) \leq m_t - l_t + l_t$ and hence for every $t$ at most $m_t$ jobs are scheduled at $t$.
-  The schedule respects the lower bounds $l_t$, since
-  $c(V \setminus \{\omega\}, \{\omega\}) = P$ and hence
-  $f(v_t, \omega) = l_t$ for every slot $t \in T$.
-  By flow conservation we then have $f_{in}(v_t) \geq l_t$, which implies that at least $l_t$ jobs are scheduled at every slot $t$.
-
-  For the other direction consider a feasible schedule respecting the lower and upper bounds $l_t, m_t$.
-  We construct a flow $f$ of value $P$ and show that it is maximal.
-  If $j$ is scheduled at slot $t$ and hence $t \in E_j$,
-  define $f(u_j, v_t) = 1$, otherwise $f(u_j, v_t) = 0$.
-  Define $f(\alpha, u_j) = p_j$ for every $j \in J$.
-  Hence we have $f_{in}(u_j) = p_j$
-  and $f_{out}(u_j)$ must be  $p_j$ since this corresponds to the number of distinct time slots in which $j$ is scheduled.
-  Define $f(v_t, \omega) = l_t$ for every slot $t \in T$.
-  Define $f(v_t, \gamma) = f_{in}(v_t) - l_t$.
-  We have $f(v_t, \gamma) \leq m_t - l_t$ since $f_{in}(v_t)$ corresponds to the number $\vol(t)$ of jobs scheduled at $t$, which is at most $m_t$.
-  We also have $f_{out}(v_t) = f_{in}(v_t) - l_t + l_t = f_{in}(v_t)$.
-  Define $f(\gamma, \omega) = P - \sum_{t \in T} l_t$.
-  Then $f_{in}(\gamma) = \sum_{t \in T} f_{in}(v_t) - l_t
-  = \sum_{t \in T} \vol(t) - \sum_{t \in T} l_t$.
-  Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(\gamma) = P - \sum_{t \in T} l_t = f_{out}(\gamma)$.
-
-\end{proof}
+\end{restatable}
 %\todo{Move this Theorem~\ref{theorem:feasibility} to the back together with Lemma~\ref{lemma:flow_feasibility}.
 %  Or even better yet, include this in the main theorem.}
 \begin{theorem}\label{theorem:feasibility}
@@ -382,52 +343,15 @@ The following Lemma~\ref{lemma:critical} provides the crucial structure required
 Intuitively, it states that whenever $\PLTR$ requires processor $k$ to become busy at some time slot $t$, there must be some critical set $Q \subseteq T$ of time slots during which the volume scheduled by $\PLTR$ is minimal.
 This in turn implies that processor $k$ needs to be busy at some point during $Q$ in every feasible schedule.
 The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{deadline-scheduling-with-processor-bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of sets $Q \subseteq T$.
-These auxiliary lemmas are again a generalization of the corresponding feasibility characterization in~\cite{antoniadis} for their problem deadline-scheduling-on-intervals, which only defines upper bounds.
-\begin{lemma}\label{lemma:cut}
+Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} are again a generalization of the corresponding feasibility characterization in~\cite{antoniadis} for their problem deadline-scheduling-on-intervals, which only defines upper bounds.
+\begin{restatable}{lemma}{lemmacut}\label{lemma:cut}
   For every $\alpha$-$\omega$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
   $c(S) \geq P - \opdef(Q(S))$ or $c(S) \geq P - \exc(Q(\bar S))$, where $Q(S) \coloneqq \{ t \mid v_t \in S \}$.
-\end{lemma}
-\begin{proof}
-  Let $(S, \bar S)$ be an $\alpha$-$\omega$ cut and let $J(S) \coloneqq \{j \mid u_j \in S\}$.
-  We consider the contribution of every node of $S$ to the capacity $c(S)$ of the cut.
-  First consider the case that $\gamma \notin S$.
-  \begin{itemize}
-    \item Node $\alpha$: $\sum_{j \in J(\bar S)} p_j$
-    \item Node $u_j$: $|\{v_t \in \bar S \mid t \in E_j\}| = | E_j \setminus Q(S) | \geq p_j - \fv(j, Q(S))$
-    \item Node $v_t$: $l_t + m_t - l_t = m_t$
-  \end{itemize}
-  The inequality for node $u_j$ follows since $\fv(j, Q(S)) = \max \{0, p_j - |E_j \setminus Q(S)| \}$.
-  In total, we can bound the capacity from below with
-  \begin{align}
-    c(S) &\geq \sum_{j \in J(\bar S)} p_j + \sum_{j \in J(S)} p_j - \fv(j, Q(S)) + \sum_{t \in Q(S)} m_t
-    \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
-    \\ &\geq P - \opdef(Q(S))\text{.}
-  \end{align}
-  If $\gamma \in S$, we have the following contributions of nodes in $S$ to the capacity of the cut:
-  \begin{itemize}
-    \item Node $\alpha$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$
-    \item Node $u_j$: $| E_j \setminus Q(S) |
-      = | E_j \cap Q(\bar S)| \geq \pv(j, Q(\bar S))$
-    \item Node $v_t$: $l_t$
-    \item Node $\gamma$: $P - \sum_{t \in T} l_t$
-  \end{itemize}
-  In total, we obtain the alternative lower bound
-  $c(S) \geq P + \pv(Q(\bar S))
-  - \sum_{t \in Q(\bar S)} l_t
-  = P - \exc(Q(\bar S)) \text{.}$
-\end{proof}
+\end{restatable}
 
-\begin{lemma}\label{lemma:feasibility}
+\begin{restatable}{lemma}{lemmafeasibility}\label{lemma:feasibility}
   An instance of deadline-scheduling-with-processor-bounds is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq T$.
-\end{lemma}
-\begin{proof}
-  If $\opdef(Q) > 0$ for some $Q$, then some upper bound $m_t$ cannot be met.
-  If $\exc(Q) > 0$ for some $Q$, then some lower bound $l_t$ cannot be met.
-  For the direction from right to left, consider an infeasible scheduling instance with lower and upper bounds.
-  By Lemma~\ref{lemma:flow_feasibility} we have that the maximum flow $f$ for this instance has value $|f| < P$.
-  Hence, there must be an $\alpha$-$\omega$ cut $(S, \bar S)$ of capacity $c(S) < P$.
-  Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
-\end{proof}
+\end{restatable}
 
 \begin{definition}
   A time slot $t \in T$ is called \emph{engagement of processor $k$} if $t = \min B$ for some busy interval $B$ on processor $k$.
@@ -536,8 +460,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 \begin{proof}
   Refer to Figure~\ref{fig:left_right_valleys} for a visual sketch of the proposition.
   By choice of $C$ as critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
-  If this inequality is fulfilled strictly, i.e.\ if
-  $\vol(C \cap D) > (c-1) \cdot |C \cap D|$, then with the premise
+  If this inequality is fulfilled strictly, then with the premise
   $\fv(C \cap D) / |C \cap D| \leq c - \delta$ we directly get $\uv(C \cap D) / |C \cap D| > \delta - 1$.
   This implies that there are at least $\delta$ jobs $j$ scheduled in $C \cap D$ with $\uv(j, C \cap D) > 0$.
   Such jobs can be scheduled in the part of $C$ not contained in $D$, i.e.\ we must have $E_j \cap (C \setminus D) \neq \emptyset$ and hence the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ must be defined.
@@ -554,7 +477,6 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   we get $\phi(C \setminus D) > \phi(C)$ since by case assumption $\vol(C \cap D) / |C \cap D| = (c-1) < \phi(C)$.
   With $\vol(t) \leq c - 1$ for every $t \in C \cap D$, we know that $\crit(C \cap D) \leq k$ and therefore $C \setminus D$ is still a critical set for processor $c$ but has higher density than $C$, contradicting the choice of $C$.
   Therefore, there must exist a job $j \notin J'$ scheduled in $C \setminus D$ with an execution interval intersecting $C \cap D$.
-
   In any case, we have at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
   This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J(V_l)$ or $J(V_r)$.
 \end{proof}
@@ -567,7 +489,7 @@ For the single processor $\LTR$ algorithm, the crucial property for the approxim
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
 More specifically, it will establish the stronger property that $\hat \phi(B) > k - 1$ for every $\busy$ interval $B$ on processor $k$ with $\crit(B) \geq 2$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $B$.
 Idle intervals surrounded by only busy intervals $B$ with $\crit(B) \leq 1$ are then handled in Lemma~\ref{lemma:constellation} with essentially the same argument as for the single processor $\LTR$ algorithm.
-These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
+%These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
 By making sure that the modifications cannot decrease the costs of our schedule, we obtain an upper bound for the costs of $S_{\pltr}$.
 
 \subsection{Augmentation and Realignment}
@@ -582,7 +504,7 @@ It merely forces processor $k$ to be in the on-state at time $k$ while allowing 
   The property directly follows from our choice of the critical sets, the definition of $\crit(t)$, and the construction of $S_{\aug}$.
 \end{proof}
 
-As a next step, we transform $S_{\aug}$ into the realigned schedule $S_{\pltr}$ using Algorithm~\ref{alg:real}. We briefly sketch the ideas behind this realignment.
+As a next step, we transform $S_{\aug}$ into the \emph{realigned schedule $S_{\real}$} using Algorithm~\ref{alg:real}. We briefly sketch the ideas behind this realignment.
 Lemma~\ref{lemma:augmented} guarantees us that every busy interval $B$ on processor $k$ is a section of the critical set $C$ with $C \sim B$.
 It also guarantees that the left and right valley $V_l, V_r$ of $C$ and $B$ do not end within an idle interval on processor $k$.
 Lemma~\ref{lemma:valley} in turn implies that if the density of $B$ is too small to guarantee that $S_{\opt}$ has to use processor $k$ during $B$, i.e.\ if $\hat \phi(B) \leq k - 1$, then $V_l$ or $V_r$ is defined and there is some $j$ scheduled in every slot of $V_l$ or $V_r$.
@@ -723,7 +645,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       \end{itemize}
       Taken together, for $t \in V$ to be busy on $k'$ after the close, $t$ must have been busy on $k'$ before the close (definition $\close, k' < k$) and $t$ cannot have been part of a full busy interval $B \subseteq V$.
       Hence $t \in B$ for some \emph{partial} busy interval $B \subseteq V$ on $k'$ before the close.
-      For $B' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $B' \subseteq B$, as shown in the following figure.
+      For $B' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $B' \subseteq B$, as shown in the following sketch.
       \begin{figure}[H]
         \centering
         %\includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}
@@ -837,7 +759,7 @@ With the same argument as for the original single-processor Left-to-Right algori
   This step must be the closing of some valley $V$ on some processor $k > k'$:
   On processor $k$, we have seen that closing some valley can only merge busy intervals.
   On processors above $k$, the schedule does not change.
-  Busy slots on processors $k'' < k$ are only removed (by definition of $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close, as seen in the following figure.
+  Busy slots on processors $k'' < k$ are only removed (by definition of $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.%, as seen in the following figure.
   \begin{figure}[H]
     \centering
     \includesvg[scale=0.4]{graphics/engagements.drawio.svg}
@@ -987,4 +909,90 @@ This work was supported by the Research Training Network of the Deutsche Forschu
 \bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
 \bibliography{references}
+\section*{Appendix}
+\lemmastairproperty*
+\begin{proof}
+  Let $S$ be an optimal schedule.
+  We transform $S$ such that it fulfills the stair-property without increasing its costs and while maintaining feasibility.
+  Let $k, k' \in [m]$ be two processors with $k' < k$ and job $j \in J$ scheduled on processor $k$ in time slot $t \in T$ while $k'$ is idle in $t$.
+  Let $I$ be the idle interval on processor $k'$ containing $t$.
+  We now move all jobs scheduled on processor $k$ during $I$ to be scheduled on processor $k'$ instead.
+  Since $I$ is a maximal interval for which processor $k'$ is idle, this modification does not increase the combined costs of processors $k'$ and $k$.
+  The modification also moves at least job $j$ from processor $k$ down to $k'$ while not moving any job from processor $k'$ to $k$.
+  Jobs are only moved between processors at the same time slot and only to slots of processor $k'$ which are idle, hence the resulting schedule is still feasible.
+  This modification can be repeated until the schedule has the desired property.
+\end{proof}
+
+\lemmaflowfeasibility*
+\begin{proof}
+  Let $f$ be an $\alpha$-$\omega$ flow of value $|f| = P$.
+  We construct a feasible schedule from $f$ respecting the lower and upper bounds given by $l_t$ and $m_t$.
+  For every $j \in J$ and  $t \in T$, if $f(u_j, v_t) = 1$, then schedule $j$ at slot $t$ on the lowest-numbered processor not scheduling some other job.
+  Since $|f| = P$ and the capacity of the cut $c(\{\alpha\}, V \setminus \{\alpha\}) = P$, we have $f_{in}(u_j) = p_j$ for every $j \in J$.
+  Hence $f_{out}(u_j) = \sum_{t \in E_j} f_{in}(v_t) = p_j$.
+  Hence every job $j$ is scheduled in $p_j$ distinct time slots within its execution interval.
+
+  The schedule respects the upper bounds $m_t$, since $c(v_t, \gamma) + c(v_t, \omega) \leq m_t - l_t + l_t$ and hence for every $t$ at most $m_t$ jobs are scheduled at $t$.
+  The schedule respects the lower bounds $l_t$, since
+  $c(V \setminus \{\omega\}, \{\omega\}) = P$ and hence
+  $f(v_t, \omega) = l_t$ for every slot $t \in T$.
+  By flow conservation we then have $f_{in}(v_t) \geq l_t$, which implies that at least $l_t$ jobs are scheduled at every slot $t$.
+
+  For the other direction consider a feasible schedule respecting the lower and upper bounds $l_t, m_t$.
+  We construct a flow $f$ of value $P$ and show that it is maximal.
+  If $j$ is scheduled at slot $t$ and hence $t \in E_j$,
+  define $f(u_j, v_t) = 1$, otherwise $f(u_j, v_t) = 0$.
+  Define $f(\alpha, u_j) = p_j$ for every $j \in J$.
+  Hence we have $f_{in}(u_j) = p_j$
+  and $f_{out}(u_j)$ must be  $p_j$ since this corresponds to the number of distinct time slots in which $j$ is scheduled.
+  Define $f(v_t, \omega) = l_t$ for every slot $t \in T$.
+  Define $f(v_t, \gamma) = f_{in}(v_t) - l_t$.
+  We have $f(v_t, \gamma) \leq m_t - l_t$ since $f_{in}(v_t)$ corresponds to the number $\vol(t)$ of jobs scheduled at $t$, which is at most $m_t$.
+  We also have $f_{out}(v_t) = f_{in}(v_t) - l_t + l_t = f_{in}(v_t)$.
+  Define $f(\gamma, \omega) = P - \sum_{t \in T} l_t$.
+  Then $f_{in}(\gamma) = \sum_{t \in T} f_{in}(v_t) - l_t
+  = \sum_{t \in T} \vol(t) - \sum_{t \in T} l_t$.
+  Since the schedule is feasible, we have $\sum_{t \in T} \vol(t) = P$ and finally the flow conservation $f_{in}(\gamma) = P - \sum_{t \in T} l_t = f_{out}(\gamma)$.
+\end{proof}
+
+\lemmacut*
+\begin{proof}
+  Let $(S, \bar S)$ be an $\alpha$-$\omega$ cut and let $J(S) \coloneqq \{j \mid u_j \in S\}$.
+  We consider the contribution of every node of $S$ to the capacity $c(S)$ of the cut.
+  First consider the case that $\gamma \notin S$.
+  \begin{itemize}
+    \item Node $\alpha$: $\sum_{j \in J(\bar S)} p_j$
+    \item Node $u_j$: $|\{v_t \in \bar S \mid t \in E_j\}| = | E_j \setminus Q(S) | \geq p_j - \fv(j, Q(S))$
+    \item Node $v_t$: $l_t + m_t - l_t = m_t$
+  \end{itemize}
+  The inequality for node $u_j$ follows since $\fv(j, Q(S)) = \max \{0, p_j - |E_j \setminus Q(S)| \}$.
+  In total, we can bound the capacity from below with
+  \begin{align}
+    c(S) &\geq \sum_{j \in J(\bar S)} p_j + \sum_{j \in J(S)} p_j - \fv(j, Q(S)) + \sum_{t \in Q(S)} m_t
+    \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
+    \\ &\geq P - \opdef(Q(S))\text{.}
+  \end{align}
+  If $\gamma \in S$, we have the following contributions of nodes in $S$ to the capacity of the cut:
+  \begin{itemize}
+    \item Node $\alpha$: $\sum_{j \in J(\bar S)} p_j \geq \pv(J(\bar S), Q(\bar S))$
+    \item Node $u_j$: $| E_j \setminus Q(S) |
+      = | E_j \cap Q(\bar S)| \geq \pv(j, Q(\bar S))$
+    \item Node $v_t$: $l_t$
+    \item Node $\gamma$: $P - \sum_{t \in T} l_t$
+  \end{itemize}
+  In total, we obtain the alternative lower bound
+  $c(S) \geq P + \pv(Q(\bar S))
+  - \sum_{t \in Q(\bar S)} l_t
+  = P - \exc(Q(\bar S)) \text{.}$
+\end{proof}
+
+\lemmafeasibility*
+\begin{proof}
+  If $\opdef(Q) > 0$ for some $Q$, then some upper bound $m_t$ cannot be met.
+  If $\exc(Q) > 0$ for some $Q$, then some lower bound $l_t$ cannot be met.
+  For the direction from right to left, consider an infeasible scheduling instance with lower and upper bounds.
+  By Lemma~\ref{lemma:flow_feasibility} we have that the maximum flow $f$ for this instance has value $|f| < P$.
+  Hence, there must be an $\alpha$-$\omega$ cut $(S, \bar S)$ of capacity $c(S) < P$.
+  Lemma~\ref{lemma:cut} now implies that $\opdef(Q(S)) > 0$ or $\exc(Q(\bar S)) > 0$.
+\end{proof}
 \end{document}
