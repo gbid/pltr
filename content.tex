@@ -64,8 +64,8 @@
 
 
 
-\title{Greedy Minimum-Energy Scheduling\thanks{This work was supported by the Research Training Network of the Deutsche Forschungsgemeinschaft (DFG) (378803395: ConVeY)}}
-\author{Gunther Bidlingmaier\thanks{Department of Computer Science, Technical University of Munich}}
+\title{Greedy Minimum-Energy Scheduling}
+\author{Gunther Bidlingmaier\thanks{Department of Computer Science, Technical University of Munich, Germany,\ \email{g.bidlingmaier@tum.de}}}
 \begin{document}
 
 \selectlanguage{english}
@@ -979,7 +979,10 @@ We complement this with an argument that the augmentation and realignment could 
   Such a sub-schedule can be computed in $O(n^2)$, as laid out in Chapter 5 of~\cite{brucker_scheduling_algorithms}.
   With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
 \end{proof}
-
+\section*{Acknowledgement}
+Thanks to Prof.\ Dr.\ Susanne Albers for her supervision during my studies.
+The idea of generalizing the Left-to-Right algorithm emerged in discussions during this supervision.
+This work was supported by the Research Training Network of the Deutsche Forschungsgemeinschaft (DFG) (378803395: ConVeY).
 %\bibliographystyle{plainurl}
 \bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
