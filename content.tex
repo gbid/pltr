@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper, 10pt]{article}
 \usepackage[margin=2cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -73,12 +73,12 @@
 
 \maketitle
 \begin{abstract}
-  We consider energy-efficient scheduling across multiple processors with a power-down mechanism.
-  In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes has to be scheduled across $m$ parallel processors while minimizing the consumed energy.
-  Idle processors can be turned off at no cost to save energy, while turning them on requires a fixed amount of energy.
+  We consider the problem of energy-efficient scheduling across multiple processors with a power-down mechanism.
+  In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes must be scheduled across $m$ parallel processors while minimizing the consumed energy.
+  Idle processors can be turned off to save energy, while turning them on requires a fixed amount of energy.
   For the special case of a single processor, the greedy Left-to-Right algorithm guarantees an approximation factor of $2$.
-  We generalize this simple greedy policy to the case of multiple processors and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P$ the total processing volume.
-  Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the largest deadline and the earliest release time, and $f$ the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
+  We generalize this simple greedy policy to the case of multiple parallel processors and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P < \OPT$ is the total processing volume.
+  Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the latest deadline and the earliest release time, and $f$ the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
 \end{abstract}
 \clearpage
 
@@ -139,10 +139,10 @@ For each of these single-processor problems they construct a single-processor sk
 These in turn are then combined into a multi-processor skeleton, which is extended into a feasible schedule by first executing EXT-ALG, and then carefully powering on additional processors since EXT-ALG is not sufficient for ensuring feasibility here.
 
 As presented in the papers, both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, run in pseudo-polynomial time.
-By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced from $d$ to $\mathcal{O}(n \log d)$, which allows the algorithms to run in polynomial time.
+By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced from $d$ to $\mathcal{O}(n \log d)$, allowing the algorithms to run in polynomial time.
 More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
 However, this improved running time comes at the price of the additive $\epsilon$ in the approximation factors of the two LP-based algorithms.
-The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ refers to a maximum flow calculation in a network of size $\mathcal{O}(n^2 \log d)$ with $\mathcal{O}(n \log d)$ nodes.
+The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$ where $F$ refers to a maximum flow calculation in a network with $\mathcal{O}(n^2 \log d)$ edges and $\mathcal{O}(n \log d)$ nodes.
 
 \paragraph{Contribution}
 In this paper we develop a greedy algorithm which is simpler and faster than the previous algorithms.
