@@ -68,19 +68,19 @@
 
 
 \title{Greedy Minimum-Energy Scheduling}
-\author{Gunther Bidlingmaier\thanks{Department of Computer Science, Technical University of Munich, Germany, g.bidlingmaier@tum.de}}
+\date{}
 \begin{document}
 
 \selectlanguage{english}
 
 \maketitle
 \begin{abstract}
-  We consider the problem of energy-efficient scheduling across multiple processors with a power-down mechanism.
-  In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes must be scheduled across $m$ parallel processors while minimizing the consumed energy.
-  Idle processors can be turned off to save energy, while turning them on requires a fixed amount of energy.
-  For the special case of a single processor, the greedy Left-to-Right algorithm guarantees an approximation factor of $2$.
-  We generalize this simple greedy policy to the case of $m \geq 1$ processors running in parallel and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P < \OPT$ is the total processing volume.
-  Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the latest deadline and the earliest release time, and $f$ is the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
+We consider the problem of energy-efficient scheduling across multiple processors with a power-down mechanism.
+In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes must be scheduled across $m$ parallel processors while minimizing the consumed energy.
+Idle processors can be turned off to save energy, while turning them on requires a fixed amount of energy.
+For the special case of a single processor, the greedy Left-to-Right algorithm \citep{irani_left_to_right_soda_2003} guarantees an approximation factor of $2$.
+We generalize this simple greedy policy to the case of $m \geq 1$ processors running in parallel and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P < \OPT$ is the total processing volume.
+Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the latest deadline and the earliest release time, and $f$ is the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
 \end{abstract}
 \clearpage
 
@@ -414,7 +414,7 @@ Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} are again a generalization of
   Finally, we have $\fv(Q_k) = \vol(Q_k)$ and $\vol(t) \geq k-1$ for every $t \in Q_k$ since all sets in the union fulfill these properties.
 \end{proof}
 
-\subsection{Definitions based on critical sets}
+\subsection{Definitions Based on Critical Sets}
 
 \begin{definition}
   For the critical set $C_k$ of some processor $k \in [m]$, we define $\crit(C_k) \coloneqq k$.
@@ -901,10 +901,6 @@ We complement this with an argument that the augmentation and realignment could 
   Such a sub-schedule can be computed in $O(n^2)$, as laid out in Chapter 5 of~\cite{brucker_scheduling_algorithms}.
   With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
 \end{proof}
-\section*{Acknowledgement}
-Thanks to Prof.\ Dr.\ Susanne Albers for her supervision during my studies.
-The idea of generalizing the Left-to-Right algorithm emerged in discussions during this supervision.
-This work was supported by the Research Training Network of the Deutsche Forschungsgemeinschaft (DFG) (378803395: ConVeY).
 %\bibliographystyle{plainurl}
 \bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
