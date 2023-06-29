@@ -1,0 +1,155 @@
+SUBMISSION: 147
+TITLE: Greedy Minimum-Energy Scheduling
+
+
+----------------------- REVIEW 1 ---------------------
+SUBMISSION: 147
+TITLE: Greedy Minimum-Energy Scheduling
+AUTHORS: Gunther Bidlingmaier
+
+----------- Overall evaluation -----------
+This paper studies the problem of energy efficient scheduling of n jobs
+on m processors. Each job has a release time r_j, a deadline d_j and a
+processing time p_j. Time is discrete. Each processor consumes one unit
+of energy for every time instance while it is on. Idle machines can be
+turned off to save energy, but turning on a processor incurs a fixed
+amount of energy. Migration is allowed and is free. The goal is to
+schedule all jobs while minimizing the expended energy.
+
+There was a greedy 2-approximation algorithm for the case where m=1.
+This algorithm works as follows: if the processor is busy, then it stays
+busy as long as possible, and if it is idle, then it stays idle as long
+as possible.
+
+There is also a polynomial time LP based (2+\epsilon)-approximation
+algorithm for the case where m>1.
+
+This paper presents a polynomial time 3-approximation algorithm that
+extends the greedy algorithm to m>1 machines. More specifically, it is
+shown that the energy consumption of the algorithm is at most 2OPT + P,
+where P = \sum_j p_j.The running time of the algorithm is O(n f \log d),
+where d is the time horizon and f is the time to compute a maximum flow
+in a network with O(n) nodes.
+
+It is assumed w.l.o.g. that m \leq n, and that if machine k is busy,
+then any machine k'<k is also busy. The latter is called the stairway
+property.
+
+The algorithm goes over the processors from m to 1 and computes the idle
+and busy times for processor k in a greedy manner, given the
+computations that were previously made for higher processors. The
+decision with respect to the feasibility at a given time instance t is
+made using a flow network in which there is a node for each job and for
+each time instance.
+
+The running time of a naive implementation of the algorithm is
+polynomial in d. However, a faster version is given with the above
+mentioned running time by bounding the number of busy intervals of all
+processors by O(n). This bounds the number of feasibility tests by O(n).
+The running time of each test is decreased by using a smaller network in
+which a temporal nodes represent time intervals.
+
+I started to read the analysis but did not finish it.
+
+This paper is not easy to read. This is not the kind of writing that one
+would expect in the simplicity track. The paper should be short due to
+the simplicity and the elegance of the arguments and not because the
+writing is condensed.
+
+One should not place definitions inside lemma statements (see, Lemmas
+10, 11, 17).
+
+In addition, the algorithm which is presented in this paper may be
+simpler than the previous (2+\epsilon)-approximation algorithm. However,
+I don't think that it can be described as simple.
+
+In my opinion this submission does not fit the simplicity track of ESA.
+Maybe WAOA would be more appropriate.
+
+
+
+----------------------- REVIEW 2 ---------------------
+SUBMISSION: 147
+TITLE: Greedy Minimum-Energy Scheduling
+AUTHORS: Gunther Bidlingmaier
+
+----------- Overall evaluation -----------
+The paper considers the following multiprocessor scheduling problem. One is given m parallel machines. Each machine consumes energy at a rate of one when active and can (individually) transition to a sleep state where no energy is consumed. Transitioning from the active to the sleep state is free but the other way around consumes q energy units, where q is a constant. The goal is to feasibly schedule a set of n jobs, each with a release time, deadline and  prosessing time requirement. Preemption and migration is allowed but no job can run in parallel to itself.
+
+The problem is known to admit a simple greedy 2-approximation algorithm called left-to-right (LTR) as well as an involved DP-based exact algorithm on a single machine. On multiple machines, i.e., the problem studied here, it is known to admit a (2+eps)-approximation algorithm based on an integer programming relaxation and a combinatorial 6-approximation algorithm. The current paper presents an appropriate generalization of LTR to multiple machines called parallel LTR (PLTR) and thereby gives the first combinatorial 3-approximation algorithm which is faster than previous algorithms for the multiple machines setting.
+
+Algorithm PLTR at a very high level follows LTR in that it keeps each processor in the sleep state as long as possible while still guaranteeing a feasible schedule, and it also keeps it in the active state as long as possible (while it can process job or only has small idleness intervals so that transitioning to the sleep state would be too expensive). Veryfying feasibility (and thus calculating the exact timepoint where more machines should become active) is naturally more involved that in LTR since it has to consider the interplay between the different machines. Whereas for one machine it can be easily done with an EDF schedule, on multiple machines a sequence of maximum-flow computations is used. The algorithm definition is arguably simpler than the previous algorithms for the problem.
+
+The analysis of the algorithm on the other hand is quite technical involves (i) identifying a number of structural properties of the produced schedules and deriving appropriate definitions based on these properties. Most of these are inherited or are extensions of similar properties in previous papers, (ii) An intricate two-step transformation process that allows to derive the approximation guarantee. The analysis is definitely not simpler than that of pre-existing algorithms, although it would fair to say that it provides more structural insight.
+
+As far as I can say the results are correct, but I did not carefully verify all calculations. Many aspects of the paper heavily build on previous work. But these are sufficiencly augmented and there are also some smaller novel technical contributions of the paper. The writing could be improved and in some cases, see also comments to authors, but is generally good.
+
+
+Overall, the paper does not improve the state of the art for the problem in general, but slightly does so for class of combinatorial approximation algorithms. With respect to the scope of Track S the presented algorithm is indeed simpler at a high-level description than previous ones, but the analysis is quite involved.
+
+
+
+Comments to authors
+
+Abstract: I first got the impression that the whole multi-processor system has *one* power-down mechanism, rather than each machine individually. Same on the first paragraph of the introduction.
+
+Problem definition: You use the term job volume to refer to the amount of time during which the job must be processed. Although this is technically correct since a machine can process one amount of volume per time-unit, I think it would be clearer if it were called *processing time*.
+
+Introduction: "working on the *unfinished* released job"
+
+General: A job is processed by a machine and not "worked on"
+
+Page 4: please use parantheses in the sum notation to make it clear that the sum is over both terms
+
+Page 4: I think whith "PLTR returns with the corresponding tight upper and lower bounds", you mean that it terminates once the upper and lower bounds become *equal*?
+
+Page 5: be more specific on how you search for a maximal t'
+
+
+
+----------------------- REVIEW 3 ---------------------
+SUBMISSION: 147
+TITLE: Greedy Minimum-Energy Scheduling
+AUTHORS: Gunther Bidlingmaier
+
+----------- Overall evaluation -----------
+The submission deals with the problem of energy-efficient (or minimum energy)
+scheduling on identical machines with release times and deadlines. The paper
+presents a (2OPT + P)-approximation algorithm, which can be thought of as a
+3-approximation algorithm.
+
+This algorithm does not reach the best possible known approximation factor,
+but it is quite simple in its description.
+
+The main reason I cannot support the submission is due to its fairly
+complicated analysis. I can quote the submission itself here:
+
+"Devising an approximation guarantee from this structure is however highly
+non-trivial and much more involved than the approximation proof of the
+single-processor LTR algorithm, because one has to deal with sets of time slots
+and not just intervals. Our main contribution in terms of techniques is a
+complex procedure which (for the sake of the analysis only) carefully realigns
+the jobs scheduled in between critical sets of time slots such that it is
+sufficient to consider intervals as in the single processor case."
+
+Borrowing from the ESA website https://algo-conference.org/esa/, I quote:
+
+"(...) We find that new simple or elegant proofs are easier to understand and
+to teach, and may contain interesting new insights whose relevance only the
+future will reveal. Track S submissions will primarily be judged on the
+simplicity and elegance of their proofs or algorithms, and the clarity of their
+presentation."
+
+The analysis takes 9 pages of the paper, including two more pages of
+appendices, and at first glance, the formatting would take even more pages if
+the submission was done in the recommended Lipics style.
+
+Coming back to the ESA website quotation, I just cannot see myself for example
+managing to explain the full analysis in 90 minutes in my Theory of scheduling
+course.
+
+In summary, the analysis is not fundamentally hard to read compared to other
+scientific papers at say Track A, and I could see myself supporting this
+submission for a standard track at perhaps a B-rank conference. Unfortunately,
+the complexity of the analysis is too high to support it for Track S of ESA.
+
