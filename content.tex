@@ -295,7 +295,6 @@ As stated in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in su
   By definition of subroutines $\keepidle$ and $\keepbusy$, $\PLTR$ only modifies the upper and lower bounds $m_t$, $l_t$ for the number of busy processors such that the resulting instance of \emph{deadline-scheduling-with-processor-bounds} remains feasible.
   The correctness of the algorithm then follows from the correctness of the flow-calculation for checking feasibility, which is implied by Lemma~\ref{lemma:flow_feasibility}.
 \end{proof}
-%\todo{Kürzen: zusammenfassen mit Theorem~\ref{theorem:approximation} am Ende?}
 
 \section{Structure of the PLTR-Schedule}\label{section:structure}
 \subsection{Types of Volume}
@@ -437,7 +436,6 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 %  \includesvg[width=1\textwidth]{graphics/valleys_of.drawio.svg}
 %  \caption{A sketch of the valleys $V_1, V_2, V_3$ of the critical set $C_k$ for processor $k$}\label{fig:valleys_of}
 %\end{figure}
-%\todo{Kürzen: Remove this figure?}
 \end{definition}
 \begin{definition}
   For a critical set $C$, an interval $D \subseteq T$ \emph{is a section of} $C$ if $D \cap C$ contains only full subintervals of $C$ and at least one subinterval of $C$.
