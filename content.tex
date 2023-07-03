@@ -451,8 +451,8 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
 \end{lemma}
 \begin{figure}
   \centering
-  %\includegraphics[width=1\textwidth]{graphics/left_right_valleys.pdf}
-  \includesvg[width=1\textwidth]{graphics/left_right_valleys.drawio.svg}
+  \includegraphics[width=1\textwidth]{graphics/left_right_valleys.drawio.pdf}
+  %\includesvg[width=1\textwidth]{graphics/left_right_valleys.drawio.svg}
   \caption{The left and right valley $V_l$ and $V_r$ of the critical set $C_k$ for processor $k$ and a section $D$ of $C_k$.
   Lemma~\ref{lemma:valley} guarantees that $\delta$ jobs are scheduled at every slot of $V_l$ or $V_r$.}\label{fig:left_right_valleys}
 \end{figure}
@@ -620,7 +620,8 @@ With the same argument as for the original single-processor Left-to-Right algori
   Busy slots on processors $k'' < k$ are only removed (by definition of $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.%, as seen in the following figure.
   \begin{figure}[H]
     \centering
-    \includesvg[scale=0.4]{graphics/engagements.drawio.svg}
+		\includegraphics[scale=0.4]{graphics/engagements.drawio.pdf}
+    %\includesvg[scale=0.4]{graphics/engagements.drawio.svg}
   \end{figure}
   If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
   Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
@@ -919,8 +920,8 @@ This work was supported by the Research Training Network of the Deutsche Forschu
       For $B' \subseteq V$ to be a full busy interval on $k'_V$ after the close (with $k_V \leq k'_V < k$), we must have $B' \subseteq B$, as shown in the following sketch.
       \begin{figure}[H]
         \centering
-        %\includegraphics[width=0.5\textwidth]{graphics/invariant_case1.jpg}
-        \includesvg[scale=0.4]{graphics/invariant_case1.drawio.svg}
+        \includegraphics[scale=0.4]{graphics/invariant_case1.drawio.pdf}
+        %\includesvg[scale=0.4]{graphics/invariant_case1.drawio.svg}
       \end{figure}
       Hence there must have been a busy interval $B'' \subseteq [\min B', \max B]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
