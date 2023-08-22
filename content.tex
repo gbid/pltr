@@ -163,8 +163,7 @@ This in turn gives a lower bound for the number of busy processors required by a
 
 Devising an approximation guarantee from this structure is however highly non-trivial and much more involved than the approximation proof of the single-processor $\LTR$ algorithm, because one has to deal with sets of time slots and not just intervals.
 Our main contribution in terms of techniques is a complex procedure which (for the sake of the analysis only) carefully realigns the jobs scheduled in between critical sets of time slots such that it is sufficient to consider intervals as in the single processor case, see Section~\ref{section:approximation} for details.
-
-Finally, we show in Section~\ref{section:running_time} that the simplicity of the greedy policy also leads to a much faster algorithm than the previous ones, namely to a running time $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ is the running time for checking feasibility by finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
+Here, we also show that our greedy policy leads to a much faster algorithm than the previous ones, namely to a running time $\mathcal{O}(n f \log d)$, where $d$ is the maximal deadline and $f$ is the running time for checking feasibility by finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
 
 
 \subsubsection{Formal Problem Statement}
@@ -630,7 +629,7 @@ With the same argument as for the original single-processor Left-to-Right algori
   %\end{figure}
 \end{proof}
 
-\subsection{Approximation Guarantee}
+\subsection{Approximation Guarantee and Running Time}
 Lemma~\ref{lemma:intersection} finally allows us to bound the costs of the schedule $S_{\real}$ with the same arguments as in the proof for the single-processor LTR algorithm of~\cite{irani_left_to_right_soda_2003}.
 We complement this with an argument that the augmentation and realignment could have only increased the costs of $S_{\pltr}$ and that we have hence also bounded the costs of the schedule returned by our algorithm $\PLTR$.
 
@@ -660,56 +659,54 @@ We complement this with an argument that the augmentation and realignment could 
   By the same argument as in Lemma~\ref{lemma:stair_property_opt}, this does not increase the total costs of the schedule.
 \end{proof}
 
-\section{Running Time}\label{section:running_time}
 \begin{theorem}\label{theorem:running_time}
   Algorithm $\PLTR$ has a running time of $\mathcal{O}(n f \log d)$ where $f$ denotes the time needed for finding a maximum flow in a network with $\mathcal{O}(n)$ nodes.
 \end{theorem}
-\begin{proof}
-  First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$, respectively.
-  We begin by bounding the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
-  Note that if $\keepidle$ returns $d$, then we do not have to calculate $\keepbusy$ from $d$ on.
-  Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is then bounded by $n + m$.
-  If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
-  We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $g$ from the set of busy intervals to the jobs $J$.
-  For this construction of $g$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
-  We construct $g$ such that $g(B) = j$ only if $d_j \in B$.
-
-  Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $B$ on $k$.
-  We call a busy interval $B'$ in $S_{\pltr}$ on processor $l \in [m]$ a \emph{plateau on processor $l$}, if all slots of $B'$ are idle for all processors above $l$.
-  Observe that plateaus (even across different processors) cannot intersect, which implies an ordering of the plateaus from left to right.
-  Let $B'$ be the last plateau with $B' \subseteq B$ and let $l \geq k$ be the processor for which this busy interval $B'$ is a plateau.
-  By construction of $g$ and the choice of $B'$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B', \max B]$ already mapped to by $g$.
-  This is since at most $l - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min B', \max B]$.
-  %Refer to the following figure for a visual sketch.
-  %\begin{figure}[H]
-  %  \centering
-  %  %\includegraphics[width=0.7\textwidth]{graphics/running_time.jpg}
-  %  \includesvg[scale=0.4]{graphics/running_time.drawio.svg}
-  %  %\caption{}\label{fig:running_time}
-  %\end{figure}
-  Let $Q_t \subseteq T$ be a tight set over engagement $t \coloneqq \min B$ of processor $l$.
-  Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
-  We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
-  With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max B$ is scheduled at slot $\max B + 1$.
-  Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $g$ so far and which we therefore can assign to $B$.
-
-  Having bounded the number of calls to $\keepidle$ and $\keepbusy$ by $\mathcal{O}(n)$, the final step is to bound the running time of these two subroutines by $\mathcal{O}(f \log d)$.
-  A slight modification to the flow-network of Figure~\ref{fig:flow} suffices to have only $\mathcal{O}(n)$ nodes.
-  The idea here is to partition the time horizon $T$ into $\mathcal{O}(n)$ \textit{time intervals} instead of $\mathcal{O}(d)$ individual time slots.
-  Since this is a standard problem as laid out in e.g.\ Chapter 5 of~\cite{brucker_scheduling_algorithms}, we only sketch the main points relevant to our setting in the following.
-
-  The partition of the time horizon into time intervals is done by using the release times and deadlines as splitting points of the time horizon and scaling the capacities of the incoming and outgoing edges by the length of the time interval.
-  For our generalization we additionally have to split whenever an upper or lower bound $l_t, m_t$ changes.
-  Since we have already bounded the number of such times by $2n$ in the first part of this proof, there are only $\mathcal{O}(n)$ time intervals and hence also $\mathcal{O}(n)$ nodes in the flow network.
-  Also note that constructing the sub-schedules within the time intervals is a much simpler scheduling problem, since by construction, for every time interval and every job $j$, the execution interval $E_j$ either completely contains the time interval or does not intersect it.
-  Such a sub-schedule can be computed in $O(n^2)$, as laid out in Chapter 5 of~\cite{brucker_scheduling_algorithms}.
-  With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
-\end{proof}
+%\begin{proof}
+%  First observe that every busy interval is created by a pair of calls to $\keepidle$ and $\keepbusy$, respectively.
+%  We begin by bounding the number of busy intervals across all processors in $S_{\pltr}$ by $n$.
+%  Note that if $\keepidle$ returns $d$, then we do not have to calculate $\keepbusy$ from $d$ on.
+%  Therefore, the total number of calls to $\keepidle$ and $\keepbusy$ is then bounded by $n + m$.
+%  If $m > n$ we can restrict our algorithm to use the first $n$ processors only, as there cannot be more than $n$ processors scheduling jobs at the same time.
+%  We derive the upper bound of $n$ for the number of busy intervals across all processors by constructing an injective mapping $g$ from the set of busy intervals to the jobs $J$.
+%  For this construction of $g$ we consider the busy intervals in the same order as the algorithm, i.e.\ from Top-Left to Bottom-Right.
+%  We construct $g$ such that $g(B) = j$ only if $d_j \in B$.
+%
+%  Suppose we have constructed such a mapping for busy intervals on processors $m, \ldots, k$ up to some busy interval $B$ on $k$.
+%  We call a busy interval $B'$ in $S_{\pltr}$ on processor $l \in [m]$ a \emph{plateau on processor $l$}, if all slots of $B'$ are idle for all processors above $l$.
+%  Observe that plateaus (even across different processors) cannot intersect, which implies an ordering of the plateaus from left to right.
+%  Let $B'$ be the last plateau with $B' \subseteq B$ and let $l \geq k$ be the processor for which this busy interval $B'$ is a plateau.
+%  By construction of $g$ and the choice of $B'$, there are at most $l - k$ distinct jobs $j$ with $d_j \in [\min B', \max B]$ already mapped to by $g$.
+%  This is since at most $l - k$ busy intervals on processors $k+1, \ldots, m$ intersect the interval $[\min B', \max B]$.
+%  %Refer to the following figure for a visual sketch.
+%  %\begin{figure}[H]
+%  %  \centering
+%  %  %\includegraphics[width=0.7\textwidth]{graphics/running_time.jpg}
+%  %  \includesvg[scale=0.4]{graphics/running_time.drawio.svg}
+%  %  %\caption{}\label{fig:running_time}
+%  %\end{figure}
+%  Let $Q_t \subseteq T$ be a tight set over engagement $t \coloneqq \min B$ of processor $l$.
+%  Let $J' \coloneqq \{ j_1, \ldots, j_{l} \}$ be the $l$ distinct jobs scheduled at $t$.
+%  We know that $\max B + 1 \notin C_t$ since $\vol(\max B + 1) < k \leq l$ and $\max B + 1 > t$.
+%  With $\vol(j, Q_t) = \fv(j, Q_t) > 0$ for every $j \in J'$, we know that every job $j \in J'$ with $d_j > \max B$ is scheduled at slot $\max B + 1$.
+%  Hence there are at least $l - (k-1)$ distinct jobs $j \in J'$ with $d_j \in [\min B', \max B]$ and there must be at least one such job $j^*$ which is not mapped to by $g$ so far and which we therefore can assign to $B$.
+%
+%  Having bounded the number of calls to $\keepidle$ and $\keepbusy$ by $\mathcal{O}(n)$, the final step is to bound the running time of these two subroutines by $\mathcal{O}(f \log d)$.
+%  A slight modification to the flow-network of Figure~\ref{fig:flow} suffices to have only $\mathcal{O}(n)$ nodes.
+%  The idea here is to partition the time horizon $T$ into $\mathcal{O}(n)$ \textit{time intervals} instead of $\mathcal{O}(d)$ individual time slots.
+%  Since this is a standard problem as laid out in e.g.\ Chapter 5 of~\cite{brucker_scheduling_algorithms}, we only sketch the main points relevant to our setting in the following.
+%
+%  The partition of the time horizon into time intervals is done by using the release times and deadlines as splitting points of the time horizon and scaling the capacities of the incoming and outgoing edges by the length of the time interval.
+%  For our generalization we additionally have to split whenever an upper or lower bound $l_t, m_t$ changes.
+%  Since we have already bounded the number of such times by $2n$ in the first part of this proof, there are only $\mathcal{O}(n)$ time intervals and hence also $\mathcal{O}(n)$ nodes in the flow network.
+%  Also note that constructing the sub-schedules within the time intervals is a much simpler scheduling problem, since by construction, for every time interval and every job $j$, the execution interval $E_j$ either completely contains the time interval or does not intersect it.
+%  Such a sub-schedule can be computed in $O(n^2)$, as laid out in Chapter 5 of~\cite{brucker_scheduling_algorithms}.
+%  With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
+%\end{proof}
 
 \subsubsection*{Acknowledgement}
 Thanks to Prof.\ Dr.\ Susanne Albers for her supervision during my studies.
 The idea of generalizing the Left-to-Right algorithm emerged in discussions during this supervision.
-This work was supported by the Research Training Network of the Deutsche Forschungsgemeinschaft (DFG) (378803395: ConVeY).
 %\bibliographystyle{plainurl}
 %\bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
