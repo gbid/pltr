@@ -12,7 +12,7 @@
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \usepackage[normalem]{ulem}
-\usepackage[round]{natbib}
+%\usepackage[round]{natbib}
 \usepackage{float}
 \usepackage{svg}
 %\usepackage{fancyhdr}
@@ -86,7 +86,7 @@
 We consider the problem of energy-efficient scheduling across multiple processors with a power-down mechanism.
 In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes must be scheduled across $m$ parallel processors while minimizing the consumed energy.
 Idle processors can be turned off to save energy, while turning them on requires a fixed amount of energy.
-For the special case of a single processor, the greedy Left-to-Right algorithm \citep{irani_left_to_right_soda_2003} guarantees an approximation factor of $2$.
+For the special case of a single processor, the greedy Left-to-Right algorithm \cite{irani_left_to_right_soda_2003} guarantees an approximation factor of $2$.
 We generalize this simple greedy policy to the case of $m \geq 1$ processors running in parallel and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P < \OPT$ is the total processing volume.
 Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the latest deadline and the earliest release time, and $f$ is the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
 %TODO: keywords
@@ -121,39 +121,24 @@ Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a $2$-approximation and 
 If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily keeps the processor busy for as long as possible, always working on the released job with the earliest deadline.
 Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
 At this point, the processor becomes busy again and $\ltr$ proceeds recursively until all jobs are completed.
+For a single processor,~\cite{baptiste_unit_jobs} develop an optimal dynamic program for unit jobs.
+~\cite{baptiste_general_jobs} generalize this to general job weights with a running time of $\mathcal{O}(n^5)$,
+while~\cite{demaine} generalize it to multiple processors but again only unit jobs, increasing the complexity to $\mathcal{O}(n^7m^5)$.
 
-%\subsubsection{Single Processor Setting}
-The first optimal result for the case of a single processor and jobs with unit processing volume was developed by~\cite{baptiste_unit_jobs}.
-He devised a dynamic program that runs in time $\mathcal{O}(n^7)$, where $n$ denotes the number of jobs to be scheduled.
-Building on this result,~\cite{baptiste_general_jobs} solved the case of general processing volumes on a single processor in time $\mathcal{O}(n^5)$.
-Their sophisticated algorithm involves the computation of multiple dynamic programming tables, the introduction of a special method for speeding up the computation of these tables, and a final post-processing phase.
-
-%\subsubsection{Multi-Processor Setting}
-The first result for an arbitrary number of processors $m$ was given by~\cite{demaine} for the special case of unit processing volumes.
-They solved this special case in time $~\mathcal{O}(n^7m^5)$ by building on the original dynamic programming approach of~\cite{baptiste_unit_jobs} while non-trivially obtaining additional structure.
-Obtaining good solutions for general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
-Note that this is not an additional restriction for the former special case of unit processing volumes since time is discrete in our problem setting.
+Obtaining good solutions for multiple processors and general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
+Note that this is not an additional restriction for the former special cases since time is discrete in our problem setting.
 It is a major open problem whether the general multi-processor setting is NP-hard.
 It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of multiple processors and general processing volumes of jobs.
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
-Their algorithm guarantees an approximation factor of $3 + \epsilon$ and builds on the Linear Programming relaxation of a corresponding Integer Program.
-Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional solution.
+Their algorithm guarantees an approximation factor of $3 + \epsilon$ and relies on relaxing an Integer Programming formulation of the problem.
+Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional LP solution.
 Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG}, which iteratively extends the intervals returned by the rounding procedure by a time slot at which an additional turned on processor allows for an additional unit of processing volume to be scheduled.
 
 \cite{skeletons} improve this approximation factor to $2 + \epsilon$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
-They also modify the rounding procedure based on their concept of a \textit{multi-processor skeleton}.
-Very roughly, a skeleton is a stripped-down schedule which still guarantees a number of processors in the on-state during specific intervals and which provides a lower bound for the costs of an optimal feasible schedule.
-
-Building on this concept of skeletons, they also develop a combinatorial $6$-approximation for the problem.
-This algorithm first computes the lower bounds for the number of processors required in every possible time interval starting and ending at a release time or deadline using flow calculations.
-Based on these bounds, they define for every processor a single-processor scheduling problem with $\mathcal{O}(n^2)$ artificial jobs.
-For each of these single-processor problems they construct a single-processor skeleton using dynamic programming.
-These in turn are then combined into a multi-processor skeleton, which is extended into a feasible schedule by first executing EXT-ALG, and then carefully powering on additional processors since EXT-ALG is not sufficient for ensuring feasibility here.
-
-As presented in the papers, both Linear Programs of~\cite{antoniadis} and~\cite{skeletons}, respectively, run in pseudo-polynomial time.
+They also develop a combinatorial $6$-approximation for the problem.
+As presented in the papers, all three algorithms run in pseudo-polynomial time.
 By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced from $d$ to $\mathcal{O}(n \log d)$, allowing the algorithms to run in polynomial time.
 More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
-However, this improved running time comes at the price of the additive $\epsilon$ in the approximation factors of the two LP-based algorithms.
 The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$, where $F$ refers to a maximum flow calculation in a network with $\mathcal{O}(n^2 \log d)$ edges and $\mathcal{O}(n \log d)$ nodes.
 
 \subsubsection{Contribution}
@@ -196,8 +181,7 @@ All processors start in the off-state.
 The objective now is to find a feasible schedule which minimizes the expended energy $E$, which is defined as follows.
 Each processor consumes $1$ unit of energy for every time slot it is in the on-state and $0$ units of energy if it is in the off-state.
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
-In Graham's notation~\citep{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
-
+In Graham's notation~\cite{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
 \subsubsection{Costs of busy and idle intervals}
 We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled for this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
@@ -726,13 +710,15 @@ We complement this with an argument that the augmentation and realignment could 
   With the feasibility check running in time $\mathcal{O}(f)$, each call to $\keepidle$ and $\keepbusy$ can be completed in $\mathcal{O}(f \log d)$ using binary search on the remaining time horizon.
 \end{proof}
 
-\section*{Acknowledgement}
+\subsubsection*{Acknowledgement}
 Thanks to Prof.\ Dr.\ Susanne Albers for her supervision during my studies.
 The idea of generalizing the Left-to-Right algorithm emerged in discussions during this supervision.
 This work was supported by the Research Training Network of the Deutsche Forschungsgemeinschaft (DFG) (378803395: ConVeY).
 %\bibliographystyle{plainurl}
-\bibliographystyle{abbrvnat}
+%\bibliographystyle{abbrvnat}
 %\setcitestyle{authoryear,open={(},close={)}}
+%\bibliography{references}
+\bibliographystyle{splncs04}
 \bibliography{references}
 \section*{Appendix}
 \lemmastairproperty*
