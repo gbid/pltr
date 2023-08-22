@@ -793,59 +793,6 @@ This work was supported by the Research Training Network of the Deutsche Forschu
   = P - \exc(Q(\bar S)) \text{.}$
 \end{proof}
 
-\lemmaengagements*
-\begin{proof}
-  Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an engagement of some processor $k'$ where $t$ was no engagement of any processor before this step.
-  This step must be the closing of some valley $V$ on some processor $k > k'$:
-  On processor $k$, we have seen that closing some valley can only merge busy intervals.
-  On processors above $k$, the schedule does not change.
-  Busy slots on processors $k'' < k$ are only removed (by definition of $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.%, as seen in the following figure.
-  \begin{figure}[H]
-    \centering
-		\includegraphics[scale=0.4]{graphics/engagements.drawio.pdf}
-    %\includesvg[scale=0.4]{graphics/engagements.drawio.svg}
-  \end{figure}
-  If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
-  Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
-  If $t \notin V$, then $t \succ V$.
-  Let $W$ be the valley such that $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
-  If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
-  By Invariant 2, processors $1, \ldots, k_W = k$ are busy at $t$ before the close.
-  Again, this implies that $t$ was an engagement before the close already, contradicting our choice of $t$.
-  If $t \notin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
-  We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
-  Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are busy at $t$ before the close.
-  Hence, $t$ was an engagement before the close already, again contradicting our initial choice of $t$.
-\end{proof}
-
-\lemmaconstellation*
-\begin{proof}
-  By Lemma~\ref{lemma:engagements} and $\crit(B_r) \leq 1$, we know that $\min B_r$ is an engagement of processor $1$ in $S_{\aug}$.
-  Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence idle on all processors (by stair-property in $S_{\aug}$).
-  Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
-  Therefore, no $V$ intersecting $[\max I, \max B_r]$ was closed during the realignment on any processor since this $V$ would contain $\max I$.
-  Since $B_r$ is a busy interval with $\crit(B_r) \leq 1$ (i.e.\ not containing engagements of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
-  For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
-  Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min B_l - 1, \max B_r + 1] \neq \emptyset$ can have been closed during the realignment.
-  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$.
-  In other words, for processor $1$ in both $S_{\aug}$ and $S_{\pltr}$, $B_l$ and $B_r$ are busy intervals and $I$ is an idle interval.
-
-  %\begin{figure}[H]
-  %  \centering
-  %  %\includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
-  %  %\includesvg[width=0.6\textwidth]{graphics/constellation.drawio.svg}
-  %  \includesvg[scale=0.4]{graphics/constellation.drawio.svg}
-  %  %\caption{}
-  %  \label{fig:constellation}
-  %\end{figure}
-  %\todo{Replace notation in figure: $A_l: B_l, A_r: B'_r$}
-  Let $j$ be the single job scheduled at time slot $\min B_r$.
-  We conclude by showing that $E_j \subseteq I \cup B_r$ and therefore $\hat \phi(I \cup B_r) > 0$.
-  Otherwise, $j$ could be scheduled at $\min I$ or $\max B_r + 1$.
-  In the first case, $\PLTR$ would have extended $B_l$ by scheduling $j$ at time $\min I$ instead of at $\min B_r$.
-  In the second case, $\PLTR$ would have extended the idle interval $I$ by scheduling $j$ at $\max B_r + 1$ instead of at $\min B_r$.
-\end{proof}
-
 \lemmafeasibility*
 \begin{proof}
   If $\opdef(Q) > 0$ for some $Q$, then some upper bound $m_t$ cannot be met.
@@ -1000,5 +947,59 @@ This work was supported by the Research Training Network of the Deutsche Forschu
   This reduces the number of idle intervals on processor $k$ by at least $1$, since Invariant 2 implies that $V_l$ or $V_r$ cannot end strictly within an idle interval on $k$.
   Hence all terms in the realignment are well defined and the realignment terminates.
 \end{proof}
+
+\lemmaengagements*
+\begin{proof}
+  Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an engagement of some processor $k'$ where $t$ was no engagement of any processor before this step.
+  This step must be the closing of some valley $V$ on some processor $k > k'$:
+  On processor $k$, we have seen that closing some valley can only merge busy intervals.
+  On processors above $k$, the schedule does not change.
+  Busy slots on processors $k'' < k$ are only removed (by definition of $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.%, as seen in the following figure.
+  \begin{figure}[H]
+    \centering
+		\includegraphics[scale=0.4]{graphics/engagements.drawio.pdf}
+    %\includesvg[scale=0.4]{graphics/engagements.drawio.svg}
+  \end{figure}
+  If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
+  Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
+  If $t \notin V$, then $t \succ V$.
+  Let $W$ be the valley such that $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
+  If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
+  By Invariant 2, processors $1, \ldots, k_W = k$ are busy at $t$ before the close.
+  Again, this implies that $t$ was an engagement before the close already, contradicting our choice of $t$.
+  If $t \notin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
+  We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
+  Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are busy at $t$ before the close.
+  Hence, $t$ was an engagement before the close already, again contradicting our initial choice of $t$.
+\end{proof}
+
+\lemmaconstellation*
+\begin{proof}
+  By Lemma~\ref{lemma:engagements} and $\crit(B_r) \leq 1$, we know that $\min B_r$ is an engagement of processor $1$ in $S_{\aug}$.
+  Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence idle on all processors (by stair-property in $S_{\aug}$).
+  Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
+  Therefore, no $V$ intersecting $[\max I, \max B_r]$ was closed during the realignment on any processor since this $V$ would contain $\max I$.
+  Since $B_r$ is a busy interval with $\crit(B_r) \leq 1$ (i.e.\ not containing engagements of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
+  For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.
+  Therefore $\crit(I) \leq 1$ and no valley $V$ with $V \cap [\min B_l - 1, \max B_r + 1] \neq \emptyset$ can have been closed during the realignment.
+  Therefore, the constellation occurs exactly in the same way in $S_{\aug}$ and $S_{\pltr}$ on processor $1$.
+  In other words, for processor $1$ in both $S_{\aug}$ and $S_{\pltr}$, $B_l$ and $B_r$ are busy intervals and $I$ is an idle interval.
+
+  %\begin{figure}[H]
+  %  \centering
+  %  %\includegraphics[width=0.6\textwidth]{graphics/constellation.jpg}
+  %  %\includesvg[width=0.6\textwidth]{graphics/constellation.drawio.svg}
+  %  \includesvg[scale=0.4]{graphics/constellation.drawio.svg}
+  %  %\caption{}
+  %  \label{fig:constellation}
+  %\end{figure}
+  %\todo{Replace notation in figure: $A_l: B_l, A_r: B'_r$}
+  Let $j$ be the single job scheduled at time slot $\min B_r$.
+  We conclude by showing that $E_j \subseteq I \cup B_r$ and therefore $\hat \phi(I \cup B_r) > 0$.
+  Otherwise, $j$ could be scheduled at $\min I$ or $\max B_r + 1$.
+  In the first case, $\PLTR$ would have extended $B_l$ by scheduling $j$ at time $\min I$ instead of at $\min B_r$.
+  In the second case, $\PLTR$ would have extended the idle interval $I$ by scheduling $j$ at $\max B_r + 1$ instead of at $\min B_r$.
+\end{proof}
+
 
 \end{document}
