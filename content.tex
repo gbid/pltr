@@ -24,7 +24,8 @@
 
 \mathtoolsset{showonlyrefs}
 
-\newcommand{\algrule}[1][.2pt]{\par\vspace\baselineskip\hrule height #1\par\vspace\baselineskip}
+%\newcommand{\algrule}[1][.2pt]{\par\vspace\baselineskip\hrule height #1\par\vspace\baselineskip}
+\newcommand{\algrule}[1][.2pt]{\par\vspace{0.5\baselineskip}\hrule height #1\par\vspace{0.5\baselineskip}}
 
 
 \DeclareMathOperator{\prev}{prev}
@@ -59,7 +60,7 @@
 \DeclareMathOperator{\crit}{crit}
 \DeclareMathOperator{\fillop}{fill}
 \DeclareMathOperator{\close}{close}
-\DeclareMathOperator{\res}{Sup}
+\DeclareMathOperator{\res}{s}
 
 %\newtheorem{theorem}{Theorem}
 %\newtheorem{lemma}[theorem]{Lemma}
@@ -242,14 +243,14 @@ The mapping from this flow to an actual assignment of jobs to processors and tim
   \EndFor{}
 \algrule
   \Function{$\keepidle$}{$k, t$}
-    \State{search maximal $t' > t$ s.t.\
-    exists feasible schedule with $m_{t''}$ set to $k-1$ for all $t'' \in [t, t')$}
+    \State{find maximal $t' > t$ s.t.\
+    $\exists$ feasible schedule with $m_{t''} = k-1$ for all $t'' \in [t, t')$}
     \State{$m_{t''} \gets k - 1$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
   \Function{$\keepbusy$}{$k, t$}
-    \State{search maximal $t' > t$ s.t.\
-    exists feasible schedule with $l_{t''}$ set to $\max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
+    \State{find maximal $t' > t$ s.t.\
+    $\exists$ feasible schedule with $l_{t''} = \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{$l_{t''} \gets \max\{k, l_{t''}\}$ for all $t'' \in [t, t')$}
     \State{\Return{$t'$}}
   \EndFunction{}
@@ -510,16 +511,13 @@ The crucial part is ensuring that this merging of busy intervals by closing a va
 For this purpose, we go through the busy intervals on each processor in decreasing order of their criticality, i.e.\ in the order of $\succeq$.
 We also allow every busy slot to be used twice for the realignment by introducing further auxiliary busy slots, since for a section $D$ of the critical set $C$, both the right and the left valley might be closed on processor $k$ in the worst case.
 This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which correspond to the initial properties of Lemma~\ref{lemma:valley} and~\ref{lemma:augmented} for $S_{\aug}$.
-
-
-
 \begin{algorithm}
   \caption{Realignment of $S_{\aug}$ for analysis only}\label{alg:real}
 \begin{algorithmic}
-  \State{$\res(V) \gets 2 |J(V)|$ for every valley $V$}
+  \State{$\res_V \gets 2 |J(V)|$ for every valley $V$}
   \For{$k \gets m$ \textrm{to} $1$}
     \State{\Call{$\fillop$}{$k, T$}}
-    \State{$\res(V) \gets \res(V) - 1$ for every valley $V$
+    \State{$\res_V \gets \res_V - 1$  for every $V$
     s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on processor $k$}
   \EndFor{}
 \algrule
@@ -528,9 +526,9 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       \State{\Return{}}
     \EndIf{}
     \State{let $C$ be the critical set s.t.\ $C \sim V$}
-    \While{exists busy interval $B \subseteq V$ on processor $k$
+    \While{$\exists$ busy interval $B \subseteq V$ on processor $k$
     with $B \sim V$ and $\hat \phi(B) \leq k - 1$}
-      \State{let $V_l, V_r$ be the left and right valley for $C$ and interval $B$ (if $B$ is a section of $C$)}
+      \State{let $V_l, V_r$ be the left, right valley for $C$ and $B$ (given $B$ is a section of $C$)}
       \If{$V_l$ exists and $\res(V_l) > 0$}
         \State{\Call{$\close$}{$k, V_l$}}
       \ElsIf{$V_r$ exists and $\res(V_r) > 0$}
@@ -547,14 +545,12 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
       \If{processors $1, \ldots, k-1$ are idle at $t$}
         \State{introduce new auxiliary busy slot on processor $k$ at time $t$}
       \Else{}
-        \State{move busy slot at time $t$ of highest processor
-        among $1, \ldots, k-1$ to processor $k$ at $t$}
+        \State{move busy slot $t$ of highest processor $\leq k-1$ to processor $k$}
       \EndIf{}
     \EndFor{}
   \EndFunction{}
 \end{algorithmic}
 \end{algorithm}
-
 \subsection{Invariants for Realignment}
 \begin{restatable}{lemma}{lemmainvariant}\label{lemma:invariant}
   For an arbitrary step during the realignment of $S_{\aug}$ and a valley $V \subseteq T$, let the \emph{critical processor $k_V$ for $V$} be the highest processor such that
