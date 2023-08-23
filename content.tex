@@ -13,14 +13,11 @@
 \usepackage[noend]{algpseudocode}
 \usepackage[normalem]{ulem}
 %\usepackage[round]{natbib}
-\usepackage{float}
-\usepackage{svg}
 %\usepackage{fancyhdr}
 %\pagestyle{fancy}
 \usepackage[hidelinks]{hyperref}
 \usepackage[textsize=small, textwidth=1.5cm]{todonotes}
 \usepackage{thmtools}
-\usepackage{thm-restate}
 
 \mathtoolsset{showonlyrefs}
 
@@ -88,10 +85,10 @@
 \begin{abstract}
 We consider the problem of energy-efficient scheduling across multiple processors with a power-down mechanism.
 In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes must be scheduled across $m$ parallel processors while minimizing the consumed energy.
-Each idle processor can be turned off to save energy, while turning it on requires a fixed amount of energy.
+When idle, each processor can be turned off to save energy, while turning it on requires a fixed amount of energy.
 For the special case of a single processor, the greedy Left-to-Right algorithm \cite{irani_left_to_right_soda_2003} guarantees an approximation factor of $2$.
 We generalize this simple greedy policy to the case of $m \geq 1$ processors running in parallel and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P < \OPT$ is the total processing volume.
-Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the latest deadline and the earliest release time, and $f$ is the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
+Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the last deadline and the earliest release time, and $f$ is the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
 \keywords{Scheduling  \and Greedy Algorithms \and Approximation Algorithms}
 \end{abstract}
 %\clearpage
@@ -104,7 +101,7 @@ Energy-efficiency has become a major concern in most areas of computing for reas
 At the hardware level, excessive heat generation from power consumption has become one of the bottlenecks.
 For the billions of mobile battery-powered devices, power consumption determines the length of operation and hence their usefulness.
 On the level of data centers, electricity is often the largest cost factor and cooling one of the major design constraints.
-Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, first the option to power down idle devices and second the option to trade performance for energy-efficiency by speed-scaling processors.
+Algorithmic techniques for saving power in computing environments employ two fundamental mechanisms, first the option to power down idle devices, and second the option to trade performance for energy-efficiency by speed-scaling processors.
 In this paper we study the former, namely classical deadline based scheduling of jobs on parallel machines which can be powered down with the goal of minimizing the consumed energy.
 
 %\subsubsection{Informal problem description}
@@ -132,7 +129,7 @@ Obtaining good solutions for the general case of multiple processors and general
 It is a major open problem whether the general multi-processor setting is NP-hard.
 It took further thirteen years for the first non-trivial result on this general setting to be be developed.
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
-Their algorithm guarantees an approximation factor of $3 + \epsilon$ and relies on relaxing an Integer Programming formulation of the problem.
+Their algorithm guarantees an approximation factor of $3 + \epsilon$ by relaxing an Integer Programming formulation of the problem.
 For making the rounded LP-solution feasible, they develop an additional extension algorithm \textit{EXT-ALG}.
 This approximation factor is improved to $2 + \epsilon$ in~\cite{skeletons} by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
 They also develop a combinatorial $6$-approximation for the problem.
@@ -213,9 +210,9 @@ Note that this generalizes the problem \emph{deadline-scheduling-on-intervals} i
   This symmetrically implies that if processor $k \in [m]$ is idle at $t$, then every processor $k' \geq k$ is idle at $t$.
 \end{definition}
 
-\begin{restatable}{lemma}{lemmastairproperty}\label{lemma:stair_property_opt}
+\begin{lemma}\label{lemma:stair_property_opt}
   For every problem instance we can assume the existence of an optimal schedule $S_{\opt}$ which fulfills the stair-property.
-\end{restatable}
+\end{lemma}
 
 \section{Algorithm}\label{section:algorithm}
 
@@ -276,9 +273,9 @@ As stated in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in su
   }\label{fig:flow}
 \end{figure}
 
-\begin{restatable}{lemma}{lemmaflowfeasibility}\label{lemma:flow_feasibility}
+\begin{lemma}\label{lemma:flow_feasibility}
   There exists a feasible solution to an instance of deadline-scheduling-with-processor-bounds $l_t$, $m_t$ if and only if the maximum $\alpha$-$\omega$ flow in the corresponding flow network depicted in Figure~\ref{fig:flow} has value $P$.
-\end{restatable}
+\end{lemma}
 %\todo{Move this Theorem~\ref{theorem:feasibility} to the back together with Lemma~\ref{lemma:flow_feasibility}.
 %  Or even better yet, include this in the main theorem.}
 \begin{theorem}\label{theorem:feasibility}
@@ -336,14 +333,14 @@ Intuitively, it states that whenever $\PLTR$ requires processor $k$ to become bu
 This in turn implies that processor $k$ needs to be busy at some point during $Q$ in every feasible schedule.
 The auxiliary Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} provide a necessary and more importantly also sufficient condition for the feasibility of an instance of \emph{deadline-scheduling-with-processor-bounds} based on the excess $\exc(Q)$ and the deficiency $\opdef(Q)$ of sets $Q \subseteq T$.
 Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} are again a generalization of the corresponding feasibility characterization in~\cite{antoniadis} for their problem deadline-scheduling-on-intervals, which only defines upper bounds.
-\begin{restatable}{lemma}{lemmacut}\label{lemma:cut}
+\begin{lemma}\label{lemma:cut}
   For every $\alpha$-$\omega$ cut $(S, \bar S)$ in the network given in Figure~\ref{fig:flow} we have at least one of the following two lower bounds for the capacity $c(S)$ of the cut:
   $c(S) \geq P - \opdef(Q(S))$ or $c(S) \geq P - \exc(Q(\bar S))$, where $Q(S) \coloneqq \{ t \mid v_t \in S \}$.
-\end{restatable}
+\end{lemma}
 
-\begin{restatable}{lemma}{lemmafeasibility}\label{lemma:feasibility}
+\begin{lemma}\label{lemma:feasibility}
   An instance of deadline-scheduling-with-processor-bounds is feasible if and only if $\opdef(Q) \leq 0$ and $\exc(Q) \leq 0$ for every $Q \subseteq T$.
-\end{restatable}
+\end{lemma}
 
 \begin{definition}
   A time slot $t \in T$ is called an \emph{engagement of processor $k$} if $t = \min B$ for some busy interval $B$ on processor $k$.
@@ -467,7 +464,7 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   Now suppose for contradiction that all jobs $j$ scheduled during $C \setminus D$ which are not contained in $J'$ have $E_j \cap C \cap D = \emptyset$.
   Then $\fv(C \setminus D) = \vol(C \setminus D)$ and
   we get $\phi(C \setminus D) > \phi(C)$ since by case assumption $\vol(C \cap D) / |C \cap D| = (c-1) < \phi(C)$.
-  With $\vol(t) \leq c - 1$ for every $t \in C \cap D$, we know that $\crit(C \cap D) \leq k$ and therefore $C \setminus D$ is still a critical set for processor $c$ but has higher density than $C$, contradicting the choice of $C$.
+  With $\vol(t) \leq c - 1$ for every $t \in C \cap D$, we know that $\crit(C \cap D) \leq c$ and therefore $C \setminus D$ is still a critical set for processor $c$ but has higher density than $C$, contradicting the choice of $C$.
   Therefore, there must exist a job $j \notin J'$ scheduled in $C \setminus D$ with an execution interval intersecting $C \cap D$.
   In any case, we have at least $\delta$ jobs scheduled in $C$ with an execution interval intersecting both $C \setminus D$ and $C \cap D$.
   This implies that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and that at least $\delta$ jobs are contained in $J(V_l)$ or $J(V_r)$.
@@ -479,7 +476,7 @@ We stress that this is for the analysis only and not part of $\PLTR$.
 The first step augments specific processors with auxiliary busy slots such that in every critical set $C$ at least the first $\crit(C)$ processors are busy all the time.
 For the single processor $\LTR$ algorithm, the crucial property for the approximation guarantee is that every idle interval of $S_{\opt}$ can intersect at most $2$ distinct idle intervals of the schedule returned by $\LTR$.
 The second modification step of $S_{\pltr}$ is more involved and establishes this crucial property on every processor $k \in [m]$ by making use of Lemma~\ref{lemma:valley}.
-More specifically, it will establish the stronger property that $\hat \phi(B) > k - 1$ for every $\busy$ interval $B$ on processor $k$ with $\crit(B) \geq 2$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $B$.
+More specifically, it will establish the stronger property that $\hat \phi(B) > k - 1$ for every busy interval $B$ on processor $k$ with $\crit(B) \geq 2$, i.e.\ that every feasible schedule requires $k$ busy processors at some point during $B$.
 Idle intervals surrounded by only busy intervals $B$ with $\crit(B) \leq 1$ are then handled in Lemma~\ref{lemma:constellation} with essentially the same argument as for the single processor $\LTR$ algorithm.
 %These modification steps are only done for the sake of the analysis of the original schedule $S_{\pltr}$ and are not part of the algorithm.
 By making sure that the modifications cannot decrease the costs of our schedule, we obtain an upper bound for the costs of $S_{\pltr}$.
@@ -487,7 +484,7 @@ By making sure that the modifications cannot decrease the costs of our schedule,
 \subsection{Augmentation and Realignment}
 We transform $S_{\pltr}$ into the \emph{augmented schedule $S_{\aug}$} by adding for every $t$ with $k \coloneqq \crit(t) \geq 2$ and $\vol(t) = k-1$ an auxiliary busy slot on processor $k$.
 No job is scheduled in this auxiliary busy slot on processor $k$ and it does also not count towards the volume of this slot.
-It merely forces processor $k$ to be in the on-state at time $k$ while allowing us to keep thinking in terms of $\idle$ and $\busy$ intervals in our analysis of the costs.
+It merely forces processor $k$ to be in the on-state at time $k$ while allowing us to keep thinking in terms of idle and busy intervals in our analysis of the costs.
 
 \begin{lemma}\label{lemma:augmented}
   In $S_{\aug}$ processors $1, \ldots, \crit(t)$ are busy in every slot $t \in T$ with $\crit(t) \geq 2$.
@@ -551,7 +548,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
 \end{algorithmic}
 \end{algorithm}
 \subsection{Invariants for Realignment}
-\begin{restatable}{lemma}{lemmainvariant}\label{lemma:invariant}
+\begin{lemma}\label{lemma:invariant}
   For an arbitrary step during the realignment of $S_{\aug}$ and a valley $V \subseteq T$, let the \emph{critical processor $k_V$ for $V$} be the highest processor such that
   \begin{itemize}
     \item
@@ -571,11 +568,11 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
     \item
       Every busy interval $B \subseteq V$ on processor $k_V$ with $B \sim V$ is a section of $C$.
   \end{enumerate}
-\end{restatable}
+\end{lemma}
 
-\begin{restatable}{lemma}{lemmasreal}\label{lemma:s_real}
+\begin{lemma}\label{lemma:s_real}
   The resulting schedule $S_{\real}$ of the realignment of $S_{\aug}$ is defined.
-\end{restatable}
+\end{lemma}
 
 \begin{lemma}\label{lemma:phi_prop}
   For every processor $k \in [m]$ and every busy interval $B$ on processor $k$ in $S_{\real}$ with $\crit(B) \geq 2$, we have $\hat \phi(B) > k - 1$.
@@ -598,18 +595,18 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 With the same argument as for the original single-processor Left-to-Right algorithm, we then get that at least one processor has to be busy in any schedule during these intervals.
 
 %\begin{lemma}\label{lemma:engagements}
-%\begin{restatable}{lemma}{lemmaengagements}\label{lemma:engagements}
+%\begin{lemma}\label{lemma:engagements}
 %  The realignment of $S_{\aug}$ does not create new engagement times but may only change the corresponding processor being engaged, i.e.\ if $t \in T$ is an engagement of some processor $k$ in $S_{\real}$, then $t$ is also an engagement of some processor $k'$ in $S_{\aug}$.
-%\end{restatable}
+%\end{lemma}
 %\end{lemma}
 
 %\begin{lemma}\label{lemma:constellation}
-\begin{restatable}{lemma}{lemmaconstellation}\label{lemma:constellation}
+\begin{lemma}\label{lemma:constellation}
   Let $I$ be an idle interval in $S_{\real}$ on some processor $k$ and let $B_l, B_r$ be the busy intervals on $k$ directly to the left and right of $I$ with $\crit(B_l) \leq 1$ and $\crit(B_r) \leq 1$.
   Allow $B_l$ to be empty, i.e.\ we might have $\min I = 0$, but $B_r$ must be nonempty, i.e.\ $\max I < d$.
   Then we must have $k = 1$ and $\hat \phi(B_l \cup I \cup B_r) > 0$.
 %\end{lemma}
-\end{restatable}
+\end{lemma}
 
 \begin{lemma}\label{lemma:intersection}
   For every processor $k$, every idle interval on processor $k$ in $S_{\opt}$ intersects at most two distinct idle intervals of processor $k$ in $S_{\real}$.
@@ -639,10 +636,10 @@ We complement this with an argument that the augmentation and realignment could 
 \begin{proof}
   We begin by bounding $\costs(S_{\real})$ as in the lemma.
   First, we show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
-  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ which intersect some $\off$ interval of $S^k_{\opt}$.
-  Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$ intervals in $S^k_{\opt}$.
+  Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ which intersect some off interval of $S^k_{\opt}$.
+  Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are off intervals in $S^k_{\opt}$.
   Since the costs of each idle interval are at most $q$, and the costs of each off interval are exactly $q$, the costs of all idle intervals in $\mathcal{I}_1$ is bounded by $2 \off(S^k_{\opt})$.
-  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ which do not intersect any $\off$ interval in $S^k_{\opt}$.
+  Let $\mathcal{I}_2$ be the set of idle intervals on $S^k_{\real}$ which do not intersect any off interval in $S^k_{\opt}$.
   The total length of these intervals is naturally bounded by $\on(S^k_{\opt})$.
 
   We continue by showing that $\busy(S_{\real}) \leq 2 P$.
