@@ -1,27 +1,19 @@
 Final submission WAOA in LNCS format:
 	Kürzen (4 Seiten):
 		Previous work: noch mehr?
-		Contribution:
-			"For a single processor, LTR ensure feasibility" ?
 		Hauptteil:
 			Lemma 11 sollte drinnen bleiben
+			Lemma 6, 7 sollten drinnen bleiben
+			Theorem 2 sollte drinnen bleiben
 			X Lemma 12 (1/2 Seite)
 			X Lemma 13 (1/4 Seite)
-			Theorem 2 nur zusätzliches Argument?
-			Theorem 3 (nur zu Lemma machen?) (1 Seite)
-			Lemma 6, 7 sollten drinnen bleiben
+			X Theorem 3 (nur zu Lemma machen?) (1 Seite)
 			Lemma 14?: eh kurz
-			Theorems 1-3 zusammenfassen?
-			Introduction radikal kürzen?
 		Realistisch, große Brocken:
 			Fig 2?
-			Algorithm 2?
-			
 	Reviews einarbeiten:
-	Formattieren:
-		Algorithm 1
-		Algorithm 2
 	Link full version on arxiv
+
 Do
   Neuer Branch: Kürzen auf 12 Seiten
   Graphiken als PDF von drawio exportieren?

@@ -29,11 +29,11 @@
 
 
 \DeclareMathOperator{\prev}{prev}
-\DeclareMathOperator{\on}{on}
-\DeclareMathOperator{\off}{off}
-\DeclareMathOperator{\idle}{idle}
-\DeclareMathOperator{\busy}{busy}
-\DeclareMathOperator{\costs}{costs}
+\DeclareMathOperator{\on}{\textsf{on}}
+\DeclareMathOperator{\off}{\textsf{off}}
+\DeclareMathOperator{\idle}{\textsf{idle}}
+\DeclareMathOperator{\busy}{\textsf{busy}}
+\DeclareMathOperator{\costs}{\textsf{costs}}
 \DeclareMathOperator{\adjacent}{adjacent}
 \DeclareMathOperator{\neighboring}{neighboring}
 \DeclareMathOperator{\true}{true}
@@ -48,19 +48,19 @@
 \DeclareMathOperator{\LTR}{LTR}
 \DeclareMathOperator{\aug}{aug}
 \DeclareMathOperator{\real}{real}
-\DeclareMathOperator{\fv}{fv}
-\DeclareMathOperator{\uv}{uv}
-\DeclareMathOperator{\pv}{pv}
-\DeclareMathOperator{\vol}{vol}
-\DeclareMathOperator{\opdef}{def}
-\DeclareMathOperator{\exc}{exc}
-\DeclareMathOperator{\keepidle}{keepidle}
-\DeclareMathOperator{\keepbusy}{keepbusy}
-\DeclareMathOperator{\rank}{rank}
-\DeclareMathOperator{\crit}{crit}
-\DeclareMathOperator{\fillop}{fill}
-\DeclareMathOperator{\close}{close}
-\DeclareMathOperator{\res}{s}
+\DeclareMathOperator{\fv}{\textsf{fv}}
+\DeclareMathOperator{\uv}{\textsf{uv}}
+\DeclareMathOperator{\pv}{\textsf{pv}}
+\DeclareMathOperator{\vol}{\textsf{vol}}
+\DeclareMathOperator{\opdef}{\textsf{def}}
+\DeclareMathOperator{\exc}{\textsf{exc}}
+\DeclareMathOperator{\keepidle}{\texttt{keepidle}}
+\DeclareMathOperator{\keepbusy}{\texttt{keepbusy}}
+\DeclareMathOperator{\rank}{\textsf{rank}}
+\DeclareMathOperator{\crit}{\textsf{crit}}
+\DeclareMathOperator{\fillop}{\texttt{fill}}
+\DeclareMathOperator{\close}{\texttt{close}}
+\DeclareMathOperator{\res}{sup}
 
 %\newtheorem{theorem}{Theorem}
 %\newtheorem{lemma}[theorem]{Lemma}
@@ -86,12 +86,11 @@
 \begin{abstract}
 We consider the problem of energy-efficient scheduling across multiple processors with a power-down mechanism.
 In this setting a set of $n$ jobs with individual release times, deadlines, and processing volumes must be scheduled across $m$ parallel processors while minimizing the consumed energy.
-Idle processors can be turned off to save energy, while turning them on requires a fixed amount of energy.
+Each idle processor can be turned off to save energy, while turning it on requires a fixed amount of energy.
 For the special case of a single processor, the greedy Left-to-Right algorithm \cite{irani_left_to_right_soda_2003} guarantees an approximation factor of $2$.
 We generalize this simple greedy policy to the case of $m \geq 1$ processors running in parallel and show that the energy costs are still bounded by $2 \OPT + P$, where $\OPT$ is the energy consumed by an optimal solution and $P < \OPT$ is the total processing volume.
 Our algorithm has a running time of $\mathcal{O}(n f \log d)$, where $d$ is the difference between the latest deadline and the earliest release time, and $f$ is the running time of a maximum flow calculation in a network of $\mathcal{O}(n)$ nodes.
-%TODO: keywords
-\keywords{First keyword  \and Second keyword \and Another keyword.}
+\keywords{Scheduling  \and Greedy Algorithms \and Approximation Algorithms}
 \end{abstract}
 %\clearpage
 
@@ -120,27 +119,25 @@ This fundamental problem in power management was first considered by~\cite{irani
 In their paper, they devise arguably the simplest algorithm one can think of which goes beyond mere feasibility.
 Their greedy algorithm \emph{Left-to-Right} ($\ltr$) is a $2$-approximation and proceeds as follows.
 If the processor is currently busy, i.e.\ working on a job, then $\ltr$ greedily keeps the processor busy for as long as possible, always working on the released job with the earliest deadline.
-Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ greedily keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
+Once there are no more released jobs to be worked on, the processor becomes idle and $\ltr$ keeps the processor idle for as long as possible such that all remaining jobs can still be feasibly completed.
 At this point, the processor becomes busy again and $\ltr$ proceeds recursively until all jobs are completed.
 For a single processor,~\cite{baptiste_unit_jobs} develop an optimal dynamic program for unit jobs.
 ~\cite{baptiste_general_jobs} generalize this to general job weights with a running time of $\mathcal{O}(n^5)$,
 while~\cite{demaine} generalize it to multiple processors but again only unit jobs, increasing the complexity to $\mathcal{O}(n^7m^5)$.
 
-Obtaining good solutions for multiple processors and general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
-Note that this is not an additional restriction for the former special cases since time is discrete in our problem setting.
+Obtaining good solutions for the general case of multiple processors and general job weights is difficult because of the additional constraint that every job can be worked on by at most a single processor at the same time.
+%Note that this is not an additional restriction for the former special cases since time is discrete in our problem setting.
 It is a major open problem whether the general multi-processor setting is NP-hard.
-It took further thirteen years for the first non-trivial result on the general setting to be be developed, i.e.\ an algorithm for the case of multiple processors and general processing volumes of jobs.
+It took further thirteen years for the first non-trivial result on this general setting to be be developed.
 In their breakthrough paper,~\cite{antoniadis} develop the first constant-factor approximation for the problem.
 Their algorithm guarantees an approximation factor of $3 + \epsilon$ and relies on relaxing an Integer Programming formulation of the problem.
-Their algorithm obtains a possibly infeasible integer solution by building the convex hull of the corresponding fractional LP solution.
-Since this integer solution might not schedule all jobs, they develop an additional \textit{extension} algorithm \textit{EXT-ALG}, which iteratively extends the intervals returned by the rounding procedure by a time slot at which an additional turned on processor allows for an additional unit of processing volume to be scheduled.
-
-\cite{skeletons} improve this approximation factor to $2 + \epsilon$ by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
+For making the rounded LP-solution feasible, they develop an additional extension algorithm \textit{EXT-ALG}.
+This approximation factor is improved to $2 + \epsilon$ in~\cite{skeletons} by incorporating into the Linear Program additional constraints for the number of processors required during every possible time interval.
 They also develop a combinatorial $6$-approximation for the problem.
 As presented in the papers, all three algorithms run in pseudo-polynomial time.
 By using techniques presented in~\cite{antoniadis}, the number of time slots which have to be considered can be reduced from $d$ to $\mathcal{O}(n \log d)$, allowing the algorithms to run in polynomial time.
 More specifically, the number of constraints and variables of the Linear Programs reduces to $\mathcal{O}(n^2 \log^2 d)$.
-The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$, where $F$ refers to a maximum flow calculation in a network with $\mathcal{O}(n^2 \log d)$ edges and $\mathcal{O}(n \log d)$ nodes.
+The running time of the EXT-ALG used by all three approximation algorithms is reduced to $\mathcal{O}(F m n^3 \log^3 d)$, where $F$ refers to a maximum flow calculation in a network with $\mathcal{O}(n \log d)$ nodes.
 
 \subsubsection{Contribution}
 In this paper we develop a greedy algorithm which is simpler and faster than the previous algorithms.
@@ -182,12 +179,12 @@ The objective now is to find a feasible schedule which minimizes the expended en
 Each processor consumes $1$ unit of energy for every time slot it is in the on-state and $0$ units of energy if it is in the off-state.
 Turning a processor on consumes a constant amount of energy $q \geq 0$, which is fixed by the problem instance.
 In Graham's notation~\cite{graham}, this setting can be denoted with $m \mid r_j; \overline{d_j}; \mathrm{pmtn} \mid E$.
-\subsubsection{Costs of busy and idle intervals}
+\subsubsection{Busy and idle intervals}
 We say a processor is \emph{busy} at time $t \in T$ if some job is scheduled for this processor at time $t$.
 Otherwise, the processor is \emph{idle}.
 Clearly a processor cannot be busy and off at the same time.
-An interval $I \subseteq T$ is a (full) \emph{busy interval} for processor $k \in [m]$ if $I$ is inclusion maximal on condition that processor $k$ is busy in every $t \in I$.
-Correspondingly, an interval $I \subseteq T$ is a \emph{partial busy interval} for processor $k$ if $I$ is not inclusion maximal on condition that processor $k$ is busy in very $t \in I$.
+An interval $I \subseteq T$ is a (full) \emph{busy interval} for processor $k \in [m]$ if $I$ is inclusion maximal on the condition that processor $k$ is busy in every $t \in I$.
+Correspondingly, an interval $I \subseteq T$ is a \emph{partial busy interval} for processor $k$ if $I$ is not inclusion maximal on the condition that processor $k$ is busy in very $t \in I$.
 We define (partial and full) \emph{idle intervals}, \emph{on intervals}, and \emph{off intervals} of a processor analogously via inclusion maximality.
 Observe that if a processor is idle for more than $q$ units of time, it is worth turning the processor off during the corresponding idle interval.
 Our algorithm will specify for each processor when it is busy and when it is idle.
@@ -195,8 +192,8 @@ Each processor is then defined to be in the off-state during idle intervals of l
 Accordingly, we can express the costs of a schedule $S$ in terms of busy and idle intervals.
 
 For a multi-processor schedule $S$, let $S^k$ denote the schedule of processor $k$.
-Furthermore, for fixed $k$, let $\mathcal{N}, \mathcal{F}, \mathcal{B}, \mathcal{I}$ be the set of on, off, busy, and idle intervals on $S^k$. 
-We partition the costs of processor $k$ into the costs $\on(S^k)$ for residing in the on-state and the costs $\off(S^k)$ for transitioning between the off-state and the on-state, hence $\costs(S^k) = \on(S^k) + \off(S^k) = \sum_{N \in \mathcal{N}} |N| + q$.
+Furthermore, for fixed $k$, let $\mathcal{N}, \mathcal{F}, \mathcal{B}, \mathcal{I}$ be the set of on, off, busy, and idle intervals of $S^k$. 
+We partition the costs of processor $k$ into the costs $\on(S^k)$ for residing in the on-state and the costs $\off(S^k)$ for transitioning between the off-state and the on-state, hence $\costs(S^k) = \on(S^k) + \off(S^k) = \sum_{N \in \mathcal{N}} q + |N|$.
 Equivalently, we partition the costs of processor $k$ into the costs $\idle(S^k) \coloneqq \sum_{I \in \mathcal{I}} \min \{ |I|, q \}$ for being idle and the costs $\busy(S^k) \coloneqq \sum_{B \in \mathcal{B}} |B|$ for being busy.
 The total costs of a schedule $S$ are the total costs across all processors, i.e.\ $\costs(S) = \sum_{k = 1}^{m} \costs(S^k)$.
 Clearly we have $\sum_{k = 1}^m \busy(k) = P$, this means for an approximation guarantee the critical part is bounding the idle costs.
@@ -204,7 +201,7 @@ Clearly we have $\sum_{k = 1}^m \busy(k) = P$, this means for an approximation g
 \subsubsection{Lower and upper bounds for the number of busy processors}
 We specify a generalization of our problem which we call \emph{deadline-scheduling-with-processor-bounds}.
 Where in the original problem, for each time slot $t$, between $0$ and $m$ processors were allowed to be working on jobs, i.e.\ being busy, we now specify a lower bound $l_t \geq 0$ and an upper bound $m_t \leq m$.
-For a feasible solution to \emph{deadline-scheduling-with-processor-bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq v(t) \leq m_t$.
+For a feasible solution to \emph{deadline-scheduling-with-processor-bounds}, we require that in every time slot $t$, the number of busy processors, which we denote with $\vol(t)$, lies within the lower and upper bounds, i.e.\ $l_t \leq \vol(t) \leq m_t$.
 This will allow us to express the $\PLTR$ greedy policy of keeping processors idle or busy, respectively.
 Note that this generalizes the problem \emph{deadline-scheduling-on-intervals} introduced by~\cite{antoniadis} by additionally introducing lower bounds.
 
@@ -273,7 +270,7 @@ As stated in Lemma~\ref{lemma:flow_feasibility}, the check for feasibility in su
     \draw[->] (4) -- node[midway, right] {$P - \sum_{t \in T} l_t$} (5);
   \end{tikzpicture}
   \caption{The Flow-Network for checking feasibility of an instance of \emph{deadline-scheduling-with-processor-bounds} $l_t$ and $m_t$ for the number of busy processors at $t \in T$.
-  There is a node $u_j$, $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
+  There are nodes $u_j$, $v_t$ with the corresponding edges for every job $j \in J$ and for every time slot $t \in T$, respectively.
   }\label{fig:flow}
 \end{figure}
 
@@ -347,8 +344,9 @@ Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} are again a generalization of
 \end{restatable}
 
 \begin{definition}
-  A time slot $t \in T$ is called \emph{engagement of processor $k$} if $t = \min B$ for some busy interval $B$ on processor $k$.
-  A time slot $t \in T$ is just called \emph{engagement} if it is an engagement of processor $k$ for some $k \in [m]$.
+  A time slot $t \in T$ is called an \emph{engagement of processor $k$} if $t = \min B$ for some busy interval $B$ on processor $k$.
+	We say processor $k$ is \emph{engaged} at time $t$ if $t$ is an engagement of processor $k$.
+  A time slot $t \in T$ is just called an \emph{engagement} if it is an engagement of processor $k$ for some $k \in [m]$.
 \end{definition}
 \begin{lemma}\label{lemma:critical}
   Let $Q \subseteq T$ be a set of time slots and $t \in T$ an engagement of processor $k \in [m]$.
@@ -361,7 +359,7 @@ Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} are again a generalization of
   For every engagement $t$ of some processor $k \in [m]$ in the schedule $S_{\pltr}$ constructed by $\PLTR$, there exists a tight set $Q_t \subseteq T$ for engagement $t$ of processor $k$.
 \end{lemma}
 \begin{proof}
-  Suppose for contradiction that there is some engagement $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$.
+  Suppose for contradiction that there is some engagement $t \in T$ of processor $k \in [m]$ and no such $Q$ exists for $t$, i.e.\ every $Q \subseteq T$ containing $t$ violates at least one of the three conditions in the Lemma.
   We show that $\PLTR$ would have extended the idle interval on processor $k$ which ends at $t$.
   Consider the step in $\PLTR$ when $t$ was the result of $\keepidle$ on processor $k$.
   Let $l_{t'}$, $m_{t'}$ be the lower and upper bounds for $t' \in T$ right after the calculation of $t$ and the corresponding update of the bounds by $\keepidle$.
@@ -373,11 +371,11 @@ Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} are again a generalization of
   The inequality $m_Q \geq \vol(Q)$ here follows since the upper bounds $m_{t'}$ are monotonically decreasing during $\PLTR$.
   Since our modification decreases $m_Q$ by at most $1$, we hence still have $m_Q \geq \fv(Q)$ after the decrement of $m_t$.
   Consider $Q \subseteq T$ such that $t \in Q$ and $\vol(t') < k - 1$ for some $t'$.
-  At the step in $\PLTR$ considered by us, we hence have $m_{t'} \geq k - 1 > \vol(t')$.
+  At the step in $\PLTR$ considered by us, i.e.\ when $\keepidle$ returned $t$ on processor $k$, we hence have $m_{t'} \geq k - 1 > \vol(t')$.
   Before our decrement of $m_t$ we therefore have $m_Q > \vol(Q) \geq \fv(Q)$, which implies $m_Q \geq \fv(Q)$ after the decrement.
   Finally, consider $Q \subseteq T$ such that $t \in Q$ and $\vol(t') < k$ for some $t' > t$.
   At the step in $\PLTR$ considered by us, we again have $m_{t'} \geq k > \vol(t')$, which implies $m_Q \geq \fv(Q)$ after our decrement of $m_t$.
-  In summary, if for $t$ no $Q$ exists as characterized in the proposition, the engagement of processor $k$ at $t$ could not have been the result of $\keepidle$ on processor $k$.
+  In summary, if for $t$ no $Q$ exists as characterized in the lemma, the engagement of processor $k$ at $t$ could not have been the result of $\keepidle$ on processor $k$.
 \end{proof}
 
 \begin{lemma}
@@ -419,10 +417,10 @@ Lemmas~\ref{lemma:cut} and~\ref{lemma:feasibility} are again a generalization of
 \end{definition}
 
 \begin{definition}
-A nonempty interval $V \subseteq T$ is a \emph{valley} if $V$ is inclusion maximal on condition that $C \sim V$ for some fixed critical set $C$.
+A nonempty interval $V \subseteq T$ is a \emph{valley} if $V$ is inclusion maximal on the condition that $C \sim V$ for some fixed critical set $C$.
 Let $D_1, \ldots, D_l$ be the maximal intervals contained in a critical set $C$.
 A nonempty interval $V$ is a \emph{valley of $C$} if $V$ is exactly the valley between $D_{a}$ and $D_{a+1}$ for some $a < l$, i.e. $V = [\max D_a + 1, \min D_{a+1} - 1]$.
-By choice of $C$ as critical set (property 1), a valley of $C$ is indeed a valley.
+By the choice of $C$ as a critical set (property 1), a valley of $C$ is indeed a valley.
 We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are scheduled by $S_{\pltr}$ in every $t \in V$.
 %\begin{figure}[H]
 %  \centering
@@ -450,8 +448,8 @@ We define the jobs $J(V) \subseteq J$ for a valley $V$ as all jobs which are sch
   Lemma~\ref{lemma:valley} guarantees that $\delta$ jobs are scheduled at every slot of $V_l$ or $V_r$.}\label{fig:left_right_valleys}
 \end{figure}
 \begin{proof}
-  Refer to Figure~\ref{fig:left_right_valleys} for a visual sketch of the proposition.
-  By choice of $C$ as critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
+  Refer to Figure~\ref{fig:left_right_valleys} for a visual sketch of the lemma.
+  By the choice of $C$ as a critical set with $c \coloneqq \crit(C)$, we have $\vol(C \cap D) \geq (c-1) \cdot |C \cap D|$.
   If this inequality is fulfilled strictly, then with the premise
   $\fv(C \cap D) / |C \cap D| \leq c - \delta$ we directly get $\uv(C \cap D) / |C \cap D| > \delta - 1$.
   This implies that there are at least $\delta$ jobs $j$ scheduled in $C \cap D$ with $\uv(j, C \cap D) > 0$.
@@ -503,13 +501,13 @@ Lemma~\ref{lemma:valley} in turn implies that if the density of $B$ is too small
 Let $V$ be the corresponding left or right valley of $C$ and $D$ for which such a job $j$ exists.
 Instead of scheduling $j$ on the processors below $k$, we can schedule $j$ on processor $k$ in idle time slots during $V$.
 This merges the busy interval $B$ with at least one neighbouring busy interval on processor $k$.
-In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ \emph{closing of valley $V$ on processor $k$}.
+In the definition of the realignment, we will call this process of filling the idle slots during $V$ on processor $k$ the \emph{closing of valley $V$ on processor $k$}.
 The corresponding subroutine is called $\close(k, V)$.
 
 The crucial part is ensuring that this merging of busy intervals by closing a valley continues to be possible throughout the realignment whenever we encounter a busy interval with a density too small.
 For this purpose, we go through the busy intervals on each processor in decreasing order of their criticality, i.e.\ in the order of $\succeq$.
-We also allow every busy slot to be used twice for the realignment by introducing further auxiliary busy slots, since for a section $D$ of the critical set $C$, both the right and the left valley might be closed on processor $k$ in the worst case.
-This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which correspond to the initial properties of Lemma~\ref{lemma:valley} and~\ref{lemma:augmented} for $S_{\aug}$.
+We also allow every busy slot to be used twice for the realignment (see variable $\res_V$ in Algorithm~\ref{alg:real}) by introducing further auxiliary busy slots, since for a section $D$ of the critical set $C$, both the right and the left valley might be closed on processor $k$ in the worst case.
+This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} during the realignment process, which correspond to the initial properties of Lemmas~\ref{lemma:valley} and~\ref{lemma:augmented} for $S_{\aug}$.
 \begin{algorithm}
   \caption{Realignment of $S_{\aug}$ for analysis only}\label{alg:real}
 \begin{algorithmic}
@@ -517,7 +515,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
   \For{$k \gets m$ \textrm{to} $1$}
     \State{\Call{$\fillop$}{$k, T$}}
     \State{$\res_V \gets \res_V - 1$  for every $V$
-    s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on processor $k$}
+    s.t.\ some $V'$ with $V' \cap V \neq \emptyset$ was closed on proc. $k$}
   \EndFor{}
 \algrule
   \Function{$\fillop$}{$k, V$}
@@ -528,9 +526,9 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
     \While{$\exists$ busy interval $B \subseteq V$ on processor $k$
     with $B \sim V$ and $\hat \phi(B) \leq k - 1$}
       \State{let $V_l, V_r$ be the left, right valley for $C$ and $B$ (given $B$ is a section of $C$)}
-      \If{$V_l$ exists and $\res(V_l) > 0$}
+			\If{$V_l$ exists and $\res_{V_l} > 0$}
         \State{\Call{$\close$}{$k, V_l$}}
-      \ElsIf{$V_r$ exists and $\res(V_r) > 0$}
+			\ElsIf{$V_r$ exists and $\res_{V_r} > 0$}
         \State{\Call{$\close$}{$k, V_r$}}
       \EndIf{}
     \EndWhile{}
@@ -565,7 +563,7 @@ This allows us to maintain the invariants stated in Lemma~\ref{lemma:invariant} 
   At every step in the realignment of $S_{\aug}$ the following invariants hold for every valley $V$, where $C$ denotes the critical set with $C \sim V$.
   \begin{enumerate}
     \item
-      If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$, some section $D \subseteq V$ of $C$, then the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and $\res(V_l) + \res(V_r) \geq 2 \delta$.
+			If $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$, some section $D \subseteq V$ of $C$, then the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and $\res_{V_l} + \res_{V_r} \geq 2 \delta$.
     \item
       For every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy at $t$.
     \item
@@ -598,9 +596,9 @@ We will show that this constellation can only occur in $S_{\real}$ on processor 
 With the same argument as for the original single-processor Left-to-Right algorithm, we then get that at least one processor has to be busy in any schedule during these intervals.
 
 %\begin{lemma}\label{lemma:engagements}
-\begin{restatable}{lemma}{lemmaengagements}\label{lemma:engagements}
-  The realignment of $S_{\aug}$ does not create new engagement times but may only change the corresponding processor being engaged, i.e.\ if $t \in T$ is an engagement of some processor $k$ in $S_{\real}$, then $t$ is also an engagement of some processor $k'$ in $S_{\aug}$.
-\end{restatable}
+%\begin{restatable}{lemma}{lemmaengagements}\label{lemma:engagements}
+%  The realignment of $S_{\aug}$ does not create new engagement times but may only change the corresponding processor being engaged, i.e.\ if $t \in T$ is an engagement of some processor $k$ in $S_{\real}$, then $t$ is also an engagement of some processor $k'$ in $S_{\aug}$.
+%\end{restatable}
 %\end{lemma}
 
 %\begin{lemma}\label{lemma:constellation}
@@ -637,7 +635,7 @@ We complement this with an argument that the augmentation and realignment could 
   Algorithm $\PLTR$ constructs a schedule of costs at most $2 \OPT + P$.
 \end{theorem}
 \begin{proof}
-  We begin by bounding $\costs(S_{\real})$ as in the proposition.
+  We begin by bounding $\costs(S_{\real})$ as in the lemma.
   First, we show that $\idle(S^k_{\real}) \leq 2 \off(S^k_{\opt}) + \on(S^k_{\opt})$ for every processor $k \in [m]$.
   Let $\mathcal{I}_1$ be the set of idle intervals on $S^k_{\real}$ which intersect some $\off$ interval of $S^k_{\opt}$.
   Lemma~\ref{lemma:intersection} implies that $\mathcal{I}_1$ contains as most twice as many intervals as there are $\off$ intervals in $S^k_{\opt}$.
@@ -646,9 +644,9 @@ We complement this with an argument that the augmentation and realignment could 
   The total length of these intervals is naturally bounded by $\on(S^k_{\opt})$.
 
   We continue by showing that $\busy(S_{\real}) \leq 2 P$.
-  By construction of $S_{\aug}$ and the definition of $\res$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$.
+  By construction of $S_{\aug}$ and the definition of $\res_V$ and $\close$, we introduce at most as many auxiliary busy slots at every slot $t \in T$ as there are jobs scheduled at $t$ in $S_{\pltr}$.
   For $S_{\aug}$, an auxiliary busy slot is only added for $t$ with $\crit(t) \geq 2$ and hence $\vol(t) \geq 1$.
-  Furthermore, initially $\res(V) = 2 |J(V)|$ for every valley $V$ and $\res(V)$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
+  Furthermore, initially $\res_V = 2 |J(V)|$ for every valley $V$ and $\res_V$ is decremented if some $V'$ intersecting $V$ is closed during $\fillop(k, T)$.
   During $\fillop(k, T)$ at most a single $V'$ containing $t$ is closed for every $t \in T$.
   Finally, auxiliary busy slots introduced by $S_{\aug}$ are used in the subroutine $\close$.
   This establishes the lower bound $\costs(S_{\real}) = \idle(S_{\real}) + \busy(S_{\real}) \leq 2 \off(S_{\opt}) + \on(S_{\opt}) + 2 P \leq 2 \OPT + P$ for our realigned schedule.
@@ -772,7 +770,7 @@ The idea of generalizing the Left-to-Right algorithm emerged in discussions duri
   The inequality for node $u_j$ follows since $\fv(j, Q(S)) = \max \{0, p_j - |E_j \setminus Q(S)| \}$.
   In total, we can bound the capacity from below with
   \begin{align}
-    c(S) &\geq \sum_{j \in J(\bar S)} p_j + \sum_{j \in J(S)} p_j - \fv(j, Q(S)) + \sum_{t \in Q(S)} m_t
+		c(S) &\geq \sum_{j \in J(\bar S)} p_j + \sum_{j \in J(S)}(p_j - \fv(j, Q(S))) + \sum_{t \in Q(S)} m_t
     \\ &= P - \fv(J(S), Q(S)) + \sum_{t \in Q(S)} m_t
     \\ &\geq P - \opdef(Q(S))\text{.}
   \end{align}
@@ -810,7 +808,7 @@ The idea of generalizing the Left-to-Right algorithm emerged in discussions duri
   Invariant 2 now follows since by construction of $S_{\aug}$ and our choice of $C$ we have for every $t \in C$ that processors $1, \ldots, k_V, \ldots, c$ are busy at $t$.
   For Invariant 1, let $D$ be a section of $C$ with $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$.
   With $k_V \leq c$ we get $\phi(C \cap D) \leq c - \delta$ and hence by Lemma~\ref{lemma:valley}, we have that the left valley $V_l$ or the right valley $V_r$ of $C$ and $D$ exists and $|J(V_l)| + |J(V_r)| \geq \delta$.
-  With the initial definition of the supply $\res(V)$ of a valley, we get the desired lower bound of $\res(V_l) + \res(V_r) \geq 2 \delta$.
+	With the initial definition of the supply $\res_V$ of a valley, we get the desired lower bound of $\res_{V_l} + \res_{V_r} \geq 2 \delta$.
 
   Now suppose that Invariants 1 and 2 hold at all steps of the realignment up to a specific next step.
   Let $V$ again be an arbitrary valley of $\crit(V) \geq 2$ and let $k$ be the processor currently being filled.
@@ -869,7 +867,7 @@ The idea of generalizing the Left-to-Right algorithm emerged in discussions duri
       \end{figure}
       Hence there must have been a busy interval $B'' \subseteq [\min B', \max B]$ on processor $k'_V + 1 > k_V$ before the close, which contradicts the choice of $k_V < k$.
       In conclusion, we have $k'_V \leq k_V - 1$, which allows us to prove Invariants 1 and 2.
-      If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some section $D$ of $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res(V_l) + \res(V_r) \leq 2 (\delta + 1)$ both before and after the close.
+			If $\phi(C \cap D) \leq k'_{V} - \delta$ for some $\delta \in \mathbb{N}$ and some section $D$ of $C$, then $\phi(C \cap D) \leq k_V - (\delta + 1)$ and hence by induction hypothesis the left valley $V_l$ or the right valley $V_r$ for $C, D$ exists and $\res_{V_l} + \res_{V_r} \leq 2 (\delta + 1)$ both before and after the close.
       Our induction hypothesis also implies that for every $t \in C \cap V$, processors $1, \ldots, k_V$ are busy before the close.
       Since at most the uppermost busy slot is moved by $\close$, after the close of $V'$ we still have that processors $1, \ldots, k_V - 1 \geq k'_V$ are busy.
 
@@ -887,7 +885,7 @@ The idea of generalizing the Left-to-Right algorithm emerged in discussions duri
       Since processor $k+1$ is already completely filled before the close, we have $k_V = k \geq k'_V$.
 
       For Invariant 1, again let $\phi(C \cap D) \leq k'_V - \delta$ and hence $\phi(C \cap D) \leq k_V - \delta$ for some $\delta \in \mathbb{N}$ and some section $D$ of $C$.
-      Our induction hypothesis implies that the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and that both before and after the close we have $\res(V_l) + \res(V_r) \geq 2 \delta$.
+			Our induction hypothesis implies that the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and that both before and after the close we have $\res_{V_l} + \res_{V_r} \geq 2 \delta$.
       For Invariant 2, observe that $V' \cap C = \emptyset$ since our case assumption $V' \subset V$ implies $V' \prec C$.
       Therefore, no slots of $C$ are modified when $V'$ is closed.
       Invariant 2 now directly follows from the induction hypothesis and $k'_V \leq k_V$.
@@ -897,20 +895,20 @@ The idea of generalizing the Left-to-Right algorithm emerged in discussions duri
       Some $V'$ with $V' \cap V = \emptyset$ is closed on processor $k$.
       We first show that $\min V - 1 \notin V'$ and symmetrically $\max V + 1 \notin V'$.
       Consider $t \coloneqq \min V - 1$ and assume $t \in T$.
-      By choice of $V$ and $t$ we must have $t \succ V$.
+      By the choice of $V$ and $t$ we must have $t \succ V$.
       If $t \in V'$, we would have $V' \succ V$ and hence $V' \supseteq V$, which contradicts our case assumption.
       Symmetrically, we know that $\max V + 1 \notin V'$.
       Therefore the close of $V'$ does not modify the schedule within $[\min V - 1, \max V + 1]$, implying that no partial busy interval in $V$ before the close can become a full busy interval.
       Hence we have $k_V = k'_V$ and Invariants 1 and 2 follow as in Case 2.
 
   \subsubsection{Case 4:}
-      The call to $\fillop(k, T)$ returns and $\res(V')$ is decreased by 1 for every valley $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
+			The call to $\fillop(k, T)$ returns and $\res_{V'}$ is decreased by 1 for every valley $V'$ such that some valley intersecting $V'$ has been closed during $\fillop(k, T)$.
       First observe that the schedule itself does not change by this step but processor $k$ is now fully filled, which implies $k'_V \leq k_V$.
       Invariant 2 then follows directly from the induction hypothesis.
       We consider two subcases.
-      If during $\fillop(k, T)$, no valley $V'$ intersecting $V$ was closed on $k$, then $\res(V)$ does not change and Invariant 1 follows from the induction hypothesis and $k'_V \leq k_V$.
+			If during $\fillop(k, T)$, no valley $V'$ intersecting $V$ was closed on $k$, then $\res_{V}$ does not change and Invariant 1 follows from the induction hypothesis and $k'_V \leq k_V$.
 
-      If on the other hand some valley $V'$ intersecting $V$ was closed on $k$ during $\fillop(k, T)$, then $\res(V)$ is decreased by $1$ to $\res'(V) \coloneqq \res(V) - 1$.
+			If on the other hand some valley $V'$ intersecting $V$ was closed on $k$ during $\fillop(k, T)$, then $\res_{V}$ is decreased by $1$ to $\res'_V \coloneqq \res_{V} - 1$.
       As argued in Cases 1 to 3, the critical processor of $V$ decreases monotonically during $\fillop(k, T)$.
       Consider the schedule right before the first valley $V'$ intersecting $V$ is closed on $k$.
       Let $k^0_V$ be the critical processor for $V$ at this point of the realignment and $k^1_V$ the critical processor right after $V'$ is closed.
@@ -919,8 +917,8 @@ The idea of generalizing the Left-to-Right algorithm emerged in discussions duri
       If $V' \subset V$, then as argued in Case 2 we have $k^0_V = k$.
       Since by our case assumption $\fillop(k, T)$ returns in the next step, we have $k'_V \leq k - 1$ and hence $k'_V \leq k^0_V -1$.
       Invariant 2 now follows by our induction hypothesis.
-      If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence by our induction hypothesis the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and before the close we have $\res(V_l) + \res(V_r) \geq 2 (\delta + 1)$.
-      Since $\res$ is decreased for every valley by at most $1$, we have after the close that $\res'(V_l) + \res'(V_r) \geq 2 \delta$.
+			If $\phi(C \cap D) \leq k'_V - \delta$ then $\phi(C \cap D) \leq k^0_V - (\delta + 1)$ and hence by our induction hypothesis the left valley $V_l$ or the right valley $V_r$ of $C, D$ exists and before the close we have $\res_{V_l} + \res_{V_r} \geq 2 (\delta + 1)$.
+			Since $\res_V$ is decreased for every valley $V$ by at most $1$, we have after the close that $\res'_{V_l} + \res'_{V_r} \geq 2 \delta$.
 
   We conclude by showing that Invariant 2 implies Invariant 3.
   Let $V$ be an arbitrary valley during the realignment of $S_{\aug}$ and $B \subseteq V$ a busy interval on processor $k_V$ with $B \sim V$.
@@ -945,36 +943,36 @@ The idea of generalizing the Left-to-Right algorithm emerged in discussions duri
   Hence all terms in the realignment are well defined and the realignment terminates.
 \end{proof}
 
-\lemmaengagements*
-\begin{proof}
-  Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an engagement of some processor $k'$ where $t$ was no engagement of any processor before this step.
-  This step must be the closing of some valley $V$ on some processor $k > k'$:
-  On processor $k$, we have seen that closing some valley can only merge busy intervals.
-  On processors above $k$, the schedule does not change.
-  Busy slots on processors $k'' < k$ are only removed (by definition of $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.%, as seen in the following figure.
-  \begin{figure}[H]
-    \centering
-		\includegraphics[scale=0.4]{graphics/engagements.drawio.pdf}
-    %\includesvg[scale=0.4]{graphics/engagements.drawio.svg}
-  \end{figure}
-  If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
-  Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
-  If $t \notin V$, then $t \succ V$.
-  Let $W$ be the valley such that $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
-  If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
-  By Invariant 2, processors $1, \ldots, k_W = k$ are busy at $t$ before the close.
-  Again, this implies that $t$ was an engagement before the close already, contradicting our choice of $t$.
-  If $t \notin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
-  We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
-  Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are busy at $t$ before the close.
-  Hence, $t$ was an engagement before the close already, again contradicting our initial choice of $t$.
-\end{proof}
+%\lemmaengagements*
+%\begin{proof}
+%  Consider the first step in the realignment of $S_{\aug}$ in which some $t \in T$ becomes an engagement of some processor $k'$ where $t$ was no engagement of any processor before this step.
+%  This step must be the closing of some valley $V$ on some processor $k > k'$:
+%  On processor $k$, we have seen that closing some valley can only merge busy intervals.
+%  On processors above $k$, the schedule does not change.
+%  Busy slots on processors $k'' < k$ are only removed (by definition of $\close$), therefore $t-1$ must have been busy on processor $k'$ and idle on $k' + 1, \ldots, k$ before the close.%, as seen in the following figure.
+%  \begin{figure}[H]
+%    \centering
+%		\includegraphics[scale=0.4]{graphics/engagements.drawio.pdf}
+%    %\includesvg[scale=0.4]{graphics/engagements.drawio.svg}
+%  \end{figure}
+%  If $t \in V$, then processor $k' + 1$ (or $k$) must have been busy before at $t$.
+%  Hence $t$ was already an engagement before the close, contradicting our initial choice of $t$.
+%  If $t \notin V$, then $t \succ V$.
+%  Let $W$ be the valley such that $V$ is closed during $\fillop(k, W)$, hence $W \supset V$.
+%  If $t \in W$, then $t \sim C_W$ and $t \in C_W$.
+%  By Invariant 2, processors $1, \ldots, k_W = k$ are busy at $t$ before the close.
+%  Again, this implies that $t$ was an engagement before the close already, contradicting our choice of $t$.
+%  If $t \notin W$, then let $W'$ be the valley with $t \sim W$ and $t \in W'$.
+%  We have $W \prec t \sim W'$ and $W' \supset W$ and $t \in C_{W'}$.
+%  Therefore $k_{W'} \geq k_W = k$ and Invariant 2 implies that processors $1, \ldots, k$ are busy at $t$ before the close.
+%  Hence, $t$ was an engagement before the close already, again contradicting our initial choice of $t$.
+%\end{proof}
 
 \lemmaconstellation*
 \begin{proof}
   By Lemma~\ref{lemma:engagements} and $\crit(B_r) \leq 1$, we know that $\min B_r$ is an engagement of processor $1$ in $S_{\aug}$.
   Hence $\max I$ is idle in $S_{\aug}$ on processor $1$ and hence idle on all processors (by stair-property in $S_{\aug}$).
-  Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res(V) = 0$ at all times during the realignment.
+  Since no jobs are scheduled at $\max I$, we know that $\crit(\max I) \leq 1$ and $J(V) = \emptyset$ for all valleys $V$ containing the slot $\max I$, and hence also $\res_V = 0$ at all times during the realignment.
   Therefore, no $V$ intersecting $[\max I, \max B_r]$ was closed during the realignment on any processor since this $V$ would contain $\max I$.
   Since $B_r$ is a busy interval with $\crit(B_r) \leq 1$ (i.e.\ not containing engagements of processors above $1$ in $S_{\aug}$), we must then have $k = 1$.
   For $I$ to be idle on processor $k = 1$ in $S_{\real}$ and $\crit(I) \geq 2$, some $V \succeq I$ with $V \cap I \neq \emptyset$ and hence $V \supseteq \max I$ would have to been closed, which contradicts what we have just shown.

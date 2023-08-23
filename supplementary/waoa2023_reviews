@@ -28,28 +28,6 @@ This paper has a lot of potential. It is certainly publishable and could be a ve
 Specific Comments
 =================
 
-! There are many grammatical errors/typos and it doesn't appear to have been proof-read (e.g. On p4 vol(t) is defined, but it becomes v(t) on the very next line).
-
-X More clarity and intuition would be helpful in following the proofs, especially in Section 2.
-For example:
-
-X * Section 2 is key to the whole paper so why is it allocated less than 1 page?
-
-? * The definitions of keepidle and keepbusy are not clear. The first line of keepidle says
-"Search maximal t'>t st there exists feasible schedule with m_{t''} set to k-1 for all t'' in [t,t')." But, as written, all the m_{t''} are already set to m so no such t' exists. I presume the authors mean we should ignore the current values of m_{t''} and try new onesusing the network flow but, if so, this should be formalized. Some explanation of these two procedures would also be helpful.
-
-X * Fig 1 is confusing for the reader. Why not draw the entire graph?
-
-X * The section would greatly benefit for a small example to illustrate the algorithm and the definitions.
-
-X * The proof of Lemma 3 has to be in the main text.
-
-X * It would be helpful to explain the formulas in prose
-
-X * It would be helpful to get some proof sketches before the partially long line of formal arguments
-
-
-
 ----------------------- REVIEW 2 ---------------------
 SUBMISSION: 23
 TITLE: Greedy Minimum-Energy Scheduling
@@ -66,36 +44,8 @@ I think that this is a nice contribution. The algorithm is combinatorial, simple
 
 Please see below for more detailed comments on the paper's presentation:
 
-X (1) I appreciated the brief discussion of technical difficulties given in the introduction, in particular, the difficulty in dealing with jobs that have non-unit volumes. If you think you have room in the intro, I'd have liked to have seen a more detailed overview of the analysis. The reader is strung along in the proof of the analysis without a good idea of where it's going or without a lot of intuition.  If you do not want to add a better analysis overview in the intro, then you should add more technical overviews before each subsection, or proof overviews for the most technical proofs.
-TODO: (2) It would be easier to read the following defined terms and subroutines if they were in a different font (e.g., defined terms in \textsf and subroutines in the algorithm-y looking text would be good): off(.), on(.), costs(.), keepidle, keepbusy, vol(.), fv(.), uv(.), pv(.), def(.), exc(.), close(.).
-TODO: (3) I don't think you ever define E_j?? I could figure out what it means, but add a definition.
-X (4) I think Figure 1 isn't very necessary and the space would be better used on a figure later in the paper. Moreover, I think Figure 1 needs some work. It should be made clear that there's one of these gadgets for all jobs and times and then edges go between these with ellipses or something. This suggestion for the figure will also make it bigger, hence another reason why it should go in the appendix.
-X (5) I think a Figure for Lemma 10 would be very helpful,  Subsection 3.2 is currently asking a lot of the reader.
 ?TODO: (6) Don't define definitions within lemma statements if they are going to be used elsewhere. This goes for  definition of tight set for engagement t off processor k and the definition of a critical set.
-?TODO (define "engaged"): (7) I don't understand what t is in Definition 9, this is  just the left endpoint of the time interval? If so, say that and change the notation to that.
-TODO: (8) I don't clearly see the contradiction in the proof of Lemma 10 (this is part of why I think a figure would help here!). It should clearly say "if no such Q then we consider the 3 cases forcing this.... Case 1: fv(q) \neq vol(Q).... Case 2: vol(t') < k-1.... Case 3: vol(t') < k..." and each case should end clearly outlining where the contradiction is. Currently it is relying too much on the reader to remember all the definitions.
-TODO?: (9) "At the step in PLTR considered by us" is used multiple times in the proof of Lemma 10 and is unclear wording, please revise.
-TODO?: (10) Add several sentences at the beginning of subsection 3.3 to indicate intuitively to the reader what will be shown in this subsection.
-TODO?: (11) I did not understand why many of the definitions in Definition 12 were necessary. Aren't all critical sets associated with some processor k? In which case the total ordering is just 1....k, by the definition of critical set? But then this seems the opposite of the statement "i.e., C \geq C' if and only if crit(C) \geq crit(C')"?
-TODO ("We also allow every busy slot to be used twice for the realignment by introducing further auxiliary busy slots") (12) Define Sup in words before the statement of Algorithm 2.
 TODO? (4 cases of what Alg2 does (only closes some valley or reduces Sup)): (13) I recommend breaking up the proof of Lemma 17  more. You could have a separate lemma that invariants 1 and 2 imply invariant  3. Then you could have a lemma proving invariant 1 and 2 hold. It's also not clear to me why the 4 cases cover all options. You should explain this before casing.
-
-
-TODO: Small comments:
-TODO: - Overall there are many grammatical mistakes through out this paper. Many of them are below, but I leave it to the authors to do a few more careful read throughs of their paper to prepare it for a camera ready submission.
-TODO: - bottom of page 3: "on *the* condition that processor...." and then "maximal on *the* condition that....busy in *every* t \in I".
-- top of page 4: missing parentheses in sum in def'n of costs.
-- when a lemma is stated, if it's proof is in the appendix, say so and add a pointer there (e.g. pf of lemma 2)
-- In Algorithm 1, replace "search" with "find" in subroutine definitions, replace "exists" with either "there exists" or the \exists sign (also do this in Algorithm 2), and just say m_{t''} = k-1 and l_{t''} = max...
-- rewrite the last sentence before Section 3, it's difficult to parse right now.
-- In definition 9 "called *an* engagement of processor", and "called *an* engagement if"
-- Formatting in Lemma 10 should be changed, too big of spacing between columns
--  you say proposition instead of lemma several times
-- In definition 13 "By *the* choice of C as *a* critical set". And this happens again in the first sentence of the proof of lemma 15.
-- In subsection 4.1 "on processor k *the* closing of...."
-- End of subsection 4.1 "*Lemmas* 15 and 16."
-- Add parentheses in the lower bound of c(S) in the proof of lemma 7 around p_j and the fv(.) term.
-
 
 
 ----------------------- REVIEW 3 ---------------------
